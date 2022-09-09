@@ -1,0 +1,467 @@
+/*
+ * FAU Person CSS Settings Frontend 
+ */
+
+// icons
+@import "icons/icons";
+
+
+.fau-person {
+    ul.contactlist {
+	margin: 0 15px 10px 0;
+    }
+
+    h3, h4, h5 {
+	a {
+	    text-decoration: none;
+	    &:hover, 
+	    &:focus {
+		    text-decoration: underline;
+	    }
+	}
+    }
+    h3 {
+	    padding-bottom: 0;
+	    padding-top: 5px;
+	    margin-bottom: 5px;
+    }
+
+    h4 {
+	    padding-top: 0;
+	    padding-bottom: 0;
+
+    }
+	
+
+  //  [itemprop="honorificSuffix"],
+  //  .fullname {
+  //     white-space: nowrap;
+  //  }
+    [itemprop="hoursAvaible"] {
+	margin-bottom: 10px;
+    }
+    
+    .shrink-contact .contactpoints {
+	li {
+	    display: inline;
+	}
+	a {
+	    width: 20px;
+	    overflow: hidden;
+	    display: inline-block;
+	}
+    }
+    
+    
+    .person-info ul.hoursAvailable_group,
+    [itemprop="hoursAvaible"] ul,
+    ul.hoursAvailable_group {
+	    li {
+ 		list-style: disc;
+		margin-left: 15px;
+	    }
+	    
+	    .widget & li {
+		display: list-item;
+	    }
+	    .widget & li::before {
+		display: none;
+	    }
+	    
+    }
+    ul.contactlist {
+	li {
+	    list-style-type: none;
+	}
+	.widget & li::before {
+		display: none;
+	}
+	
+    }
+    .connection-list {
+	margin-left: 0;
+	li {
+	    list-style-type: none;
+	}
+    }   
+    .connection {
+	    margin-top: 10px;
+	    ul {
+		margin-top: 5px;
+	    }
+	    li {
+		padding: 0;
+	    }
+    }
+    .screen-reader-text {
+	position: absolute;
+	width: 1px;
+	height: 1px;
+	padding: 0;
+	overflow: hidden;
+	clip: rect(0, 0, 0, 0);
+	white-space: nowrap;
+	border: 0;
+    }
+    
+    
+    
+}
+
+.liste-person {
+    li {
+	list-style: circle;
+    }
+}
+
+
+.person-info {
+    // Remove old definitions from theme
+	.person-info-phone:before,
+	.person-info-mobile:before,
+	.person-info-fax:before,
+	.person-info-email:before,
+	.person-info-www:before { 
+	    display: none;
+	}
+	.person-info-position {
+	    font-weight: bold;
+	}
+	
+	.person-info-address {
+	    margin-top: 10px;
+	    padding-left: 0px;
+	}
+	
+	.person-info-description {
+	    margin-top: 10px;
+	    padding-left: 20px;
+	}
+	li {
+	    list-style: none;
+	    margin: 0;
+	    padding: 0;
+	    padding-left: 0px;
+	    min-height: 20px;
+
+	}
+	
+}
+.content-inline .person,
+.fau-person {
+	.row {
+	    display: flex;
+	    flex-wrap: wrap; 
+	    align-content: flex-start;
+	    margin-left: 0;
+	    margin-right: 0;
+	    
+	
+	    .person-default-thumb,
+	    .person-default {
+		margin-left: 5px;
+		margin-right: 5px;
+		padding: 0 5px;	
+	    }
+	    .person-thumb {
+		flex: 0 0 80px;
+		float: none;
+		order: 1;
+		margin: 0;
+		padding: 5px 5px 5px 0;	
+	    }
+	    .person-default,
+	    .person-sidebar,
+	    .person-default-thumb {
+		flex: 1 0 200px;
+		float: none;
+		order: 2;
+		max-width: inherit;
+		width: inherit;
+	    } 
+	    .person-default-thumb {
+		@media (min-width: 768px) {
+		    flex-basis: 250px; 
+		}
+	    }
+
+	    .person-compact-thumb {
+		margin-left: 5px;
+		margin-right: 5px;
+		flex: 1 0 200px;
+		@media (min-width: 768px) {
+		    flex-basis: 350px; 
+		    padding: 5px;	
+		}
+		order: 1;
+		width: inherit;
+			
+	    }
+	    .person-default-more {
+		 float: none;
+		 padding: 5px;
+		 order: 4;
+	    }
+	    
+
+	}
+	.person-info-description {
+	    order: 3;
+	     padding: 5px;
+	     flex: 1 0 200px;
+	}
+	
+	// set to .standard-btn .primary-btn
+	.person-info-more {
+		text-align: right;
+		order: 4;
+
+	 }
+	.compactindex .row {
+	    
+	     .person-default,  
+	     .person-default-thumb {
+		 order: 1;
+		 
+	     }
+	     .person-default-more {
+		text-align: left;
+		order: 2;
+		
+		.person-info-more {
+		    text-align: left;
+		}
+	     }
+	     .person-thumb {
+		order: 3;
+		padding-left: 5px;
+		padding-right: 0;
+	     }
+	}
+	
+	 
+	
+	 
+	 .person-thumb {
+	     img {
+		 max-width: 100%;
+	     }
+	 }
+}
+
+.fau-person.thumb-size-small {
+    .row .person-thumb {
+	flex-basis: 80px;
+	img {
+	    width: 80px;
+	    height: 106px;
+	    object-fit: cover;
+	    max-width: inherit;
+	}
+    }
+}
+.fau-person.thumb-size-medium {
+    .row .person-thumb {
+	flex-basis: 100px;
+	img {
+	    width: 100px;
+	    height: 133px;
+	    object-fit: cover;
+	    max-width: inherit;
+	}
+    }
+}
+.fau-person.thumb-size-large {
+    .row .person-thumb {
+	flex-basis: 120px;
+	img {
+	    width: 120px;
+	    height: 160px;
+	    object-fit: cover;
+	    max-width: inherit;
+	}
+    }
+}
+
+.fau-person.border {
+    border: 1px solid #e9edf2;
+    margin: 0 0 10px 0;
+    padding: 0 5px;
+}
+
+.sidebar-inline .person .row .person-thumb {
+    padding-left: 0px;
+}
+
+.person-info-more {
+		a {
+		    display: inline-block;
+		    border-radius: 3px;
+		    font-size: 0.9333333333rem;
+		    line-height: 1.3626666667rem;
+		    padding: 6px 10px;
+		    margin: 10px 0;
+		    text-decoration: none;
+		}
+		a:hover, 
+  	         a:focus {
+		    text-decoration: none;
+		}
+	 }
+
+.widget .fau-person {
+    ul.person-info ul {
+	margin: 0 0 10px 25px;
+    }   
+    
+    li.person-info-address,
+    li.person-info-description,
+    li.person-info-office {
+	display: block;
+	margin-top: 10px;
+    }
+    li.person-info-address {
+	margin-bottom: 5px;
+    }
+    
+    div[itemprop="contactPoint"] {
+	margin-top: 10px;
+    }
+    address {
+	font-size: inherit;
+	line-height: inherit;
+    }
+    
+}
+
+// Page view
+.fau-person {
+    .person-meta {
+	display: flex;
+	flex-wrap: wrap; 
+	align-content: flex-start;
+	margin-left: 0;
+	margin-right: 0;
+	    
+	.person-image {
+	    order: 3;
+	    flex: 1 1 100px;
+	    margin: 0;
+	    
+	    @media (min-width: 768px) {
+		    flex: 1 0 240px;
+	    }
+	    figcaption {
+			font-size: 0.9em;
+		    }
+		&.person-thumb-page-v3 {
+			max-width: 240px;
+			max-height: 320px;
+		}
+		&.person-thumb-v3 {
+			max-width: 120px;
+			max-height: 160px;
+		}
+	}
+	.person-info {
+	    order: 2;
+	    flex: 1 0 200px;
+	    
+	    @media (min-width: 768px) {
+		     flex: 1 0 350px;
+		}
+	}
+	.person-image.alignleft {
+	    order: 1;
+	}
+	
+    }
+}
+
+.person-card {
+    display: flex;
+    justify-content: space-around;
+    flex-wrap: wrap;
+    align-items: flex-start;
+    align-content: stretch;
+    
+    .card-item {
+	flex: 1 0 250px;
+	text-align: center;
+	margin: 8px 0;
+	border: 2px solid transparent;
+	padding: 5px 0;
+	max-width: 300px;
+	p {
+	    hyphens: manual;
+	} 
+	figure {
+	    width: 230px;
+	    height: 230px;
+	    border-radius: 50%;
+	    overflow: hidden;
+	    margin: 0 auto;
+	    background: #eee;
+	    
+	    img {
+		width: 100%;
+		height: 100%;
+		object-fit: cover;
+		transition: 1s ease-in-out;
+	    }
+	}
+	
+	.person-info-position {
+	    display: inline-block;	    
+	}
+	ul.contactpoints {
+	    margin: 0 0 10px 0;
+	    li {
+		list-style: none;
+		padding: 1px;
+		white-space: nowrap;
+		a::before,
+		span::before {
+		    margin-right: 5px;
+		}
+		a {
+		    white-space: normal;
+		}
+	    }
+	}
+	&:hover,
+	&:focus {
+	    border-color: #eee;
+	    box-shadow: 4px 4px 15px rgba(0,0,0,0.1);
+	    
+	    img {
+		width: 110%;
+		height: 110%;
+		
+	    }
+	}
+
+	&.card-xsmall {
+	    flex-basis: 150px;
+	    figure {
+		width: 130px;
+		height: 130px;
+	    }
+	}
+	&.card-small {
+	    flex-basis: 200px;
+	    figure {
+		width: 180px;
+		height: 180px;
+	    }
+	}
+	&.card-large {
+	    flex-basis: 300px;
+	    figure {
+		width: 280px;
+		height: 280px;
+	    }
+	}
+    }
+
+}

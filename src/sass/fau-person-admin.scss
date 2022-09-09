@@ -1,0 +1,183 @@
+/*
+ * FAU Person CSS Settings Backend (Admin)) 
+ */
+
+// icons
+@import "icons/icons";
+
+#fau_person_textinfos,
+#fau_person_info,
+#fau_person_adressdaten,
+#fau_person_connection {
+   &.cmb2-postbox  {
+	.cmb-row {
+	    border: none;
+	    padding: 1.2em 0;
+	}
+    } 
+}
+
+#fau_person_sync {
+    #side-sortables & .cmb2-wrap > .cmb-field-list > .cmb-row,
+    .cmb-row {
+	border: none;
+	padding: 0.5em 0;
+	margin: 0;
+	label {
+	    margin: 0;
+	}
+	
+	.cmb2-metabox-description {
+	    padding-bottom: 1em;
+	}
+    }
+}
+
+#cmb2-metabox-fau_person_info {
+    span.cmb2-metabox-description {
+	display: block;
+    }
+}
+
+#cmb2-metabox-fau_person_social_media {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    
+    .cmb-row {
+	flex: 0 0 300px;
+	border: 0;	
+	margin: 0;
+	padding: 10px 0;
+	
+	.cmb-th, .cmb-td {
+	    float: inherit;
+	    width: inherit;
+	    padding: 0;
+	    margin: 0;
+	}
+	
+	.cmb-th {
+	    flex-basis: 150px;
+	    flex-shrink: 0;
+	    order: 1;
+	}
+	.cmb-td {
+	    flex-grow: 1;
+	    order: 2;
+	} 
+	
+	&:after {
+	    display: inherit;
+	    width: inherit;
+	}
+    }
+    
+    label {
+	 &:before {
+		  
+		 width: 1.5rem;
+		height: 1.5rem;
+		line-height: 1.5rem;
+		font-size: 1rem;
+		
+		background-image: svg-bookmark();
+		background-repeat: no-repeat;
+		display: inline-block;
+		content: ' ';
+		background-size: 70%;
+		background-position: center center;
+		background-color: inherit;
+		border-radius: 50%;
+		color: #fff;
+		margin-right: 1rem;
+
+	    }
+			
+			
+	   &[for*="twitter"]:before {
+		background-image: svg-twitter("DeepSkyBlue");
+	    }
+	    &[for*="facebook"]:before {
+		background-image: svg-facebook("white");
+		background-color: #3b5999;
+	    }
+
+	    &[for*="github"]:before {
+		background-image: svg-github("white");
+		background-color: #000;
+	    }
+
+	    &[for*="instagram"]:before {
+		background-image: svg-instagram("white");
+		background-color: #e4405f;
+	    }
+
+	    &[for*="linkedin"]:before {
+		background-image: svg-linkedin("white");
+		background-color: #0077B5;
+	    }
+	    
+	     &[for*="xing"]:before {
+		background-image: svg-xing("LightSeaGreen");
+	    }
+	    
+	     &[for*="tiktok"]:before {
+		background-image: svg-tiktok("Crimson");
+	    }
+	     &[for*="youtube"]:before {
+		background-image: svg-youtube("Red");
+	    }
+	    
+	    &[for*="publons"]:before {
+		background-image: svg-publons("DarkSlateBlue");
+	    }
+
+	    &[for*="scopus"]:before {
+		background-image: svg-scopus("Orange");
+	    }
+	   &[for*="googlescholar"]:before {
+		background-image: svg-googlescholar();
+	    }
+	   &[for*="orcid"]:before {
+		background-image: svg-orcid();
+	    }
+	    &[for*="researchgate"]:before {
+		background-image: svg-researchgate();
+	    }
+	  
+    }
+}
+
+.wp-list-table {
+    .column-thumb {
+	figure {
+	    margin: 0;
+	    padding: 0;
+	}
+    }
+    [itemprop="telephone"]:before { 
+	@extend .defaulticonplaceholder;
+	background-image: svg-icon-phone();
+    }
+    [itemprop="telephone"].mobile:before { 
+	@extend .defaulticonplaceholder;
+	background-image: svg-icon-mobile();
+
+    }
+    [itemprop="faxNumber"]:before { 
+	@extend .defaulticonplaceholder;
+	background-image: svg-icon-fax();
+
+    }
+    [itemprop="email"]:before { 
+	@extend .defaulticonplaceholder;
+	background-image: svg-icon-mail();
+
+    }
+    [itemprop="url"]:before { 
+	@extend .defaulticonplaceholder;
+	background-image: svg-icon-home();
+
+    }
+}

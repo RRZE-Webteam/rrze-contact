@@ -1,33 +1,22 @@
 (function() {
-    tinymce.PluginManager.add('rrze_campo_shortcode', function(editor) {
 
-    var menuItems = [];
-    menuItems.push({
-        text: 'Lectures',
-        icon: 'paste', 
-        menu: [
-            {
-                type: 'menuitem',
-                text: 'Alle',
-                onclick: function() {
-                    editor.insertContent('[contact task="lectures-all"]');
-                }
-            },
-            {
-                type: 'menuitem',
-                text: 'Einzelne',
-                onclick: function() {
-                    editor.insertContent('[contact task="lectures-single" lv_id=""]');
-                }
-            },
-        ]
-    });
-
-    editor.addMenuItem('insertShortcodesRRZECampo', {
-        icon: 'orientation', 
-        text: 'RRZE-Contact',
-        menu: menuItems,
-        context: 'insert',
-    });
-});
+    tinymce.PluginManager.add('contactrteshortcodes', function( editor )
+    {
+        
+        editor.addMenuItem('shortcode_contact', {
+            text: 'Add contact',
+            context: 'tools',
+            onclick: function() {
+                editor.insertContent('[contact id="" format="" show="" hide=""]');
+            }
+        });
+        
+        editor.addMenuItem('shortcode_contacts', {
+            text: 'Insert people gallery',
+            context: 'tools',
+            onclick: function() {
+                editor.insertContent('[contact category="" format="" show="" hide=""]');
+            }
+        });
+            });
 })();

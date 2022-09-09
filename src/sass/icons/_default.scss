@@ -3,7 +3,7 @@
 /*-----------------------------------------------------------------------------------*/
 
 
-.rrze-contact {
+.fau-person {
 
     [itemprop="telephone"]:before { 
 	@extend .defaulticonplaceholder;
@@ -12,22 +12,23 @@
     [itemprop="telephone"].mobile:before { 
 	@extend .defaulticonplaceholder;
 	background-image: svg-icon-mobile();
+
     }
     [itemprop="faxNumber"]:before { 
 	@extend .defaulticonplaceholder;
 	background-image: svg-icon-fax();
+
     }
     [itemprop="email"]:before { 
 	@extend .defaulticonplaceholder;
 	background-image: svg-icon-mail();
+
     }
     [itemprop="url"]:before { 
 	@extend .defaulticonplaceholder;
 	background-image: svg-icon-home();
+
     }
-    [itemprop="ics"]:before { 
-    @extend .defaulticonplaceholder;
-    background-image: svg-icon-ics();
-    }
+
 }
 
