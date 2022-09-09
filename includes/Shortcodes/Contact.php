@@ -21,21 +21,21 @@ class Contact extends Shortcodes
     {
         $this->pluginFile = $pluginFile;
         $this->settings = getShortcodeSettings();
-        $this->settings = $this->settings['kontakt'];
+        $this->settings = $this->settings['contact'];
         add_action('init', [$this, 'initGutenberg']);
     }
 
     public function onLoaded()
     {
-        add_shortcode('kontakt', [$this, 'shortcode_kontakt']);
-        add_shortcode('person', [$this, 'shortcode_kontakt']);
+        add_shortcode('kontakt', [$this, 'shortcode_contact']);
+        add_shortcode('contact', [$this, 'shortcode_contact']);
         add_shortcode('kontaktliste', [$this, 'shortcode_contactlist']);
-        add_shortcode('persons', [$this, 'shortcode_contactlist']);
+        add_shortcode('contacts', [$this, 'shortcode_contactlist']);
     }
 
     public static function shortcode_kontakt($atts, $content = null)
     {
-        $defaults = getShortcodeDefaults('kontakt');
+        $defaults = getShortcodeDefaults('contact');
         $arguments = shortcode_atts($defaults, $atts);
         $arguments = self::translate_parameters($arguments);
         $displayfield = Data::get_display_field($arguments['format'], $arguments['show'], $arguments['hide']);
@@ -57,14 +57,14 @@ class Contact extends Shortcodes
 
         if (empty($id)) {
             if (empty($slug)) {
-                return '<div class="alert alert-danger">' . sprintf(__('Bitte geben Sie den Titel oder die ID des Kontakteintrags an.', 'rrze-contact'), $slug) . '</div>';
+                // return '<div class="alert alert-danger">' . sprintf(__('Please specify the contact's titel.', 'rrze-contact'), $slug) . '</div>';
             } else {
-                $posts = get_posts(array('name' => $slug, 'post_type' => 'person', 'post_status' => 'publish'));
+                $posts = get_posts(array('name' => $slug, 'post_type' => 'contact', 'post_status' => 'publish'));
                 if ($posts) {
                     $post = $posts[0];
                     $id = $post->ID;
                 } else {
-                    return '<div class="alert alert-danger">' . sprintf(__('Es konnte kein Kontakteintrag mit dem angegebenen Titel %s gefunden werden. Versuchen Sie statt dessen die Angabe der ID des Kontakteintrags.', 'rrze-contact'), $slug) . '</div>';
+                    return '<div class="alert alert-danger">' . sprintf(__('No entry could be found with the provided title "%s". Try specifying the ID of the contact entry instead.', 'rrze-contact'), $slug) . '</div>';
                 }
             }
         }
@@ -100,15 +100,15 @@ class Contact extends Shortcodes
                     break;
                 case 'name':
                 case 'shortlist':
-                    $class .= ' person liste-person';
+                    $class .= ' contact liste-contact';
                     $content = '<span class="' . $class . '">';
                     break;
                 case 'liste':
-                    $class .= ' person liste-person';
+                    $class .= ' contact liste-contact';
                     $content = '<ul class="' . $class . '">';
                     break;
                 case 'card':
-                    $class .= ' person-card';
+                    $class .= ' contact-card';
                     $content = '<div class="' . $class . '">';
                     break;
                 default:
@@ -120,7 +120,7 @@ class Contact extends Shortcodes
             $i = 1;
             foreach ($list_ids as $value) {
                 $post = get_post($value);
-                if ($post && $post->post_type == 'person') {
+                if ($post && $post->post_type == 'contact') {
 
                     switch ($format) {
                         case 'liste':
@@ -158,7 +158,7 @@ class Contact extends Shortcodes
                     $i++;
 
                 } else {
-                    $content .= sprintf(__('Es konnte kein Kontakteintrag mit der angegebenen ID %s gefunden werden.', 'rrze-contact'), $value);
+                    $content .= sprintf(__('No contact entry could be found with the specified ID %s.', 'rrze-contact'), $value);
                 }
 
             }
@@ -182,7 +182,6 @@ class Contact extends Shortcodes
 
             return $content;
         }
-
     }
 
     public static function shortcode_contactlist($atts, $content = null)
@@ -195,11 +194,11 @@ class Contact extends Shortcodes
         $limit = (!empty($atts['unlimited']) ? -1 : 100);
 
         if (isset($arguments['category'])) {
-            $category = get_term_by('slug', $arguments['category'], 'persons_category');
+            $category = get_term_by('slug', $arguments['category'], 'contacts_category');
             if (is_object($category)) {
-                $posts = get_posts(array('post_type' => 'person', 'fields' => 'ids', 'post_status' => 'publish', 'numberposts' => $limit, 'orderby' => 'title', 'order' => 'ASC', 'tax_query' => array(
+                $posts = get_posts(array('post_type' => 'contact', 'fields' => 'ids', 'post_status' => 'publish', 'numberposts' => $limit, 'orderby' => 'title', 'order' => 'ASC', 'tax_query' => array(
                     array(
-                        'taxonomy' => 'persons_category',
+                        'taxonomy' => 'contacts_category',
                         'field' => 'id', // can be slug or id - a CPT-onomy term's ID is the same as its post ID
                         'terms' => $category->term_id, // Notice: Trying to get property of non-object bei unbekannter Kategorie
                     ),
@@ -239,15 +238,15 @@ class Contact extends Shortcodes
                     break;
                 case 'name':
                 case 'shortlist':
-                    $class .= ' person liste-person';
+                    $class .= ' contact liste-contact';
                     $content = '<span class="' . $class . '">';
                     break;
                 case 'liste':
-                    $class .= ' person liste-person';
+                    $class .= ' contact liste-contact';
                     $content = '<ul class="' . $class . '">';
                     break;
                 case 'card':
-                    $class .= ' person-card';
+                    $class .= ' contact-card';
                     $content = '<div class="' . $class . '">';
                     break;
                 default:
@@ -257,7 +256,7 @@ class Contact extends Shortcodes
             $number = count($posts);
             $i = 1;
 
-            $posts = Data::sort_person_posts($posts, $arguments['sort'], $arguments['order']);
+            $posts = Data::sort_contact_posts($posts, $arguments['sort'], $arguments['order']);
 
             foreach ($posts as $value) {
                 switch ($format) {
@@ -315,9 +314,9 @@ class Contact extends Shortcodes
 
         } else {
             if (is_object($category)) {
-                $content = '<p>' . sprintf(__('Es konnten keine Kontakte in der Kategorie %s gefunden werden.', 'rrze-contact'), $category->slug) . '</p>';
+                $content = '<p>' . sprintf(__('No contacts were found in the category "%s".', 'rrze-contact'), $category->slug) . '</p>';
             } else {
-                $content = '<p>' . sprintf(__('Die Kategorie %s konnte leider nicht gefunden werden.', 'rrze-contact'), $atts['category']) . '</p>';
+                $content = '<p>' . sprintf(__('Sorry, the category "%s" could not be found.', 'rrze-contact'), $atts['category']) . '</p>';
             }
         }
 
@@ -428,13 +427,13 @@ class Contact extends Shortcodes
         $this->settings['id']['type'] = 'string';
         $this->settings['id']['items'] = array('type' => 'text');
         $this->settings['id']['values'] = array();
-        $this->settings['id']['values'][] = ['id' => '', 'val' => __('-- Alle --', 'rrze-contact')];
+        $this->settings['id']['values'][] = ['id' => '', 'val' => __('-- All --', 'rrze-contact')];
 
-        $aPerson = get_posts(array('posts_per_page' => -1, 'post_type' => 'person', 'orderby' => 'title', 'order' => 'ASC'));
-        foreach ($aPerson as $person) {
+        $aContact = get_posts(array('posts_per_page' => -1, 'post_type' => 'contact', 'orderby' => 'title', 'order' => 'ASC'));
+        foreach ($aContact as $contact) {
             $this->settings['id']['values'][] = [
-                'id' => $person->ID,
-                'val' => str_replace("'", "", str_replace('"', "", $person->post_title)),
+                'id' => $contact->ID,
+                'val' => str_replace("'", "", str_replace('"', "", $contact->post_title)),
             ];
         }
 
@@ -446,7 +445,7 @@ class Contact extends Shortcodes
         $this->settings['category']['values'] = array();
         $this->settings['category']['values'][] = ['id' => '', 'val' => __('-- Alle --', 'rrze-contact')];
 
-        $aTerms = get_terms(array('taxonomy' => 'persons_category', 'hide_empty' => false));
+        $aTerms = get_terms(array('taxonomy' => 'contacts_category', 'hide_empty' => false));
         foreach ($aTerms as $term) {
             $this->settings['category']['values'][] = [
                 'id' => $term->slug,

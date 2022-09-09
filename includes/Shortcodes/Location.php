@@ -20,18 +20,19 @@ class Standort extends Shortcodes
     {
         $this->pluginFile = $pluginFile;
         $this->settings = getShortcodeSettings();
-        $this->settings = $this->settings['standort'];
+        $this->settings = $this->settings['location'];
         add_action('init', [$this, 'initGutenberg']);
     }
 
     public function onLoaded()
     {
-        add_shortcode('standort', [$this, 'shortcode_standort']);
+        add_shortcode('standort', [$this, 'shortcode_location']);
+        add_shortcode('location', [$this, 'shortcode_location']);
     }
 
-    public static function shortcode_standort($atts, $content = null)
+    public static function shortcode_location($atts, $content = null)
     {
-        $defaults = getShortcodeDefaults('standort');
+        $defaults = getShortcodeDefaults('location');
         extract(shortcode_atts($defaults, $atts));
 
         switch ($format) {
@@ -160,21 +161,21 @@ class Standort extends Shortcodes
 
         if (empty($id)) {
             if (empty($slug)) {
-                return '<div class="alert alert-danger">' . sprintf(__('Bitte geben Sie den Titel oder die ID des Standorteintrags an.', 'rrze-contact'), $slug) . '</div>';
+                return '<div class="alert alert-danger">' . sprintf(__('Please provide the Title or ID of the location listing.', 'rrze-contact'), $slug) . '</div>';
             } else {
-                $posts = get_posts(array('name' => $slug, 'post_type' => 'standort', 'post_status' => 'publish'));
+                $posts = get_posts(array('name' => $slug, 'post_type' => 'location', 'post_status' => 'publish'));
                 if ($posts) {
                     $post = $posts[0];
                     $id = $post->ID;
                 } else {
-                    return '<div class="alert alert-danger">' . sprintf(__('Es konnte kein Standorteintrag mit dem angegebenen Titel %s gefunden werden. Versuchen Sie statt dessen die Angabe der ID des Standorteintrags.', 'rrze-contact'), $slug) . '</div>';
+                    return '<div class="alert alert-danger">' . sprintf(__('No location entry could be found with the specified title "%s". Try specifying the ID of the location record instead.', 'rrze-contact'), $slug) . '</div>';
                 }
             }
         }
 
         if (!empty($id)) {
             if (is_numeric($id)) {
-                return Data::create_fau_standort($id, $showfields, $titletag);
+                return Data::create_fau_location($id, $showfields, $titletag);
             }
 
             $list_ids = array_map('trim', explode(',', $id));
@@ -185,11 +186,11 @@ class Standort extends Shortcodes
             foreach ($list_ids as $value) {
                 if (is_numeric($value)) {
                     $post = get_post($value);
-                    if ($post && $post->post_type == 'standort') {
+                    if ($post && $post->post_type == 'location') {
 
                         switch ($format) {
                             case 'name':
-                                $thisout = Data::create_fau_standort_plain($value, $showfields);
+                                $thisout = Data::create_fau_location_plain($value, $showfields);
                                 if (!empty($thisout)) {
                                     $output .= $thisout;
                                     if ($i < $number) {
@@ -200,21 +201,21 @@ class Standort extends Shortcodes
                                 }
                                 break;
                             case 'shortlist':
-                                $thisout = Data::create_fau_standort_plain($value, $showfields);
+                                $thisout = Data::create_fau_location_plain($value, $showfields);
                                 if (!empty($thisout)) {
                                     $output .= "<li>" . $thisout . "</li>";
                                     $i++;
                                 }
                                 break;
                             case 'liste':
-                                $thisout = Data::create_fau_standort($value, $showfields, $titletag);
+                                $thisout = Data::create_fau_location($value, $showfields, $titletag);
                                 if (!empty($thisout)) {
                                     $output .= "<li>" . $thisout . "</li>";
                                     $i++;
                                 }
                                 break;
                             default:
-                                $thisout = Data::create_fau_standort($value, $showfields, $titletag);
+                                $thisout = Data::create_fau_location($value, $showfields, $titletag);
                                 if (!empty($thisout)) {
                                     $output .= $thisout;
                                     $i++;
@@ -224,12 +225,12 @@ class Standort extends Shortcodes
                 }
             }
             if (($format == 'liste') || ($format == 'shortlist')) {
-                $content = '<div class="rrze-contact standort">';
+                $content = '<div class="rrze-contact location">';
                 $content .= '<ul>' . $output . '</ul>';
                 $content .= '</div>';
                 return $content;
             } elseif ($format == 'name') {
-                $content = '<div class="rrze-contact standort">';
+                $content = '<div class="rrze-contact location">';
                 $content .= '<p>' . $output . '</p>';
                 $content .= '</div>';
                 return $content;
@@ -251,13 +252,13 @@ class Standort extends Shortcodes
         $this->settings['id']['type'] = 'string';
         $this->settings['id']['items'] = array('type' => 'text');
         $this->settings['id']['values'] = array();
-        $this->settings['id']['values'][] = ['id' => 0, 'val' => __('-- Alle --', 'rrze-contact')];
+        $this->settings['id']['values'][] = ['id' => 0, 'val' => __('-- All --', 'rrze-contact')];
 
-        $aPerson = get_posts(array('posts_per_page' => -1, 'post_type' => 'person', 'orderby' => 'title', 'order' => 'ASC'));
-        foreach ($aPerson as $person) {
+        $aContact = get_posts(array('posts_per_page' => -1, 'post_type' => 'contact', 'orderby' => 'title', 'order' => 'ASC'));
+        foreach ($aContact as $contact) {
             $this->settings['id']['values'][] = [
-                'id' => $person->ID,
-                'val' => str_replace("'", "", str_replace('"', "", $person->post_title)),
+                'id' => $contact->ID,
+                'val' => str_replace("'", "", str_replace('"', "", $contact->post_title)),
             ];
         }
 
@@ -290,7 +291,7 @@ class Standort extends Shortcodes
         // register block
         register_block_type($this->settings['block']['blocktype'], array(
             'editor_script' => $editor_script,
-            'render_callback' => [$this, 'shortcode_standort'],
+            'render_callback' => [$this, 'shortcode_location'],
             'attributes' => $this->settings,
         )
         );
