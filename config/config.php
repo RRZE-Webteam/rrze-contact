@@ -1,6 +1,6 @@
 <?php
 
-namespace RRZE\Campo\Config;
+namespace RRZE\Contact\Config;
 
 defined('ABSPATH') || exit;
 

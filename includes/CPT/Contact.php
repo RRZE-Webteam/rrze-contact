@@ -2,10 +2,10 @@
 
 namespace RRZE_Contact\Taxonomy;
 
-use RRZE_Contact\Data;
-use RRZE_Contact\Schema;
 use function RRZE_Contact\Config\get_rrze_contact_capabilities;
 use RRZE\Lib\UnivIS\Config;
+use RRZE_Contact\Data;
+use RRZE_Contact\Schema;
 
 defined('ABSPATH') || exit;
 
