@@ -4,19 +4,19 @@ namespace RRZE_Contact\Taxonomy;
 
 use RRZE_Contact\Data;
 use RRZE_Contact\Schema;
-use function RRZE_Contact\Config\get_fau_person_capabilities;
+use function RRZE_Contact\Config\get_rrze_contact_capabilities;
 use RRZE\Lib\UnivIS\Config;
 
 defined('ABSPATH') || exit;
 
 /**
- * Posttype Person
+ * Posttype contact
  */
 class Kontakt extends Taxonomy
 {
 
-    protected $postType = 'person';
-    protected $taxonomy = 'persons_category';
+    protected $postType = 'contact';
+    protected $taxonomy = 'contact_category';
 
     protected $pluginFile;
     private $settings = '';
@@ -36,31 +36,31 @@ class Kontakt extends Taxonomy
     public function set()
     {
         $labels = [
-            'name' => _x('Kontakte', 'Post Type General Name', 'rrze-contact'),
-            'singular_name' => _x('Kontakt', 'Post Type Singular Name', 'rrze-contact'),
-            'menu_name' => __('Kontakte', 'rrze-contact'),
-            'parent_item_colon' => __('Übergeordneter Kontakt', 'rrze-contact'),
-            'all_items' => __('Alle Kontakte', 'rrze-contact'),
-            'view_item' => __('Kontakt ansehen', 'rrze-contact'),
-            'add_new_item' => __('Kontakt hinzufügen', 'rrze-contact'),
-            'add_new' => __('Neuer Kontakt', 'rrze-contact'),
-            'edit_item' => __('Kontakt bearbeiten', 'rrze-contact'),
-            'update_item' => __('Kontakt aktualisieren', 'rrze-contact'),
-            'search_items' => __('Kontakte suchen', 'rrze-contact'),
-            'not_found' => __('Keine Kontakte gefunden', 'rrze-contact'),
-            'not_found_in_trash' => __('Keine Kontakte in Papierkorb gefunden', 'rrze-contact'),
+            'name' => _x('Contacts', 'Post Type General Name', 'rrze-contact'),
+            'singular_name' => _x('Contact', 'Post Type Singular Name', 'rrze-contact'),
+            'menu_name' => __('Contacts', 'rrze-contact'),
+            'parent_item_colon' => __('Superordinate contact', 'rrze-contact'),
+            'all_items' => __('All contacts', 'rrze-contact'),
+            'view_item' => __('Show contact', 'rrze-contact'),
+            'add_new_item' => __('Add contact', 'rrze-contact'),
+            'add_new' => __('New contact', 'rrze-contact'),
+            'edit_item' => __('Edit contact', 'rrze-contact'),
+            'update_item' => __('Update contact', 'rrze-contact'),
+            'search_items' => __('Search contact', 'rrze-contact'),
+            'not_found' => __('No contacts found', 'rrze-contact'),
+            'not_found_in_trash' => __('No contacts found in trash', 'rrze-contact'),
         ];
         $has_archive_page = true;
         if (isset($this->settings->options) && isset($this->settings->options['constants_has_archive_page'])) {
             $has_archive_page = $this->settings->options['constants_has_archive_page'];
         }
-        $caps = get_fau_person_capabilities();
-        $person_args = array(
-            'label' => __('Kontakt', 'rrze-contact'),
-            'description' => __('Kontaktinformationen', 'rrze-contact'),
+        $caps = get_rrze_contact_capabilities();
+        $contact_args = array(
+            'label' => __('Contact', 'rrze-contact'),
+            'description' => __('Contact\'s informations', 'rrze-contact'),
             'labels' => $labels,
             'supports' => array('title', 'editor', 'author', 'thumbnail', 'revisions'),
-            'taxonomies' => array('persons_category'),
+            'taxonomies' => array('contact_category'),
             'hierarchical' => false,
             'public' => true,
             'show_ui' => true,
@@ -73,7 +73,7 @@ class Kontakt extends Taxonomy
             'has_archive' => $has_archive_page,
             'exclude_from_search' => false,
             'publicly_queryable' => true,
-            'query_var' => 'person',
+            'query_var' => 'contact',
             'rewrite' => [
                 'slug' => $this->postType,
                 'with_front' => true,
@@ -85,7 +85,7 @@ class Kontakt extends Taxonomy
             'map_meta_cap' => true,
         );
 
-        register_post_type($this->postType, $person_args);
+        register_post_type($this->postType, $contact_args);
 
         register_taxonomy(
             $this->taxonomy,
@@ -107,23 +107,23 @@ class Kontakt extends Taxonomy
     public function register()
     {
         register_taxonomy_for_object_type($this->taxonomy, $this->postType);
-        add_action('restrict_manage_posts', [$this, 'person_restrict_manage_posts']);
+        add_action('restrict_manage_posts', [$this, 'contact_restrict_manage_posts']);
         add_filter('parse_query', [$this, 'taxonomy_filter_post_type_request']);
         // Kontakttyp als zusätzliche Spalte in Übersicht
 
-        add_filter('manage_person_posts_columns', array($this, 'change_columns'));
-        add_action('manage_person_posts_custom_column', array($this, 'custom_columns'), 10, 2);
+        add_filter('manage_contact_posts_columns', array($this, 'change_columns'));
+        add_action('manage_contact_posts_custom_column', array($this, 'custom_columns'), 10, 2);
         // Sortierung der zusätzlichen Spalte
 
-        add_filter('manage_edit-person_sortable_columns', array($this, 'sortable_columns'));
-        add_action('pre_get_posts', array($this, 'posttype_person_custom_columns_orderby'));
+        add_filter('manage_edit-contact_sortable_columns', array($this, 'sortable_columns'));
+        add_action('pre_get_posts', array($this, 'posttype_contact_custom_columns_orderby'));
 
     }
 
     public function taxonomy_filter_post_type_request($query)
     {
         global $pagenow, $typenow;
-        if ($typenow == 'person') {
+        if ($typenow == 'contact') {
             if ('edit.php' == $pagenow) {
                 $filters = get_object_taxonomies($typenow);
 
@@ -140,16 +140,16 @@ class Kontakt extends Taxonomy
             }
         }
     }
-    public function person_restrict_manage_posts()
+    public function contact_restrict_manage_posts()
     {
         global $typenow;
-        if ($typenow == 'person') {
+        if ($typenow == 'contact') {
             $typenow = $this->postType;
             $filters = get_object_taxonomies($typenow);
             foreach ($filters as $tax_slug) {
                 $tax_obj = get_taxonomy($tax_slug);
                 wp_dropdown_categories(array(
-                    'show_option_all' => sprintf(__('Alle %s anzeigen', 'rrze-contact'), $tax_obj->label),
+                    'show_option_all' => sprintf(__('Show all %s', 'rrze-contact'), $tax_obj->label),
                     'taxonomy' => $tax_slug,
                     'name' => $tax_obj->name,
                     'orderby' => 'name',
@@ -167,13 +167,13 @@ class Kontakt extends Taxonomy
     {
         $cols = array(
             'cb' => '<input type="checkbox" />',
-            'title' => __('Titel', 'rrze-contact'),
-            'thumb' => __('Bild', 'rrze-contact'),
-            'fullname' => __('Angezeigter Name', 'rrze-contact'),
-            'contact' => __('Kontakt', 'rrze-contact'),
-            'source' => __('Datenquelle', 'rrze-contact'),
-            'author' => __('Bearbeiter', 'rrze-contact'),
-            'date' => __('Datum', 'rrze-contact'),
+            'title' => __('Title', 'rrze-contact'),
+            'thumb' => __('Image', 'rrze-contact'),
+            'fullname' => __('Shown name', 'rrze-contact'),
+            'contact' => __('Contact', 'rrze-contact'),
+            'source' => __('Data source', 'rrze-contact'),
+            'author' => __('Editor', 'rrze-contact'),
+            'date' => __('Date', 'rrze-contact'),
         );
 
         return $cols;
@@ -181,14 +181,14 @@ class Kontakt extends Taxonomy
 
     public function custom_columns($column, $post_id)
     {
-        $univisid = get_post_meta($post_id, 'fau_person_univis_id', true);
-        $data = Data::get_fields($post_id, $univisid, 0);
+        $dipid = get_post_meta($post_id, 'rrze_contact_univis_id', true);
+        $data = Data::get_fields($post_id, $dipid, 0);
         $univisconfig = Config::get_Config();
         $api_url = $univisconfig['api_url'];
 
         switch ($column) {
             case 'thumb':
-                $thumb = Data::create_kontakt_image($post_id, 'person-thumb-v3', '', true, false, '', false);
+                $thumb = Data::create_kontakt_image($post_id, 'contact-thumb-v3', '', true, false, '', false);
                 echo $thumb;
                 break;
 
@@ -206,8 +206,8 @@ class Kontakt extends Taxonomy
 
                 break;
             case 'source':
-                if ($univisid) {
-                    echo __('UnivIS', 'rrze-contact') . ' (Id: <a target="univis" href="' . $api_url . '?search=persons&id=' . $univisid . '&show=info">' . $univisid . '</a>)';
+                if ($dipid) {
+                    echo __('DIP', 'rrze-contact') . ' (Id: <a target="univis" href="' . $api_url . '?search=contacts&id=' . $dipid . '&show=info">' . $dipid . '</a>)';
                 } else {
                     echo __('Lokal', 'rrze-contact');
                 }
@@ -227,14 +227,14 @@ class Kontakt extends Taxonomy
         return $columns;
     }
 
-    public function posttype_person_custom_columns_orderby($query)
+    public function posttype_contact_custom_columns_orderby($query)
     {
         if (!is_admin()) {
             return;
         }
 
         $post_type = $query->query['post_type'];
-        if ($post_type == 'person') {
+        if ($post_type == 'contact') {
 
             /*
             $admin_posts_per_page = 25;
@@ -260,12 +260,12 @@ class Kontakt extends Taxonomy
                 $meta_query = array(
                     'relation' => 'OR',
                     array(
-                        'key' => 'fau_person_univis_id',
+                        'key' => 'rrze_contact_univis_id',
                         'compare' => 'NOT EXISTS',
                         'value' => 0,
                     ),
                     array(
-                        'key' => 'fau_person_univis_id',
+                        'key' => 'rrze_contact_univis_id',
                         'compare' => 'EXISTS',
                     ),
                 );
