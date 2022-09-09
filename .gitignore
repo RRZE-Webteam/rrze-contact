@@ -5,3 +5,4 @@ languages/.DS_Store
 src/js/.DS_Store
 templates/.DS_Store
 .DS_Store
+node_modules/
