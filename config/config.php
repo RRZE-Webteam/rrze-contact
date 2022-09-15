@@ -148,122 +148,122 @@ function getShortcodeSettings()
     return [
         'contact' => [
             'block' => [
-                'blocktype' => 'fau-person/kontakt',
-                'blockname' => 'kontakt',
-                'title' => 'RRZE Kontakt',
+                'blocktype' => 'rrze-contact/contact',
+                'blockname' => 'contact',
+                'title' => __('RRZE Contact', 'rrze-contact'),
                 'category' => 'widgets',
                 'icon' => 'id',
                 'show_block' => 'content', // 'right' or 'content' 
             ],
             'id' => [
                 'default' => 0,
-                'label' => __('Id-Number des Kontakteintrags', 'fau-person'),
-                'message' => __('Nummer der Eintrags der Kontaktliste im Backend. Nicht identisch mit einer optionalen UnivIS-Nummer.', 'fau-person'),
+                'label' => __('Id-Number of the contact', 'rrze-contact'),
+                'message' => __('Number of the contact entry in the backend. It is not identical to the optional UnivIS number.', 'rrze-contact'),
                 'field_type' => 'text',
                 'type' => 'number'
             ],
             'slug' => [
                 'default' => '',
                 'field_type' => 'text', // Art des Feldes im Gutenberg Editor
-                'label' => __('Slug (URI) des Kontakteintrags', 'fau-person'),
+                'label' => __('Slug (URI) of the contact', 'rrze-contact'),
                 'type' => 'text' // Variablentyp der Eingabe
             ],
             'category' => [
                 'default' => '',
                 'field_type' => 'text', // Art des Feldes im Gutenberg Editor
-                'label' => __('Kategorie', 'fau-person'),
+                'label' => __('Category', 'rrze-contact'),
                 'type' => 'text' // Variablentyp der Eingabe
             ],
 
             'format' => [
                 'default' => '',
                 'field_type' => 'select',
-                'label' => __('Format', 'fau-person'),
+                'label' => __('Format', 'rrze-contact'),
                 'type' => 'string',
                 'values' => [
                     [
                         'id' => 'name',
-                        'val' => __('Name', 'fau-person')
+                        'val' => __('Name', 'rrze-contact')
                     ],
                     [
                         'id' => 'shortlist',
-                        'val' => __('Kurzliste', 'fau-person')
+                        'val' => __('Short list', 'rrze-contact')
                     ],
                     [
                         'id' => 'sidebar',
-                        'val' => __('Sidebar', 'fau-person')
+                        'val' => __('Sidebar', 'rrze-contact')
                     ],
                     [
                         'id' => 'page',
-                        'val' => __('Seite', 'fau-person')
+                        'val' => __('Page', 'rrze-contact')
                     ],
                     [
-                        'id' => 'liste',
-                        'val' => __('Liste', 'fau-person')
+                        'id' => 'list',
+                        'val' => __('List', 'rrze-contact')
                     ],
                     [
                         'id' => 'plain',
-                        'val' => __('Unformatiert', 'fau-person')
+                        'val' => __('Unformatted', 'rrze-contact')
                     ],
                     [
-                        'id' => 'kompakt',
-                        'val' => __('Kompakt', 'fau-person')
+                        'id' => 'compact',
+                        'val' => __('compact', 'rrze-contact')
                     ],
                     [
                         'id' => 'card',
-                        'val' => __('Karte', 'fau-person')
+                        'val' => __('Card', 'rrze-contact')
                     ],
                     [
                         'id' => 'table',
-                        'val' => __('Tabelle', 'fau-person')
+                        'val' => __('Table', 'rrze-contact')
                     ],
                 ],
             ],
             'show' => [
                 'default' => '',
                 'field_type' => 'text',
-                'label' => __('Anzuzeigende Felder, obige Checkboxen überschreibend', 'fau-person'),
+                'label' => __('Anzuzeigende Felder, obige Checkboxen überschreibend', 'rrze-contact'),
                 'type' => 'string'
             ],
             'hide' => [
                 'default' => '',
                 'field_type' => 'text',
-                'label' => __('Zu versteckende Felder, obige Checkboxen überschreibend', 'fau-person'),
+                'label' => __('Zu versteckende Felder, obige Checkboxen überschreibend', 'rrze-contact'),
                 'type' => 'string'
             ],
             'sort' => [
                 'default' => 'title',
                 'field_type' => 'select',
-                'label' => __('Bei der Ausgabe mehrerer Kontakten kann nach diesem Feld sortiert werden.', 'fau-person'),
+                'label' => __('Bei der Ausgabe mehrerer Kontakten kann nach diesem Feld sortiert werden.', 'rrze-contact'),
                 'type' => 'array',
                 'values' => [
                     [
                         'id' => 'title',
-                        'val' => __('Titel', 'fau-person')
+                        'val' => __('Titel', 'rrze-contact')
                     ],
                     [
                         'id' => 'nachname',
-                        'val' => __('Nachname', 'fau-person')
+                        'val' => __('Nachname', 'rrze-contact')
                     ],
                     [
                         'id' => 'name',
-                        'val' => __('Vorname und Nachname', 'fau-person')
+                        'val' => __('Vorname und Nachname', 'rrze-contact')
                     ],
                 ],
             ],
             'order' => [
                 'default' => 'asc',
                 'field_type' => 'select',
-                'label' => __('Bei der Ausgabe mehrerer Kontakten kann nach diesem Feld sortiert werden.', 'fau-person'),
+                'label' => __('Bei der Ausgabe mehrerer Kontakten kann nach diesem Feld sortiert werden.', 'rrze-contact'),
                 'type' => 'array',
                 'values' => [
                     [
                         'id' => 'asc',
-                        'val' => __('Von A bis Z', 'fau-person')
+                        'val' => __('Von A bis Z', 'rrze-contact')
                     ],
                     [
                         'id' => 'desc',
-                        'val' => __('Von Z bis A', 'fau-person')
+                        'val' => __('Von Z bis A', 'rrze-contact')
                     ],
                 ],
             ],
@@ -271,57 +271,57 @@ function getShortcodeSettings()
             'hstart' => [
                 'default' => 3,
                 'field_type' => 'number',
-                'label' => __('Überschriftenebene der ersten Überschrift', 'fau-person'),
+                'label' => __('Überschriftenebene der ersten Überschrift', 'rrze-contact'),
                 'type' => 'integer'
             ],
             'class' => [
                 'default' => '',
                 'field_type' => 'text',
-                'label' => __('CSS Klassen, die der Shordcode erhalten soll.', 'fau-person'),
+                'label' => __('CSS Klassen, die der Shordcode erhalten soll.', 'rrze-contact'),
                 'type' => 'string'
             ],
             'background' => [
                 'default' => '',
                 'field_type' => 'text',
-                'label' => __('Farbcode für den Hintergrund.', 'fau-person'),
+                'label' => __('Farbcode für den Hintergrund.', 'rrze-contact'),
                 'type' => 'array',
                 'values' => [
                     [
                         'id' => '',
-                        'val' => __('Kein', 'fau-person')
+                        'val' => __('Kein', 'rrze-contact')
                     ],
                     [
                         'id' => 'med',
-                        'val' => __('Med: Blau', 'fau-person')
+                        'val' => __('Med: Blau', 'rrze-contact')
                     ],
                     [
                         'id' => 'phil',
-                        'val' => __('Phil: Ocker', 'fau-person')
+                        'val' => __('Phil: Ocker', 'rrze-contact')
                     ],
                     [
                         'id' => 'tf',
-                        'val' => __('TF: Silbern', 'fau-person')
+                        'val' => __('TF: Silbern', 'rrze-contact')
                     ],
                     [
                         'id' => 'nat',
-                        'val' => __('Nat: Meeresgrün', 'fau-person')
+                        'val' => __('Nat: Meeresgrün', 'rrze-contact')
                     ],
                     [
                         'id' => 'rw',
-                        'val' => __('RW: Bordeaurot', 'fau-person')
+                        'val' => __('RW: Bordeaurot', 'rrze-contact')
                     ],
                     [
                         'id' => 'fau',
-                        'val' => __('FAU: Dunkelblau', 'fau-person')
+                        'val' => __('FAU: Dunkelblau', 'rrze-contact')
                     ],
                 ],
             ],
         ],
         'contactlist' => [
             'block' => [
-                'blocktype' => 'fau-person/kontaktliste',
-                'blockname' => 'kontaktliste',
-                'title' => 'RRZE Kontaktliste',
+                'blocktype' => 'rrze-contact/contactlist',
+                'blockname' => 'contactlist',
+                'title' => __('RRZE Contact List', 'rrze-contact'),
                 'category' => 'widgets',
                 'icon' => 'id-alt',
                 'show_block' => 'content', // 'right' or 'content' 
@@ -329,143 +329,143 @@ function getShortcodeSettings()
             'category' => [
                 'default' => '',
                 'field_type' => 'string',
-                'label' => __('Kategorie', 'fau-person'),
+                'label' => __('Category', 'rrze-contact'),
                 'type' => 'string' // Variablentyp der Eingabe
             ],
 
             'format' => [
                 'default' => '',
                 'field_type' => 'select',
-                'label' => __('Format', 'fau-person'),
+                'label' => __('Format', 'rrze-contact'),
                 'type' => 'string',
                 'values' => [
                     [
                         'id' => 'name',
-                        'val' => __('Name', 'fau-person')
+                        'val' => __('Name', 'rrze-contact')
                     ],
                     [
                         'id' => 'shortlist',
-                        'val' => __('Kurzliste', 'fau-person')
+                        'val' => __('Short list', 'rrze-contact')
                     ],
                     [
                         'id' => 'full',
-                        'val' => __('Komplett', 'fau-person')
+                        'val' => __('Komplett', 'rrze-contact')
                     ],
                     [
                         'id' => 'sidebar',
-                        'val' => __('Sidebar', 'fau-person')
+                        'val' => __('Sidebar', 'rrze-contact')
                     ],
                     [
                         'id' => 'liste',
-                        'val' => __('Liste', 'fau-person')
+                        'val' => __('Liste', 'rrze-contact')
                     ],
                     [
                         'id' => 'listentry',
-                        'val' => __('Listeneintrag', 'fau-person')
+                        'val' => __('Listeneintrag', 'rrze-contact')
                     ],
                     [
                         'id' => 'plain',
-                        'val' => __('Unformatiert', 'fau-person')
+                        'val' => __('Unformatiert', 'rrze-contact')
                     ],
                     [
                         'id' => 'kompakt',
-                        'val' => __('Kompakt', 'fau-person')
+                        'val' => __('Kompakt', 'rrze-contact')
                     ],
                 ],
             ],
             'show' => [
                 'default' => '',
                 'field_type' => 'text',
-                'label' => __('Anzuzeigende Felder, obige Checkboxen überschreibend', 'fau-person'),
+                'label' => __('Anzuzeigende Felder, obige Checkboxen überschreibend', 'rrze-contact'),
                 'type' => 'string'
             ],
             'hide' => [
                 'default' => '',
                 'field_type' => 'text',
-                'label' => __('Zu versteckende Felder, obige Checkboxen überschreibend', 'fau-person'),
+                'label' => __('Zu versteckende Felder, obige Checkboxen überschreibend', 'rrze-contact'),
                 'type' => 'string'
             ],
             'sort' => [
                 'default' => 'title',
                 'field_type' => 'select',
-                'label' => __('Bei der Ausgabe mehrerer Kontakten kann nach diesem Feld sortiert werden.', 'fau-person'),
+                'label' => __('Bei der Ausgabe mehrerer Kontakten kann nach diesem Feld sortiert werden.', 'rrze-contact'),
                 'type' => 'array',
                 'values' => [
                     [
                         'id' => 'title',
-                        'val' => __('Titel', 'fau-person')
+                        'val' => __('Titel', 'rrze-contact')
                     ],
                     [
                         'id' => 'nachname',
-                        'val' => __('Nachname', 'fau-person')
+                        'val' => __('Nachname', 'rrze-contact')
                     ],
                     [
                         'id' => 'name',
-                        'val' => __('Vorname und Nachname', 'fau-person')
+                        'val' => __('Vorname und Nachname', 'rrze-contact')
                     ],
                 ],
             ],
             'order' => [
                 'default' => 'asc',
                 'field_type' => 'select',
-                'label' => __('Bei der Ausgabe mehrerer Kontakten kann nach diesem Feld sortiert werden.', 'fau-person'),
+                'label' => __('Bei der Ausgabe mehrerer Kontakten kann nach diesem Feld sortiert werden.', 'rrze-contact'),
                 'type' => 'array',
                 'values' => [
                     [
                         'id' => 'asc',
-                        'val' => __('Von A bis Z', 'fau-person')
+                        'val' => __('Von A bis Z', 'rrze-contact')
                     ],
                     [
                         'id' => 'desc',
-                        'val' => __('Von Z bis A', 'fau-person')
+                        'val' => __('Von Z bis A', 'rrze-contact')
                     ],
                 ],
             ],
             'hstart' => [
                 'default' => 3,
                 'field_type' => 'number',
-                'label' => __('Überschriftenebene der ersten Überschrift', 'fau-person'),
+                'label' => __('Überschriftenebene der ersten Überschrift', 'rrze-contact'),
                 'type' => 'integer'
             ],
             'class' => [
                 'default' => '',
                 'field_type' => 'text',
-                'label' => __('CSS Klassen, die der Shordcode erhalten soll.', 'fau-person'),
+                'label' => __('CSS Klassen, die der Shordcode erhalten soll.', 'rrze-contact'),
                 'type' => 'string'
             ],
             'background' => [
                 'default' => '',
                 'field_type' => 'text',
-                'label' => __('Farbcode für den Hintergrund.', 'fau-person'),
+                'label' => __('Farbcode für den Hintergrund.', 'rrze-contact'),
                 'type' => 'array',
                 'values' => [
                     [
                         'id' => '',
-                        'val' => __('Kein', 'fau-person')
+                        'val' => __('Kein', 'rrze-contact')
                     ],
                     [
                         'id' => 'med',
-                        'val' => __('Med: Blau', 'fau-person')
+                        'val' => __('Med: Blau', 'rrze-contact')
                     ],
                     [
                         'id' => 'phil',
-                        'val' => __('Phil: Ocker', 'fau-person')
+                        'val' => __('Phil: Ocker', 'rrze-contact')
                     ],
                     [
                         'id' => 'tf',
-                        'val' => __('TF: Silbern', 'fau-person')
+                        'val' => __('TF: Silbern', 'rrze-contact')
                     ],
                     [
                         'id' => 'nat',
-                        'val' => __('Nat: Meeresgrün', 'fau-person')
+                        'val' => __('Nat: Meeresgrün', 'rrze-contact')
                     ],
                     [
                         'id' => 'rw',
-                        'val' => __('RW: Bordeaurot', 'fau-person')
+                        'val' => __('RW: Bordeaurot', 'rrze-contact')
                     ],
                     [
                         'id' => 'fau',
-                        'val' => __('FAU: Dunkelblau', 'fau-person')
+                        'val' => __('FAU: Dunkelblau', 'rrze-contact')
                     ],
                 ],
             ],
@@ -473,7 +473,7 @@ function getShortcodeSettings()
         ],
         'location' => [
             'block' => [
-                'blocktype' => 'fau-person/standort',
+                'blocktype' => 'rrze-contact/standort',
                 'blockname' => 'standort',
                 'title' => 'RRZE Standort',
                 'category' => 'widgets',
@@ -483,73 +483,73 @@ function getShortcodeSettings()
 
             'id' => [
                 'default' => 0,
-                'label' => __('Id-Number des Standorteintrags', 'fau-person'),
-                'message' => __('Nummer der Eintrags im Backend.', 'fau-person'),
+                'label' => __('Id-Number des Standorteintrags', 'rrze-contact'),
+                'message' => __('Nummer der Eintrags im Backend.', 'rrze-contact'),
                 'field_type' => 'text',
                 'type' => 'number'
             ],
             'slug' => [
                 'default' => '',
                 'field_type' => 'text', // Art des Feldes im Gutenberg Editor
-                'label' => __('Slug (URI) des Kontakteintrags', 'fau-person'),
+                'label' => __('Slug (URI) des Kontakteintrags', 'rrze-contact'),
                 'type' => 'string' // Variablentyp der Eingabe
             ],
             'titletag' => [
                 'default' => 'h2',
                 'field_type' => 'text', // Art des Feldes im Gutenberg Editor
-                'label' => __('HTML-Element zur Darstellung des Standortnamens', 'fau-person'),
+                'label' => __('HTML-Element zur Darstellung des Standortnamens', 'rrze-contact'),
                 'type' => 'string' // Variablentyp der Eingabe
             ],
             'hstart' => [
                 'default' => 3,
                 'field_type' => 'number',
-                'label' => __('Überschriftenebene der ersten Überschrift', 'fau-person'),
+                'label' => __('Überschriftenebene der ersten Überschrift', 'rrze-contact'),
                 'type' => 'integer'
             ],
             'adresse' => [
                 'default' => true,
                 'field_type' => 'checkbox',
-                'label' => __('Telefonnummer anzeigen', 'fau-person'),
+                'label' => __('Telefonnummer anzeigen', 'rrze-contact'),
                 'type' => 'boolean'
             ],
             'format' => [
                 'default' => '',
                 'field_type' => 'select',
-                'label' => __('Format', 'fau-person'),
+                'label' => __('Format', 'rrze-contact'),
                 'type' => 'string',
                 'values' => [
                     [
                         'id' => 'name',
-                        'val' => __('Name', 'fau-person')
+                        'val' => __('Name', 'rrze-contact')
                     ],
                     [
                         'id' => 'shortlist',
-                        'val' => __('Kurzliste', 'fau-person')
+                        'val' => __('Kurzliste', 'rrze-contact')
                     ],
                     [
                         'id' => 'full',
-                        'val' => __('Komplett', 'fau-person')
+                        'val' => __('Komplett', 'rrze-contact')
                     ],
                     [
                         'id' => 'sidebar',
-                        'val' => __('Sidebar', 'fau-person')
+                        'val' => __('Sidebar', 'rrze-contact')
                     ],
                     [
                         'id' => 'liste',
-                        'val' => __('Liste', 'fau-person')
+                        'val' => __('Liste', 'rrze-contact')
                     ],
                 ],
             ],
             'show' => [
                 'default' => '',
                 'field_type' => 'text',
-                'label' => __('Anzuzeigende Felder, obige Checkboxen überschreibend', 'fau-person'),
+                'label' => __('Anzuzeigende Felder, obige Checkboxen überschreibend', 'rrze-contact'),
                 'type' => 'string'
             ],
             'hide' => [
                 'default' => '',
                 'field_type' => 'text',
-                'label' => __('Zu versteckende Felder, obige Checkboxen überschreibend', 'fau-person'),
+                'label' => __('Zu versteckende Felder, obige Checkboxen überschreibend', 'rrze-contact'),
                 'type' => 'string'
             ],
 

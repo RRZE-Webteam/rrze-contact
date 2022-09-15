@@ -16,7 +16,7 @@ class Contact extends Taxonomy
 {
 
     protected $postType = 'contact';
-    protected $taxonomy = 'contact_category';
+    protected $taxonomy = 'contacts_category';
 
     protected $pluginFile;
     private $settings = '';
@@ -60,7 +60,7 @@ class Contact extends Taxonomy
             'description' => __('Contact\'s informations', 'rrze-contact'),
             'labels' => $labels,
             'supports' => array('title', 'editor', 'author', 'thumbnail', 'revisions'),
-            'taxonomies' => array('contact_category'),
+            'taxonomies' => array('contacts_category'),
             'hierarchical' => false,
             'public' => true,
             'show_ui' => true,

@@ -3,7 +3,7 @@
 Kontakte und Visitenkarten-Plugin für FAU Webauftritte  
 Es bezieht die Daten von DIP / Campo
 
-(Dieses Plugin wird FAU-Person ablösen)
+(Dieses Plugin wird rrze-contact ablösen)
 
 ## Download 
 

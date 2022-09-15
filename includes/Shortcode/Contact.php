@@ -446,6 +446,7 @@ class Contact extends Shortcode
         $this->settings['category']['values'][] = ['id' => '', 'val' => __('-- Alle --', 'rrze-contact')];
 
         $aTerms = get_terms(array('taxonomy' => 'contacts_category', 'hide_empty' => false));
+
         foreach ($aTerms as $term) {
             $this->settings['category']['values'][] = [
                 'id' => $term->slug,
