@@ -1,17 +1,17 @@
 <?php
 
-namespace RRZE_Contact\Taxonomy;
+namespace RRZE\Contact\Taxonomy;
 
 defined('ABSPATH') || exit;
 
-use RRZE_Contact\Main;
-use RRZE_Contact\Taxonomy\Contact;
-use RRZE_Contact\Taxonomy\Location;
+// use RRZE_Contact\Main;
+// use RRZE_Contact\Taxonomy\Contact;
+// use RRZE_Contact\Taxonomy\Location;
 
 /**
  * Laden und definieren der Posttypes
  */
-class Taxonomy extends Main
+class Taxonomy
 {
     protected $pluginFile;
     private $settings = '';
@@ -24,8 +24,8 @@ class Taxonomy extends Main
 
     public function onLoaded()
     {
-        $kontakt_posttype = new Contact($this->pluginFile, $this->settings);
-        $kontakt_posttype->onLoaded();
+        $contact_posttype = new Contact($this->pluginFile, $this->settings);
+        $contact_posttype->onLoaded();
 
         $standort_posttype = new Location($this->pluginFile, $this->settings);
         $standort_posttype->onLoaded();

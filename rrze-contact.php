@@ -4,7 +4,7 @@
  * Plugin Name:     RRZE Contact
  * Plugin URI:      https://github.com/RRZE-Webteam/rrze-contact
  * Description:     Einbindung von Daten aus Contact
- * Version:         0.0.6
+ * Version:         0.0.7
  * Author:          RRZE-Webteam
  * Author URI:      https://blogs.fau.de/webworking/
  * License:         GNU General Public License v3
@@ -22,6 +22,10 @@ use RRZE\Contact\Main;
 // Laden der Konfigurationsdatei
 require_once __DIR__ . '/config/config.php';
 
+
+// spl_autoload_extensions(".php"); // comma-separated list
+// spl_autoload_register();
+
 // Automatische Laden von Klassen.
 // Autoloader (PSR-4)
 spl_autoload_register(function ($class) {
@@ -37,9 +41,14 @@ spl_autoload_register(function ($class) {
     $file = $base_dir . str_replace('\\', '/', $relativeClass) . '.php';
 
     if (file_exists($file)) {
+
+        echo $file;
+
         require $file;
     }
 });
+
+// exit;
 
 const RRZE_PHP_VERSION = '7.4';
 const RRZE_WP_VERSION = '5.3';

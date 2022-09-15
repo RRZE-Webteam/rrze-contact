@@ -1,17 +1,19 @@
 <?php
 
-namespace RRZE_Contact\Shortcodes;
+namespace RRZE\Contact\Shortcode;
 
-use function RRZE_Contact\Config\getShortcodeDefaults;
-use function RRZE_Contact\Config\getShortcodeSettings;
-use RRZE_Contact\Data;
+use function RRZE\Contact\Config\getShortcodeSettings;
+
+// use function RRZE_Contact\Config\getShortcodeDefaults;
+// use function RRZE_Contact\Config\getShortcodeSettings;
+// use RRZE_Contact\Data;
 
 defined('ABSPATH') || exit;
 
 /**
  * Define Shortcodes for Standort Custom Type
  */
-class Standort extends Shortcodes
+class Location extends Shortcode
 {
     protected $pluginFile;
     private $settings = '';

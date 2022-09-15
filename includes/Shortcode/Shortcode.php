@@ -1,16 +1,16 @@
 <?php
 
-namespace RRZE_Contact\Shortcodes;
+namespace RRZE\Contact\Shortcode;
 
 defined('ABSPATH') || exit;
 
-use RRZE_Contact\Shortcodes\Contact;
-use RRZE_Contact\Shortcodes\Location;
+use RRZE\Contact\Shortcode\Contact;
+use RRZE\Contact\Shortcode\Location;
 
 /**
  * Laden und definieren der Shortcodes
  */
-class Shortcodes
+class Shortcode
 {
     protected $pluginFile;
     private $settings = '';

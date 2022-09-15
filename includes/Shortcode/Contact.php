@@ -1,18 +1,18 @@
 <?php
 
-namespace RRZE_Contact\Shortcodes;
+namespace RRZE\Contact\Shortcode;
 
-use function RRZE_Contact\Config\getShortcodeDefaults;
-use function RRZE_Contact\Config\getShortcodeSettings;
-use RRZE_Contact\Data;
-use RRZE_Contact\Main;
+// use function RRZE_Contact\Config\getShortcodeDefaults;
+use function RRZE\Contact\Config\getShortcodeSettings;
+// use RRZE_Contact\Data;
+// use RRZE_Contact\Main;
 
 defined('ABSPATH') || exit;
 
 /**
  * Define Shortcodes
  */
-class Contact extends Shortcodes
+class Contact extends Shortcode
 {
     public $pluginFile = '';
     private $settings = '';

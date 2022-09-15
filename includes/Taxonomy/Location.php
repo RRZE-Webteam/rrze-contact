@@ -1,13 +1,13 @@
 <?php
 
-namespace RRZE_Contact\Taxonomy;
+namespace RRZE\Contact\Taxonomy;
 
 defined('ABSPATH') || exit;
 
 /**
  * Posttype location
  */
-class location
+class Location extends Taxonomy
 {
 
     protected $postType = 'location';

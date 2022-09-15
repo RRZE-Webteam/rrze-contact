@@ -1,18 +1,18 @@
 <?php
 
-namespace RRZE_Contact\Taxonomy;
+namespace RRZE\Contact\Taxonomy;
 
-use function RRZE_Contact\Config\get_rrze_contact_capabilities;
-use RRZE\Lib\UnivIS\Config;
-use RRZE_Contact\Data;
-use RRZE_Contact\Schema;
+use function RRZE\Contact\Config\get_rrze_contact_capabilities;
+// use RRZE\Lib\UnivIS\Config;
+// use RRZE_Contact\Data;
+// use RRZE_Contact\Schema;
 
 defined('ABSPATH') || exit;
 
 /**
  * Posttype contact
  */
-class Kontakt extends Taxonomy
+class Contact extends Taxonomy
 {
 
     protected $postType = 'contact';

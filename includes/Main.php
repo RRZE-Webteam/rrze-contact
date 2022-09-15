@@ -6,7 +6,8 @@ defined('ABSPATH') || exit;
 
 use function RRZE\Contact\Config\getConstants;
 use RRZE\Contact\Settings;
-use RRZE\Contact\Shortcode;
+use RRZE\Contact\Taxonomy\Taxonomy;
+use RRZE\Contact\Shortcode\Shortcode;
 
 /**
  * Hauptklasse (Main)
@@ -33,8 +34,10 @@ class Main
 
         $settings = new Settings($this->pluginFile);
         $settings->onLoaded();
-
         $this->settings = $settings;
+
+        $taxonomy = new Taxonomy($this->pluginFile, $settings);
+        $taxonomy->onLoaded();
 
         $shortcode = new Shortcode($this->pluginFile, $settings);
         $shortcode->onLoaded();

@@ -6,7 +6,7 @@ defined('ABSPATH') || exit;
 
 require_once ABSPATH . 'wp-includes/class-wp-widget.php';
 
-class CampoWidget extends \WP_Widget
+class ContactWidget extends \WP_Widget
 {
 
     protected $pluginFile;
