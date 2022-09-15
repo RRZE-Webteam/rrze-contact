@@ -28,97 +28,45 @@ class Contact extends Taxonomy
     }
     public function onLoaded()
     {
-        add_action('init', [$this, 'set']);
-        add_action('admin_init', [$this, 'register']);
+        add_action('init', [$this, 'register']);
+        // add_action('admin_init', [$this, 'register']);
 
     }
 
-    public function set()
+    public function register()
     {
-        $labels = [
-            'name' => _x('Contacts', 'Post Type General Name', 'rrze-contact'),
-            'singular_name' => _x('Contact', 'Post Type Singular Name', 'rrze-contact'),
-            'menu_name' => __('Contacts', 'rrze-contact'),
-            'parent_item_colon' => __('Superordinate contact', 'rrze-contact'),
-            'all_items' => __('All contacts', 'rrze-contact'),
-            'view_item' => __('Show contact', 'rrze-contact'),
-            'add_new_item' => __('Add contact', 'rrze-contact'),
-            'add_new' => __('New contact', 'rrze-contact'),
-            'edit_item' => __('Edit contact', 'rrze-contact'),
-            'update_item' => __('Update contact', 'rrze-contact'),
-            'search_items' => __('Search contact', 'rrze-contact'),
-            'not_found' => __('No contacts found', 'rrze-contact'),
-            'not_found_in_trash' => __('No contacts found in trash', 'rrze-contact'),
-        ];
-        $has_archive_page = true;
-        if (isset($this->settings->options) && isset($this->settings->options['constants_has_archive_page'])) {
-            $has_archive_page = $this->settings->options['constants_has_archive_page'];
-        }
-        $caps = get_rrze_contact_capabilities();
-        $contact_args = array(
-            'label' => __('Contact', 'rrze-contact'),
-            'description' => __('Contact\'s informations', 'rrze-contact'),
-            'labels' => $labels,
-            'supports' => array('title', 'editor', 'author', 'thumbnail', 'revisions'),
-            'taxonomies' => array('contacts_category'),
-            'hierarchical' => false,
-            'public' => true,
-            'show_ui' => true,
-            'show_in_menu' => true,
-            'show_in_nav_menus' => true,
-            'show_in_admin_bar' => true,
-            'menu_position' => 20,
-            'menu_icon' => 'dashicons-id-alt',
-            'can_export' => true,
-            'has_archive' => $has_archive_page,
-            'exclude_from_search' => false,
-            'publicly_queryable' => true,
-            'query_var' => 'contact',
-            'rewrite' => [
-                'slug' => $this->postType,
-                'with_front' => true,
-                'pages' => true,
-                'feeds' => true,
-            ],
-            'capability_type' => $this->postType,
-            'capabilities' => $caps,
-            'map_meta_cap' => true,
-        );
-
-        register_post_type($this->postType, $contact_args);
-
+        parent::registerCPT('Contact');
         register_taxonomy(
-            $this->taxonomy,
-            $this->postType,
+            'contacts_category',
+            'contact',
             [
                 'hierarchical' => true,
-                //    'labels'        => $labels,
                 'show_ui' => true,
                 'show_admin_column' => true,
                 'query_var' => true,
                 'rewrite' => [
-                    'slug' => $this->taxonomy,
+                    'slug' => 'contacts_category',
                     'with_front' => false,
                 ],
             ]
         );
     }
 
-    public function register()
-    {
-        register_taxonomy_for_object_type($this->taxonomy, $this->postType);
-        add_action('restrict_manage_posts', [$this, 'contact_restrict_manage_posts']);
-        add_filter('parse_query', [$this, 'taxonomy_filter_post_type_request']);
-        // Kontakttyp als zusätzliche Spalte in Übersicht
+    // public function register()
+    // {
+    //     register_taxonomy_for_object_type($this->taxonomy, $this->postType);
+    //     add_action('restrict_manage_posts', [$this, 'contact_restrict_manage_posts']);
+    //     add_filter('parse_query', [$this, 'taxonomy_filter_post_type_request']);
+    //     // Kontakttyp als zusätzliche Spalte in Übersicht
 
-        add_filter('manage_contact_posts_columns', array($this, 'change_columns'));
-        add_action('manage_contact_posts_custom_column', array($this, 'custom_columns'), 10, 2);
-        // Sortierung der zusätzlichen Spalte
+    //     add_filter('manage_contact_posts_columns', array($this, 'change_columns'));
+    //     add_action('manage_contact_posts_custom_column', array($this, 'custom_columns'), 10, 2);
+    //     // Sortierung der zusätzlichen Spalte
 
-        add_filter('manage_edit-contact_sortable_columns', array($this, 'sortable_columns'));
-        add_action('pre_get_posts', array($this, 'posttype_contact_custom_columns_orderby'));
+    //     add_filter('manage_edit-contact_sortable_columns', array($this, 'sortable_columns'));
+    //     add_action('pre_get_posts', array($this, 'posttype_contact_custom_columns_orderby'));
 
-    }
+    // }
 
     public function taxonomy_filter_post_type_request($query)
     {
