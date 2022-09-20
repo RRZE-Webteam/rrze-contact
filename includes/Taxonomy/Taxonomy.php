@@ -4,9 +4,8 @@ namespace RRZE\Contact\Taxonomy;
 
 defined('ABSPATH') || exit;
 
-// use RRZE_Contact\Main;
-// use RRZE_Contact\Taxonomy\Contact;
-// use RRZE_Contact\Taxonomy\Location;
+use RRZE\Contact\Taxonomy\Contact;
+use RRZE\Contact\Taxonomy\Location;
 
 /**
  * Laden und definieren der Posttypes
@@ -30,71 +29,81 @@ class Taxonomy
         $standort_posttype = new Location($this->pluginFile, $this->settings);
         $standort_posttype->onLoaded();
 
-        if (get_transient('rrze-contact-options')) {
+        // 2DO: improve this. no need for transient as long as fired after update
+        if (get_site_transient('rrze-contact-options-updated')) {
             flush_rewrite_rules();
-            delete_transient('rrze-contact-options');
+            delete_site_transient('rrze-contact-options-updated');
         }
     }
 
-    public function registerCPT($name = '', $supports = [], $icon = '') {	    
-        $lowerName = strtolower($name);
-        $labels = array(
-                'name'                => _x($name, 'Post Type General Name', 'rrze-faq' ),
-                'singular_name'       => _x($name, 'Post Type Singular Name', 'rrze-faq' ),
-                'menu_name'           => __($name, 'rrze-faq' ),
-                'add_new'             => __("Add $name", 'rrze-faq' ),
-                'add_new_item'        => __("Add new $name", 'rrze-faq' ),
-                'edit_item'           => __("Edit $name", 'rrze-faq' ),
-                'all_items'           => __("All $name", 'rrze-faq' ),
-                'search_items'        => __("Search $name", 'rrze-faq' ),
-        );
-        $rewrite = array(
-                'slug'                => $lowerName,
-                'with_front'          => true,
-                'pages'               => true,
-                'feeds'               => true,
-        );
-        $args = array(
-                'label'               => __($name, 'rrze-faq' ),
-                'description'         => __("$name informations", 'rrze-faq' ),
-                'labels'              => $labels,
-                'supports'            => $supports,
-                'hierarchical'        => false,
-                'public'              => true,
-                'show_ui'             => true,
-                'show_in_menu'        => true,
-                'show_in_nav_menus'   => false,
-                'show_in_admin_bar'   => true,
-                'menu_icon'		  => $icon,
-                'can_export'          => true,
-                'has_archive'         => (!empty($this->settings->options['constants_has_archive_page']) ? $this->settings->options['constants_has_archive_page'] : true),
-                'exclude_from_search' => false,
-                'publicly_queryable'  => true,
-                'query_var'           => $lowerName,
-                'rewrite'             => $rewrite,
-                'show_in_rest'        => true,
-                'rest_base'           => $lowerName,
-                'rest_controller_class' => 'WP_REST_Posts_Controller',
-                'capability_type' => $lowerName,
-                'capabilities' => [
-                    'edit_post'	=> 'edit_contact',
-                    'read_post'	=> 'read_contact',
-                    'delete_post'	=> 'delete_contact',
-                    'edit_posts'	=> 'edit_contacts',
-                    'edit_others_posts' => 'edit_others_contacts',
-                    'publish_posts'	=> 'publish_contacts',
-                    'read_private_posts' => 'read_private_contacts',
-                    'delete_posts'	=> 'delete_contacts',
-                    'delete_private_posts' => 'delete_private_contacts',
-                    'delete_published_posts' => 'delete_published_contacts',
-                    'delete_others_posts' => 'delete_others_contacts',
-                    'edit_private_posts' => 'edit_private_contacts',
-                    'edit_published_posts' => 'edit_published_contacts'
-                    ],
-                'map_meta_cap' => true,
+    public function registerCPT($aParams = ['name' => '', 'supports' => [], 'icon' => '', 'has_archive_page' => '', 'archive_slug' => '', 'archive_title' => ''])
+    {
+        $lowerName = strtolower($aParams['name']);
+
+        $labels = [
+            'name' => _x($aParams['archive_title'], 'Post Type General Name', 'rrze-faq'),
+            'singular_name' => _x($aParams['name'], 'Post Type Singular Name', 'rrze-faq'),
+            'menu_name' => __($aParams['name'], 'rrze-faq'),
+            'add_new' => __("Add {$aParams['name']}", 'rrze-faq'),
+            'add_new_item' => __("Add new {$aParams['name']}", 'rrze-faq'),
+            'edit_item' => __("Edit {$aParams['name']}", 'rrze-faq'),
+            'all_items' => __("All {$aParams['name']}", 'rrze-faq'),
+            'search_items' => __("Search {$aParams['name']}", 'rrze-faq'),
+        ];
+
+        $rewrite = [
+            'slug' => $aParams['archive_slug'],
+            'with_front' => true,
+            'pages' => true,
+            'feeds' => true,
+        ];
+
+        $capabilities = [
+            'edit_post' => 'edit_' . $lowerName,
+            'read_post' => 'read_' . $lowerName,
+            'delete_post' => 'delete_' . $lowerName,
+            'edit_posts' => 'edit_' . $lowerName . 's',
+            'edit_others_posts' => 'edit_others_' . $lowerName . 's',
+            'publish_posts' => 'publish_' . $lowerName . 's',
+            'read_private_posts' => 'read_private_' . $lowerName . 's',
+            'delete_posts' => 'delete_' . $lowerName . 's',
+            'delete_private_posts' => 'delete_private_' . $lowerName . 's',
+            'delete_published_posts' => 'delete_published_' . $lowerName . 's',
+            'delete_others_posts' => 'delete_others_' . $lowerName . 's',
+            'edit_private_posts' => 'edit_private_' . $lowerName . 's',
+            'edit_published_posts' => 'edit_published_' . $lowerName . 's'
+        ];
     
-        );
-        register_post_type($lowerName, $args );
+        $args = [
+            'label' => __($aParams['name'], 'rrze-faq'),
+            'description' => __("{$aParams['name']} informations", 'rrze-faq'),
+            'labels' => $labels,
+            'supports' => $aParams['supports'],
+            'hierarchical' => false,
+            'public' => true,
+            'show_ui' => true,
+            'show_in_menu' => true,
+            'show_in_nav_menus' => false,
+            'show_in_admin_bar' => true,
+            'menu_icon' => $icon,
+            'can_export' => true,
+            'has_archive' => $aParams['has_archive_page'],
+            'exclude_from_search' => false,
+            'publicly_queryable' => true,
+            'query_var' => $lowerName,
+            'rewrite' => $rewrite,
+            'capability_type' => $lowerName,
+            'capabilities' => $capabilities,
+            'map_meta_cap' => true,
+        ];
+
+        if ($aParams['show_in_rest']) {
+            $args['show_in_rest'] = true;
+            $args['rest_base'] = $lowerName;
+            $args['rest_controller_class'] = 'WP_REST_Posts_Controller';
+        }
+
+        register_post_type($lowerName, $args);
     }
 
 }

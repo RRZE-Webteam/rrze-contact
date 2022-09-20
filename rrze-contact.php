@@ -4,7 +4,7 @@
  * Plugin Name:     RRZE Contact
  * Plugin URI:      https://github.com/RRZE-Webteam/rrze-contact
  * Description:     Einbindung von Daten aus Contact
- * Version:         0.0.9
+ * Version:         0.0.10
  * Author:          RRZE-Webteam
  * Author URI:      https://blogs.fau.de/webworking/
  * License:         GNU General Public License v3
@@ -21,7 +21,6 @@ use RRZE\Contact\Main;
 
 // Laden der Konfigurationsdatei
 require_once __DIR__ . '/config/config.php';
-
 
 // spl_autoload_extensions(".php"); // comma-separated list
 // spl_autoload_register();
@@ -44,8 +43,6 @@ spl_autoload_register(function ($class) {
         require $file;
     }
 });
-
-// exit;
 
 const RRZE_PHP_VERSION = '7.4';
 const RRZE_WP_VERSION = '5.3';
@@ -73,7 +70,8 @@ function systemRequirements(): string
     $error = '';
     if (version_compare(PHP_VERSION, RRZE_PHP_VERSION, '<')) {
         $error = sprintf(__('The server is running PHP version %1$s. The Plugin requires at least PHP version %2$s.', 'rrze-rsvp'), PHP_VERSION, RRZE_PHP_VERSION);
-    } elseif (version_compare($GLOBALS['wp_version'], RRZE_WP_VERSION, '<')) {
+    }
+    elseif (version_compare($GLOBALS['wp_version'], RRZE_WP_VERSION, '<')) {
         $error = sprintf(__('The server is running WordPress version %1$s. The Plugin requires at least WordPress version %2$s.', 'rrze-rsvp'), $GLOBALS['wp_version'], RRZE_WP_VERSION);
     }
     return $error;
@@ -109,9 +107,9 @@ function add_endpoint()
  */
 function deactivation()
 {
-    // Hier können die Funktionen hinzugefügt werden, die
-    // bei der Deaktivierung des Plugins aufgerufen werden müssen.
-    // Bspw. delete_option, wp_clear_scheduled_hook, flush_rewrite_rules, etc.
+// Hier können die Funktionen hinzugefügt werden, die
+// bei der Deaktivierung des Plugins aufgerufen werden müssen.
+// Bspw. delete_option, wp_clear_scheduled_hook, flush_rewrite_rules, etc.
 }
 
 /**
@@ -130,13 +128,14 @@ function loaded()
             $pluginName = $pluginData['Name'];
             $tag = is_plugin_active_for_network(plugin_basename(__FILE__)) ? 'network_admin_notices' : 'admin_notices';
             add_action($tag, function () use ($pluginName, $error) {
-                printf(
-                    '<div class="notice notice-error"><p>' . __('Plugins: %1$s: %2$s', 'rrze-univis') . '</p></div>',
-                    esc_html($pluginName),
-                    esc_html($error)
+                    printf(
+                        '<div class="notice notice-error"><p>' . __('Plugins: %1$s: %2$s', 'rrze-univis') . '</p></div>',
+                        esc_html($pluginName),
+                        esc_html($error)
+                    );
+                }
                 );
             });
-        });
         // Das Plugin wird nicht mehr ausgeführt.
         return;
     }
