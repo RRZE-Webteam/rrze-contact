@@ -98,6 +98,17 @@ function getSections()
  */
 function getFields()
 {
+
+    $imagesizes = array();
+    $isizes = get_all_image_sizes();
+
+    foreach ($isizes as $key => $value) {
+        if (($value['width'] > 0) && ($value['height'] > 0)) {
+            $name = ucfirst($key);
+            $imagesizes[$key] = $name . ' (' . $value['width'] . ' x ' . $value['height'] . ')';
+        }
+    }
+
     $archive_options =	[
 		'person' => __('Automatisch generieren', 'rrze-contact') . ' ('  . site_url( '/person/') . ')',
 		'0' => __('Keine Übersichtsseite anzeigen', 'rrze-contact'),
@@ -841,21 +852,22 @@ function getShortcodeSettings()
     ];
 }
 
-function get_rrze_contact_capabilities()
+function get_all_image_sizes()
 {
-    return [
-        'edit_post' => 'edit_person',
-        'read_post' => 'read_person',
-        'delete_post' => 'delete_person',
-        'edit_posts' => 'edit_persons',
-        'edit_others_posts' => 'edit_others_persons',
-        'publish_posts' => 'publish_persons',
-        'read_private_posts' => 'read_private_persons',
-        'delete_posts' => 'delete_persons',
-        'delete_private_posts' => 'delete_private_persons',
-        'delete_published_posts' => 'delete_published_persons',
-        'delete_others_posts' => 'delete_others_persons',
-        'edit_private_posts' => 'edit_private_persons',
-        'edit_published_posts' => 'edit_published_persons',
-    ];
+
+    $image_sizes = array();
+
+    $ownsizes = getConstants();
+    if (isset($ownsizes['images']['default_person_thumb_width'])) {
+        $image_sizes['person-thumb-v3']['width'] = $ownsizes['images']['default_person_thumb_width'];
+        $image_sizes['person-thumb-v3']['height'] = $ownsizes['images']['default_person_thumb_height'];
+
+    }
+    if (isset($ownsizes['images']['default_person_thumb_page_width'])) {
+        $image_sizes['person-thumb-page-v3']['width'] = $ownsizes['images']['default_person_thumb_page_width'];
+        $image_sizes['person-thumb-page-v3']['height'] = $ownsizes['images']['default_person_thumb_page_height'];
+    }
+
+    return $image_sizes;
 }
+

@@ -2,10 +2,6 @@
 
 namespace RRZE\Contact\Taxonomy;
 
-// use RRZE\Lib\UnivIS\Config;
-// use RRZE_Contact\Data;
-// use RRZE_Contact\Schema;
-
 defined('ABSPATH') || exit;
 
 /**
@@ -28,25 +24,26 @@ class Contact extends Taxonomy
 
     public function onLoaded()
     {
-        add_action('init', [$this, 'registerCPT']);
+        add_action('init', [$this, 'register']);
     }
     
-    public function registerCPT()
+    public function register()
     {
-        $archive_slug = (!empty($this->settings->options['constants_has_archive_page']) ? $this->settings->options['constants_has_archive_page'] : $this->postType);
+        $slug = (!empty($this->settings->options['constants_has_archive_page']) ? $this->settings->options['constants_has_archive_page'] : $this->postType);
 		$has_archive_page = (!empty($this->settings->options['constants_has_archive_page']) && ($this->settings->options['constants_has_archive_page'] == $this->postType) ? true : false);
-		$archive_page = get_page_by_path($archive_slug, OBJECT, 'page');
-		$archive_title = (!empty($archive_page) ? $archive_page->post_title : 'Kontakte');
+		$archive_page = get_page_by_path($slug, OBJECT, 'page');
+		$archive_title = (!empty($archive_page) ? $archive_page->post_title : __('Contacts', 'rrze-contact'));
 
         $aParams = [
-            'name' => 'Contact',
+            'slug' => $slug,
+            'singular_name' => __('Contact', 'rrze-contact'),
+            'plural_name' => __('Contacts', 'rrze-contact'),
             'supports' => ['title', 'editor', 'author', 'thumbnail', 'revisions'],
-            'icon' => '',
             'has_archive_page' => $has_archive_page,
-            'archive_slug' => $archive_slug,
 		    'archive_title' => $archive_title,
             'show_in_menu' => true,
-            'show_in_rest' => true,
+            'menu_name' => __('Contacts', 'rrze-contact'),
+			'menu_icon' => 'dashicons-id-alt',
         ];
 
         parent::registerCPT($aParams);
