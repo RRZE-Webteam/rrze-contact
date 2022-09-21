@@ -41,13 +41,13 @@ class Taxonomy
         $pluralSlug = $aParams['slug'] . 's';
 
         $labels = [
-            'name' => _x($aParams['plural_name'], 'Post Type General Name', 'rrze-faq'),
-            'singular_name' => _x($aParams['singular_name'], 'Post Type Singular Name', 'rrze-faq'),
-            'add_new' => __("Add {$aParams['singular_name']}", 'rrze-faq'),
-            'add_new_item' => __("Add new {$aParams['singular_name']}", 'rrze-faq'),
-            'edit_item' => __("Edit {$aParams['singular_name']}", 'rrze-faq'),
-            'all_items' => __("All {$aParams['plural_name']}", 'rrze-faq'),
-            'search_items' => __("Search {$aParams['plural_name']}", 'rrze-faq'),
+            'name' => _x($aParams['plural_name'], 'Post Type General Name', 'rrze-contact'),
+            'singular_name' => _x($aParams['singular_name'], 'Post Type Singular Name', 'rrze-contact'),
+            'add_new' => __("Add {$aParams['singular_name']}", 'rrze-contact'),
+            'add_new_item' => __("Add new {$aParams['singular_name']}", 'rrze-contact'),
+            'edit_item' => __("Edit {$aParams['singular_name']}", 'rrze-contact'),
+            'all_items' => __("All {$aParams['plural_name']}", 'rrze-contact'),
+            'search_items' => __("Search {$aParams['plural_name']}", 'rrze-contact'),
         ];
 
         $rewrite = [
@@ -65,6 +65,7 @@ class Taxonomy
             'edit_others_posts' => 'edit_others_' . $pluralSlug,
             'publish_posts' => 'publish_' . $pluralSlug,
             'read_private_posts' => 'read_private_' . $pluralSlug,
+            'create_posts' => 'edit_' . $pluralSlug,
             'delete_posts' => 'delete_' . $pluralSlug,
             'delete_private_posts' => 'delete_private_' . $pluralSlug,
             'delete_published_posts' => 'delete_published_' . $pluralSlug,
@@ -74,8 +75,8 @@ class Taxonomy
         ];
     
         $args = [
-            'label' => __($aParams['singular_name'], 'rrze-faq'),
-            'description' => __("{$aParams['singular_name']} informations", 'rrze-faq'),
+            'label' => __($aParams['singular_name'], 'rrze-contact'),
+            'description' => __("{$aParams['singular_name']} informations", 'rrze-contact'),
             'labels' => $labels,
             'supports' => $aParams['supports'],
             'hierarchical' => false,
@@ -104,6 +105,7 @@ class Taxonomy
         }            
 
         register_post_type($aParams['slug'], $args);
+
     }
 
 }
