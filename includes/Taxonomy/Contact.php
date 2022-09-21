@@ -11,7 +11,7 @@ class Contact extends Taxonomy
 {
 
     protected $postType = 'contact';
-    protected $taxonomy = 'contacts_category';
+    protected $taxonomy = 'contact_category';
 
     protected $pluginFile;
     private $settings = '';
@@ -57,7 +57,7 @@ class Contact extends Taxonomy
                 'show_admin_column' => true,
                 'query_var' => true,
                 'rewrite' => [
-                    'slug' => 'contacts_category',
+                    'slug' => 'contact_category',
                     'with_front' => false,
                 ],
             ]
