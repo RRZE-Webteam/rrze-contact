@@ -871,3 +871,64 @@ function get_all_image_sizes()
     return $image_sizes;
 }
 
+function getSocialMediaList()
+{
+    $SocialMedia = array(
+        "twitter" => [
+            'title' => 'Twitter',
+            'class' => 'twitter',
+        ],
+        "facebook" => [
+            'title' => 'Facebook',
+            'class' => 'facebook',
+        ],
+        "linkedin" => [
+            'title' => 'LinkedIn',
+            'class' => 'linkedin',
+        ],
+        "instagram" => [
+            'title' => 'Instagram',
+            'class' => 'instagram',
+        ],
+        "xing" => [
+            'title' => 'Xing',
+            'class' => 'xing',
+        ],
+        "youtube" => [
+            'title' => 'YouTube',
+            'class' => 'youtube',
+        ],
+        "github" => [
+            'title' => 'GitHub',
+            'class' => 'github',
+        ],
+        "publons" => [
+            'title' => 'Publons',
+            'class' => 'publons',
+        ],
+        "scopus" => [
+            'title' => 'Scopus',
+            'class' => 'scopus',
+        ],
+        "googlescholar" => [
+            'title' => 'Google Scholar',
+            'class' => 'google-scholar',
+        ],
+        "orcid" => [
+            'title' => 'ORCID',
+            'class' => 'orcid',
+        ],
+        "researchgate" => [
+            'title' => 'Research Gate',
+            'class' => 'researchgate',
+        ],
+        "tiktok" => [
+            'title' => 'TikTok',
+            'class' => 'tiktok',
+        ],
+    );
+
+    // für ergänzende Optionen aus anderen Plugins
+    $SocialMedia = apply_filters('rrze_contact_socialmedialist', $SocialMedia);
+    return $SocialMedia; // Standard-Array für zukünftige Optionen
+}

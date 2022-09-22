@@ -25,6 +25,18 @@ class Contact extends Taxonomy
     public function onLoaded()
     {
         add_action('init', [$this, 'register']);
+        register_taxonomy_for_object_type($this->taxonomy, $this->postType);
+        add_action('restrict_manage_posts', [$this, 'contact_restrict_manage_posts']);
+        add_filter('parse_query', [$this, 'taxonomy_filter_post_type_request']);
+        // Kontakttyp als zusätzliche Spalte in Übersicht
+
+        add_filter('manage_contact_posts_columns', array($this, 'change_columns'));
+        add_action('manage_contact_posts_custom_column', array($this, 'custom_columns'), 10, 2);
+        // Sortierung der zusätzlichen Spalte
+
+        add_filter('manage_edit-contact_sortable_columns', array($this, 'sortable_columns'));
+        add_action('pre_get_posts', array($this, 'posttype_contact_custom_columns_orderby'));
+
     }
     
     public function register()
