@@ -29,7 +29,7 @@ class Posts extends Metaboxes {
     public function cmb2_posts_metaboxes( $meta_boxes ) {
 	$prefix = $this->prefix;
 	
-	if (isset($this->settings->options) && isset($this->settings->options['constants_backend_view_metabox_kontaktlist']) && ($this->settings->options['constants_backend_view_metabox_kontaktlist'])) {
+	if (isset($this->settings->options) && isset($this->settings->options['constants_backend_view_metabox_contactlist']) && ($this->settings->options['constants_backend_view_metabox_contactlist'])) {
 	    // Meta-Box zur Anzeige der verfügbaren Kontakte auf post und page, um die Personen-ID schneller herauszufinden
 	    $contactselect = Data::get_contactdata();
 	    $meta_boxes['rrze_contact_post_metabox'] = array(

@@ -9,7 +9,7 @@ use RRZE\Contact\Metaboxes\Contact;
 use RRZE\Contact\Metaboxes\Location;
 use RRZE\Contact\Metaboxes\Pages;
 use RRZE\Contact\Metaboxes\Posts;
-// use RRZE\Lib\UnivIS\Data as UnivIS_Data;
+use RRZE\Lib\UnivIS\Data as UnivIS_Data;
 
 
 class Metaboxes  {
@@ -31,7 +31,7 @@ class Metaboxes  {
 	add_action( 'cmb2_render_text_number', array( $this, 'sm_cmb_render_text_number' ) );
 
 	
-//	add_filter( 'cmb2_show_on', array( $this, 'mb_show_on_person' ) );
+//	add_filter( 'cmb2_show_on', array( $this, 'mb_show_on_contact' ) );
 	
 	$contactmb = new Contact($this->pluginFile,  $this->settings);
 	$contactmb->onLoaded();

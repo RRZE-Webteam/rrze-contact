@@ -112,18 +112,18 @@ class Functions
                 //         }
                 //     }
                 //     break;
-                // case 'personByName':
+                // case 'contactByName':
                 //     foreach ($data as $entry) {
-                //         if (isset($entry['person_id'])) {
-                //             $ret[$entry['person_id']] = $entry['lastname'] . ', ' . $entry['firstname'];
+                //         if (isset($entry['contact_id'])) {
+                //             $ret[$entry['contact_id']] = $entry['lastname'] . ', ' . $entry['firstname'];
                 //         }
                 //     }
                 //     break;
-                // case 'personAll':
+                // case 'contactAll':
                 //     foreach ($data as $position => $entries) {
                 //         foreach ($entries as $entry) {
-                //             if (isset($entry['person_id'])) {
-                //                 $ret[$entry['person_id']] = $entry['lastname'] . ', ' . $entry['firstname'];
+                //             if (isset($entry['contact_id'])) {
+                //                 $ret[$entry['contact_id']] = $entry['lastname'] . ', ' . $entry['firstname'];
                 //             }
                 //         }
                 //     }

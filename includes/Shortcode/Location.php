@@ -28,7 +28,7 @@ class Location extends Shortcode
 
     public function onLoaded()
     {
-        add_shortcode('standort', [$this, 'shortcode_location']);
+        add_shortcode('location', [$this, 'shortcode_location']);
         add_shortcode('location', [$this, 'shortcode_location']);
     }
 

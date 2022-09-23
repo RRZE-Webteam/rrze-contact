@@ -37,7 +37,7 @@ class Location extends Metaboxes
 			'id' => 'fau_location_info',
 			'title' => __('Locationinformationen', 'rrze-contact'),
 			'object_types' => array('location'), // post type
-			//'show_on' => array( 'key' => 'submenu-slug', 'value' => 'kontakt' ),        
+			//'show_on' => array( 'key' => 'submenu-slug', 'value' => 'contact' ),        
 			'context' => 'normal',
 			'priority' => 'default',
 			'fields' => array(

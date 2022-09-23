@@ -226,7 +226,7 @@ msgstr "Desculpe, este campo não tem um cmb_id especificado."
 
 #: example-functions.php:176
 msgid "Custom Rendered Field"
-msgstr "Campo com apresentação personalizada"
+msgstr "Campo com apresentação contactalizada"
 
 #: includes/CMB2_hookup.php:185
 msgid "Term metaboxes configuration requires a \"taxonomies\" parameter."
@@ -250,7 +250,7 @@ msgstr "Metabox de categoria"
 
 #. Description of the plugin/theme
 msgid "CMB2 will create metaboxes and forms with custom fields that will blow your mind."
-msgstr "O CMB2 permite criar metaboxes e formulários com campos personalizados que são surpreendentes."
+msgstr "O CMB2 permite criar metaboxes e formulários com campos contactalizados que são surpreendentes."
 
 #. Plugin Name of the plugin/theme
 msgid "CMB2"

@@ -122,7 +122,7 @@ class Schema {
 	    }
 	}
 	if ((isset($data['addressLocality'])) && (isset($data['postalCode'])) && (!empty(trim($data['addressLocality'])))  && (!empty(trim($data['postalCode']))) ) {
-	    $res .= '<span class="person-info-city">';
+	    $res .= '<span class="contact-info-city">';
 	}
 	  
 	if ((isset($data['postalCode'])) && (!empty(trim($data['postalCode'])))) {
@@ -248,7 +248,7 @@ class Schema {
 	    $res .= '</'.$surroundingtag.'>';
 	    return $res;
 	} else {
-	   $res .= $data['kontakt_title'];
+	   $res .= $data['contact_title'];
 	   if (($surroundingtag == 'a') && (!empty($itemprop))) {
 		$res .= '</span>';
 	    }
@@ -285,14 +285,14 @@ class Schema {
 	}
 	
 	if (empty($fullname)) {
-	   $fullname = $data['kontakt_title'];
+	   $fullname = $data['contact_title'];
 	}
 	
 	
 	return esc_attr($fullname);
     }
     
-    public static function create_contactpointlist($data, $blockstart = 'ul', $itemprop = '', $class = 'person-info', $liststart = 'li', $args = array(), $fillempty = false, $addcomma = false) {
+    public static function create_contactpointlist($data, $blockstart = 'ul', $itemprop = '', $class = 'contact-info', $liststart = 'li', $args = array(), $fillempty = false, $addcomma = false) {
 	if (!is_array($data)) {
 	    return;
 	}
@@ -321,7 +321,7 @@ class Schema {
 	
 	
 	if ((isset($data['telephone'])) && (!empty($data['telephone']))) {
-	    $res .= '<'.$liststart.' class="person-info-phone telephone">';
+	    $res .= '<'.$liststart.' class="contact-info-phone telephone">';
 	    $res .= '<span class="screen-reader-text">' . __('Telefon', 'rrze-contact') . ': </span>';
 	    $number = self::get_sanitized_phone($data['telephone']);
 	    $displaynumber = $number; 
@@ -346,7 +346,7 @@ class Schema {
 	}
 	
 	if ((isset($data['mobilePhone'])) && (!empty($data['mobilePhone']))) {
-	    $res .= '<'.$liststart.' class="person-info-mobile mobilePhone">';
+	    $res .= '<'.$liststart.' class="contact-info-mobile mobilePhone">';
 	    $res .= '<span class="screen-reader-text">' . __('Mobil', 'rrze-contact') . ': </span>';
 	    $number = self::get_sanitized_phone($data['mobilePhone']);
 	    $displaynumber = $number; 
@@ -371,7 +371,7 @@ class Schema {
 	
 	
 	if ((isset($data['faxNumber'])) && (!empty($data['faxNumber']))) {
-	    $res .= '<'.$liststart.' class="person-info-fax faxNumber">';
+	    $res .= '<'.$liststart.' class="contact-info-fax faxNumber">';
 	    $res .= '<span class="screen-reader-text">' . __('Faxnummer', 'rrze-contact') . ': </span>';
 	    $number = self::get_sanitized_phone($data['faxNumber']);
 	    $displaynumber = $number; 
@@ -396,7 +396,7 @@ class Schema {
 	
 	
 	if ((isset($data['email'])) && (!empty($data['email']))) {
-	    $res .= '<'.$liststart.' class="person-info-email email">';
+	    $res .= '<'.$liststart.' class="contact-info-email email">';
 	    $res .= '<span class="screen-reader-text">' . __('E-Mail', 'rrze-contact') . ': </span>';
 	    $res .= '<a itemprop="email" href="mailto:'.self::get_email_uri($data['email']).'">' . self::get_email_uri($data['email']) . '</a>';
 	    $res .= '</'.$liststart.'>';
@@ -412,7 +412,7 @@ class Schema {
 	
 	
 	if ((isset($data['url'])) && (!empty($data['url']))) {
-	    $res .= '<'.$liststart.' class="person-info-www url">';
+	    $res .= '<'.$liststart.' class="contact-info-www url">';
 	    $res .= '<span class="screen-reader-text">' . __('Webseite', 'rrze-contact') . ': </span>';
 	    $res .= '<a itemprop="url" href="'.self::get_sanitized_url($data['url']).'">' . self::get_sanitized_url($data['url']) . '</a>';
 	    $res .= '</'.$liststart.'>';

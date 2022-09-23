@@ -39,7 +39,7 @@ class CampoAPI extends API
 
     private function setAPI()
     {
-        $this->api = 'https://api.fau.de/pub/v1/mschema/persons';
+        $this->api = 'https://api.fau.de/pub/v1/mschema/contacts';
         // $this->api = 'https://api.fau.de/pub/v1/mschema/organizations';
     }
 

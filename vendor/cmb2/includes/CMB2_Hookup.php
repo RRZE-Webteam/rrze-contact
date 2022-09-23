@@ -169,7 +169,7 @@ class CMB2_Hookup extends CMB2_Hookup_Base {
 		add_action( 'edit_user_profile', array( $this, 'user_metabox' ), $priority );
 		add_action( 'user_new_form', array( $this, 'user_new_metabox' ), $priority );
 
-		add_action( 'personal_options_update', array( $this, 'save_user' ) );
+		add_action( 'contactal_options_update', array( $this, 'save_user' ) );
 		add_action( 'edit_user_profile_update', array( $this, 'save_user' ) );
 		add_action( 'user_register', array( $this, 'save_user' ) );
 

@@ -52,7 +52,7 @@ class Helper {
         if(isset($_GET["rrze_contact_typ"]) && $_GET["rrze_contact_typ"] == 'einrichtung') {
             $default_rrze_contact_typ = 'einrichtung';
         } else {
-            $default_rrze_contact_typ = 'realperson';
+            $default_rrze_contact_typ = 'realcontact';
         }
         return $default_rrze_contact_typ;
     }     

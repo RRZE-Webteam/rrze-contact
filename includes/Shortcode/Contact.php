@@ -27,13 +27,13 @@ class Contact extends Shortcode
 
     public function onLoaded()
     {
-        add_shortcode('kontakt', [$this, 'shortcode_contact']);
         add_shortcode('contact', [$this, 'shortcode_contact']);
-        add_shortcode('kontaktliste', [$this, 'shortcode_contactlist']);
+        add_shortcode('contact', [$this, 'shortcode_contact']);
+        add_shortcode('contactliste', [$this, 'shortcode_contactlist']);
         add_shortcode('contacts', [$this, 'shortcode_contactlist']);
     }
 
-    public static function shortcode_kontakt($atts, $content = null)
+    public static function shortcode_contact($atts, $content = null)
     {
         $defaults = getShortcodeDefaults('contact');
         $arguments = shortcode_atts($defaults, $atts);
@@ -483,7 +483,7 @@ class Contact extends Shortcode
         // register block
         register_block_type($this->settings['block']['blocktype'], array(
             'editor_script' => $editor_script,
-            'render_callback' => [$this, 'shortcode_kontakt'],
+            'render_callback' => [$this, 'shortcode_contact'],
             'attributes' => $this->settings,
         )
         );

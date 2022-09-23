@@ -26,8 +26,8 @@ class Contact extends Metaboxes
 
     public function onLoaded()
     {
-        // require_once(plugin_dir_path($this->pluginFile) . 'vendor/UnivIS/UnivIS.php');
-        // require_once(plugin_dir_path($this->pluginFile) . 'vendor/DIP/DIP.php');
+        require_once(plugin_dir_path($this->pluginFile) . 'vendor/UnivIS/UnivIS.php');
+        require_once(plugin_dir_path($this->pluginFile) . 'vendor/DIP/DIP.php');
         add_filter('cmb2_meta_boxes', array($this, 'cmb2_contact_metaboxes'));
     }
 
@@ -40,34 +40,34 @@ class Contact extends Metaboxes
         $standortselect =  Data::get_standortdata();
         $default_rrze_contact_typ = Data::get_default_rrze_contact_typ();
 
-        $person_id = 0;
+        $contact_id = 0;
 
         if (isset($_GET['post'])) {
-            $person_id = intval($_GET['post']);
+            $contact_id = intval($_GET['post']);
         } elseif (isset($_POST['post_ID'])) {
-            $person_id = intval($_POST['post_ID']);
+            $contact_id = intval($_POST['post_ID']);
         }
 
-        $univis_id = get_post_meta($person_id, 'rrze_contact_univis_id', true);
-        $univisdata = Data::get_fields($person_id, $univis_id, 0, false, true);
+        $univis_id = get_post_meta($contact_id, 'rrze_contact_univis_id', true);
+        $univisdata = Data::get_fields($contact_id, $univis_id, 0, false, true);
 
         if ($univisdata) {
             $univis_sync = '';
         } else {
             $univis_sync = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
         }
-        $standort_default = Data::get_standort_defaults($person_id);
-        $univis_default = Data::univis_defaults($person_id);
+        $standort_default = Data::get_standort_defaults($contact_id);
+        $univis_default = Data::univis_defaults($contact_id);
 
         $defaultkurzauszug = '';
-        if (get_post_field('post_excerpt', $person_id)) {
-            $defaultkurzauszug  = get_post_field('post_excerpt', $person_id);
+        if (get_post_field('post_excerpt', $contact_id)) {
+            $defaultkurzauszug  = get_post_field('post_excerpt', $contact_id);
         }
         // Meta-Box Weitere Informationen - rrze_contact_adds
         $meta_boxes['rrze_contact_textinfos'] = array(
             'id' => 'rrze_contact_textinfos',
             'title' => __('Contact Beschreibung in Kurzform', 'rrze-contact'),
-            'object_types' => array('person'), // post type
+            'object_types' => array('contact'), // post type
             'context' => 'normal',
             'priority' => 'high',
             'fields' => array(
@@ -96,7 +96,7 @@ class Contact extends Metaboxes
         $meta_boxes['rrze_contact_info'] = array(
             'id' => 'rrze_contact_info',
             'title' => __('Contactinformationen', 'rrze-contact'),
-            'object_types' => array('person'), // post type
+            'object_types' => array('contact'), // post type
             //'show_on_cb' => array( 'key' => 'submenu-slug', 'value' => 'contact' ),        
             'context' => 'normal',
             'priority' => 'default',
@@ -117,7 +117,7 @@ class Contact extends Metaboxes
                     ),
                     'id' => $prefix . 'honorificPrefix',
                     'after' => $univis_default['honorificPrefix'],
-                    'show_on_cb' => 'callback_cmb2_show_on_person'
+                    'show_on_cb' => 'callback_cmb2_show_on_contact'
                 ),
                 array(
                     'name' => __('Vorname', 'rrze-contact'),
@@ -125,7 +125,7 @@ class Contact extends Metaboxes
                     'type' => 'text',
                     'id' => $prefix . 'givenName',
                     'after' => $univis_default['givenName'],
-                    'show_on_cb' => 'callback_cmb2_show_on_person',
+                    'show_on_cb' => 'callback_cmb2_show_on_contact',
                     'attributes'  => array(
                         'placeholder' => $univisdata['givenName'],
                     ),
@@ -139,7 +139,7 @@ class Contact extends Metaboxes
                     'attributes'  => array(
                         'placeholder' => $univisdata['familyName'],
                     ),
-                    'show_on_cb' => 'callback_cmb2_show_on_person'
+                    'show_on_cb' => 'callback_cmb2_show_on_contact'
                 ),
 
                 array(
@@ -151,7 +151,7 @@ class Contact extends Metaboxes
                     'attributes'  => array(
                         'placeholder' => $univisdata['honorificSuffix'],
                     ),
-                    'show_on_cb' => 'callback_cmb2_show_on_person'
+                    'show_on_cb' => 'callback_cmb2_show_on_contact'
                 ),
                 array(
                     'name' => __('Position/Funktion', 'rrze-contact'),
@@ -277,7 +277,7 @@ class Contact extends Metaboxes
                     'type' => 'text_url',
                     'id' => $prefix . 'link',
                     'attributes'  => array(
-                        'placeholder' => get_permalink($person_id),
+                        'placeholder' => get_permalink($contact_id),
                     ),
                     //'after' => '<hr>' . __('Zum Anzeigen der Person verwenden Sie bitte die ID', 'rrze-contact') . ' ' . $helpuse,                
                 ),
@@ -287,7 +287,7 @@ class Contact extends Metaboxes
         $meta_boxes['rrze_contact_adressdaten'] = array(
             'id' => 'rrze_contact_adressdaten',
             'title' => __('Postalische Adressdaten', 'rrze-contact'),
-            'object_types' => array('person'), // post type
+            'object_types' => array('contact'), // post type
             'context' => 'normal',
             'priority' => 'default',
             'fields' => array(
@@ -385,7 +385,7 @@ class Contact extends Metaboxes
         $meta_boxes['rrze_contact_social_media'] = array(
             'id' => 'rrze_contact_social_media',
             'title' => __('Social Media', 'rrze-contact'),
-            'object_types' => array('person'), // post type
+            'object_types' => array('contact'), // post type
             'context' => 'normal',
             'priority' => 'default',
             'fields' => $somefields,
@@ -396,7 +396,7 @@ class Contact extends Metaboxes
         $meta_boxes['rrze_contact_adds'] = array(
             'id' => 'rrze_contact_adds',
             'title' => __('Sprechzeiten', 'rrze-contact'),
-            'object_types' => array('person'), // post type
+            'object_types' => array('contact'), // post type
             'context' => 'normal',
             'priority' => 'default',
             'fields' => array(
@@ -484,7 +484,7 @@ class Contact extends Metaboxes
         $meta_boxes['rrze_contact_sync'] = array(
             'id' => 'rrze_contact_sync',
             'title' => __('Metadaten zum Contact', 'rrze-contact'),
-            'object_types' => array('person'), // post type
+            'object_types' => array('contact'), // post type
             'context' => 'side',
             'priority' => 'high',
             'fields' => array(
@@ -492,7 +492,7 @@ class Contact extends Metaboxes
                     'name' => __('Typ des Eintrags', 'rrze-contact'),
                     'type' => 'select',
                     'options' => array(
-                        'realperson' => __('Person (allgemein)', 'rrze-contact'),
+                        'realcontact' => __('Person (allgemein)', 'rrze-contact'),
                         'realmale' => __('Person (männlich)', 'rrze-contact'),
                         'realfemale' => __('Person (weiblich)', 'rrze-contact'),
                         'einrichtung' => __('Einrichtung', 'rrze-contact'),
@@ -503,11 +503,11 @@ class Contact extends Metaboxes
                 ),
                 array(
                     'name' => __('UnivIS-Id', 'rrze-contact'),
-                    'desc' => 'UnivIS-Id des Contacts (<a href="/wp-admin/edit.php?post_type=person&page=search-univis-id">UnivIS-Id suchen</a>)',
+                    'desc' => 'UnivIS-Id des Contacts (<a href="/wp-admin/edit.php?post_type=contact&page=search-univis-id">UnivIS-Id suchen</a>)',
                     'type' => 'text_small',
                     'id' => $prefix . 'univis_id',
                     'sanitization_cb' => 'validate_univis_id',
-                    'show_on_cb' => 'callback_cmb2_show_on_person'
+                    'show_on_cb' => 'callback_cmb2_show_on_contact'
                 ),
                 array(
                     'name' => __('UnivIS-Daten verwenden', 'rrze-contact'),
@@ -515,7 +515,7 @@ class Contact extends Metaboxes
                     'type' => 'checkbox',
                     'id' => $prefix . 'univis_sync',
                     'after' => $univis_sync,
-                    'show_on_cb' => 'callback_cmb2_show_on_person'
+                    'show_on_cb' => 'callback_cmb2_show_on_contact'
                 ),
 
             )
@@ -523,11 +523,11 @@ class Contact extends Metaboxes
 
 
 
-        // Meta-Box um eine Contactperson oder -Einrichtung zuzuordnen
+        // Meta-Box um eine Contactcontact oder -Einrichtung zuzuordnen
         $meta_boxes['rrze_contact_connection'] = array(
             'id' => 'rrze_contact_connection',
             'title' => __('Ansprechpartner / verknüpfte Contacte', 'rrze-contact'),
-            'object_types' => array('person'), // post type
+            'object_types' => array('contact'), // post type
             'context' => 'normal',
             'priority' => 'default',
             'fields' => array(
@@ -576,16 +576,16 @@ class Contact extends Metaboxes
     }
 
     //Anzeigen des Feldes nur bei Personen
-    function callback_cmb2_show_on_person($field)
+    function callback_cmb2_show_on_contact($field)
     {
         $default_rrze_contact_typ = Data::default_rrze_contact_typ();
         $typ = get_post_meta($field->object_id, 'rrze_contact_typ', true);
         if ($typ == 'pseudo' || $typ == 'einrichtung' || $default_rrze_contact_typ == 'einrichtung') {
-            $person = false;
+            $contact = false;
         } else {
-            $person = true;
+            $contact = true;
         }
-        return $person;
+        return $contact;
     }
 
     //Anzeigen des Feldes nur bei Einrichtungen

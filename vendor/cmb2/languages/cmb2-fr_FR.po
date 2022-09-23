@@ -250,7 +250,7 @@ msgstr ""
 
 #. Description of the plugin/theme
 msgid "CMB2 will create metaboxes and forms with custom fields that will blow your mind."
-msgstr "CMB2 créera des boites à méta et des formulaires avec des champs personnalisés à vous couper le souffle."
+msgstr "CMB2 créera des boites à méta et des formulaires avec des champs contactnalisés à vous couper le souffle."
 
 #. Plugin Name of the plugin/theme
 msgid "CMB2"

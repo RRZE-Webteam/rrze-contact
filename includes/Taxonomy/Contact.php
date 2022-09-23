@@ -160,7 +160,7 @@ class Contact extends Taxonomy
 
         switch ($column) {
             case 'thumb':
-                $thumb = Data::create_kontakt_image($post_id, 'contact-thumb-v3', '', true, false, '', false);
+                $thumb = Data::create_contact_image($post_id, 'contact-thumb-v3', '', true, false, '', false);
                 echo $thumb;
                 break;
 

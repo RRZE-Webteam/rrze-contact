@@ -110,7 +110,7 @@ function getFields()
     }
 
     $archive_options =	[
-		'person' => __('Automatisch generieren', 'rrze-contact') . ' ('  . site_url( '/person/') . ')',
+		'contact' => __('Automatisch generieren', 'rrze-contact') . ' ('  . site_url( '/contact/') . ')',
 		'0' => __('Keine Übersichtsseite anzeigen', 'rrze-contact'),
 	];
 
@@ -282,10 +282,10 @@ function getFields()
             [
                 'name' => 'view_some_position',
                 'label' => __('Position Social Media Icons', 'rrze-contact'),
-                'default' => 'nach-kontakt',
+                'default' => 'nach-contact',
                 'type' => 'Select',
                 'options' => [
-                    'nach-kontakt' => __('Nach den Kontaktdaten', 'rrze-contact'),
+                    'nach-contact' => __('Nach den Kontaktdaten', 'rrze-contact'),
                     'nach-name' => __('Direkt nach dem Namen', 'rrze-contact'),
                 ],
             ],
@@ -299,7 +299,7 @@ function getFields()
                 'type' => 'text',
             ],
             [
-                'name' => 'view_kontakt_linktext',
+                'name' => 'view_contact_linktext',
                 'default' => __('Mehr', 'rrze-contact') . ' ›',
                 'placeholder' => __('Mehr', 'rrze-contact') . ' ›',
                 'label' => __('Linktext für Kontaktseite', 'rrze-contact'),
@@ -307,7 +307,7 @@ function getFields()
                 'type' => 'text',
             ],
             [
-                'name' => 'view_kontakt_linkname',
+                'name' => 'view_contact_linkname',
                 'label' => __('Link auf Kontaktname', 'rrze-contact'),
                 'default' => 'use-link',
                 'type' => 'Select',
@@ -319,7 +319,7 @@ function getFields()
                 ],
             ],
             [
-                'name' => 'view_kontakt_page_imagecaption',
+                'name' => 'view_contact_page_imagecaption',
                 'label' => __('Bildbeschriftung Kontaktseite', 'rrze-contact'),
                 'desc' => __('Zeigt auf der Kontaktvisitenkarte und bei Nutzung des Shortcodes mit dem Attribut <code>format="page"</code> die Bildunterschriften eines Kontaktbildes an.', 'rrze-contact'),
                 'type' => 'checkbox',
@@ -327,10 +327,10 @@ function getFields()
                 'default' => true,
             ],
             [
-                'name' => 'view_kontakt_page_imagesize',
+                'name' => 'view_contact_page_imagesize',
                 'label' => __('Bildformat Kontaktseite', 'rrze-contact'),
                 'desc' => __('Setzt auf der Kontaktseite oder bei Nutzung des Shortcodes mit dem Attribut <code>format="page"</code> das zu verwendete Bildformat.', 'rrze-contact'),
-                'default' => 'person-thumb-page-v3',
+                'default' => 'contact-thumb-page-v3',
                 'type' => 'Selectimagesizes',
                 'options' => $imagesizes,
             ],
@@ -368,7 +368,7 @@ function getFields()
                 'default' => false,
             ],
             [
-                'name' => 'backend_view_metabox_kontaktlist',
+                'name' => 'backend_view_metabox_contactlist',
                 'label' => __('Metabox Kontakte', 'rrze-contact'),
                 'desc' => __('Zeigt in der Bearbeitung von Seiten und Beiträgen eine Kontakt-Box an, aus der man bequem die Liste der Kontakte ablesen kann.', 'rrze-contact'),
                 'type' => 'checkbox',
@@ -378,7 +378,7 @@ function getFields()
                 'name' => 'has_archive_page',
                 'label' => __('Kontakt-Übersichtsseite', 'rrze-contact'),
                 'desc' => __('Die automatisch generierte Übersichtsseite zeigt alle Kontakte an und ist stets aktuell.', 'rrze-contact'),
-                'default' => 'person',
+                'default' => 'contact',
                 'type' => 'Select',
                 'options' => $archive_options,
             ],
@@ -770,7 +770,7 @@ function getShortcodeSettings()
         'location' => [
             'block' => [
                 'blocktype' => 'rrze-contact/standort',
-                'blockname' => 'standort',
+                'blockname' => 'location',
                 'title' => 'RRZE Standort',
                 'category' => 'widgets',
                 'icon' => 'location-alt',
@@ -858,14 +858,14 @@ function get_all_image_sizes()
     $image_sizes = array();
 
     $ownsizes = getConstants();
-    if (isset($ownsizes['images']['default_person_thumb_width'])) {
-        $image_sizes['person-thumb-v3']['width'] = $ownsizes['images']['default_person_thumb_width'];
-        $image_sizes['person-thumb-v3']['height'] = $ownsizes['images']['default_person_thumb_height'];
+    if (isset($ownsizes['images']['default_contact_thumb_width'])) {
+        $image_sizes['contact-thumb-v3']['width'] = $ownsizes['images']['default_contact_thumb_width'];
+        $image_sizes['contact-thumb-v3']['height'] = $ownsizes['images']['default_contact_thumb_height'];
 
     }
-    if (isset($ownsizes['images']['default_person_thumb_page_width'])) {
-        $image_sizes['person-thumb-page-v3']['width'] = $ownsizes['images']['default_person_thumb_page_width'];
-        $image_sizes['person-thumb-page-v3']['height'] = $ownsizes['images']['default_person_thumb_page_height'];
+    if (isset($ownsizes['images']['default_contact_thumb_page_width'])) {
+        $image_sizes['contact-thumb-page-v3']['width'] = $ownsizes['images']['default_contact_thumb_page_width'];
+        $image_sizes['contact-thumb-page-v3']['height'] = $ownsizes['images']['default_contact_thumb_page_height'];
     }
 
     return $image_sizes;

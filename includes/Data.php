@@ -6,7 +6,7 @@ use RRZE\Lib\UnivIS\Data as UnivIS_Data;
 use RRZE\Lib\DIP\Data as DIP_Data;
 use RRZE\Lib\UnivIS\Config;
 use RRZE\Lib\UnivIS\Sanitizer;
-use function FRRZE\Contact\Config\getSocialMediaList;
+use function RRZE\Contact\Config\getSocialMediaList;
 
 defined('ABSPATH') || exit;
 
@@ -47,36 +47,36 @@ class Data
 
     // Get full list of all contacts as array
     // $filtertype defaults empty = all contacts
-    // $filtertype values: realperson, realmale, realfemale, einrichtung
+    // $filtertype values: realcontact, realmale, realfemale, einrichtung
 
     public static function get_contact_list($filtertype = '')
     {
         $args = array(
-            'post_type' => 'person',
+            'post_type' => 'contact',
             'numberposts' => -1,
             'meta_key' => 'rrze_contact_typ',
         );
-        $personlist = get_posts($args);
+        $contactlist = get_posts($args);
 
-        if ($personlist) {
-            foreach ($personlist as $key => $value) {
-                $personlist[$key] = (array) $personlist[$key];
-                $name = $personlist[$key]['post_title'];
+        if ($contactlist) {
+            foreach ($contactlist as $key => $value) {
+                $contactlist[$key] = (array) $contactlist[$key];
+                $name = $contactlist[$key]['post_title'];
 
-                $thistype = get_post_meta($personlist[$key]['ID'], 'rrze_contact_typ', true);
+                $thistype = get_post_meta($contactlist[$key]['ID'], 'rrze_contact_typ', true);
                 if (!empty($filtertype)) {
                     if ($thistype != $filtertype) {
                         continue;
                     }
                 }
                 switch ($thistype) {
-                    case 'realperson':
+                    case 'realcontact':
                     case 'realmale':
                     case 'realfemale':
-                        if (get_post_meta($personlist[$key]['ID'], 'rrze_contact_familyName', true)) {
-                            $lastname = get_post_meta($personlist[$key]['ID'], 'rrze_contact_familyName', true);
-                            if (get_post_meta($personlist[$key]['ID'], 'rrze_contact_givenName', true)) {
-                                $name = $lastname . ', ' . get_post_meta($personlist[$key]['ID'], 'rrze_contact_givenName', true);
+                        if (get_post_meta($contactlist[$key]['ID'], 'rrze_contact_familyName', true)) {
+                            $lastname = get_post_meta($contactlist[$key]['ID'], 'rrze_contact_familyName', true);
+                            if (get_post_meta($contactlist[$key]['ID'], 'rrze_contact_givenName', true)) {
+                                $name = $lastname . ', ' . get_post_meta($contactlist[$key]['ID'], 'rrze_contact_givenName', true);
                             } elseif (ltrim(strpos($name, $lastname))) {
                                 $name = $lastname . ', ' . ltrim(str_replace($lastname, '', $name));
                             } else {
@@ -93,7 +93,7 @@ class Data
                     default:
                         break;
                 }
-                $temp[$personlist[$key]['ID']] = $name;
+                $temp[$contactlist[$key]['ID']] = $name;
             }
             natcasesort($temp);
 
@@ -108,25 +108,25 @@ class Data
     public static function get_contactdata($connection = 0)
     {
         $args = array(
-            'post_type' => 'person',
+            'post_type' => 'contact',
             'numberposts' => -1,
             'meta_key' => 'rrze_contact_typ'
         );
 
-        $personlist = get_posts($args);
+        $contactlist = get_posts($args);
 
-        if ($personlist) {
-            foreach ($personlist as $key => $value) {
-                $personlist[$key] = (array) $personlist[$key];
-                $name = $personlist[$key]['post_title'];
-                switch (get_post_meta($personlist[$key]['ID'], 'rrze_contact_typ', true)) {
-                    case 'realperson':
+        if ($contactlist) {
+            foreach ($contactlist as $key => $value) {
+                $contactlist[$key] = (array) $contactlist[$key];
+                $name = $contactlist[$key]['post_title'];
+                switch (get_post_meta($contactlist[$key]['ID'], 'rrze_contact_typ', true)) {
+                    case 'realcontact':
                     case 'realmale':
                     case 'realfemale':
-                        if (get_post_meta($personlist[$key]['ID'], 'rrze_contact_familyName', true)) {
-                            $lastname = get_post_meta($personlist[$key]['ID'], 'rrze_contact_familyName', true);
-                            if (get_post_meta($personlist[$key]['ID'], 'rrze_contact_givenName', true)) {
-                                $name = $lastname . ', ' . get_post_meta($personlist[$key]['ID'], 'rrze_contact_givenName', true);
+                        if (get_post_meta($contactlist[$key]['ID'], 'rrze_contact_familyName', true)) {
+                            $lastname = get_post_meta($contactlist[$key]['ID'], 'rrze_contact_familyName', true);
+                            if (get_post_meta($contactlist[$key]['ID'], 'rrze_contact_givenName', true)) {
+                                $name = $lastname . ', ' . get_post_meta($contactlist[$key]['ID'], 'rrze_contact_givenName', true);
                             } elseif (ltrim(strpos($name, $lastname))) {
                                 $name = $lastname . ', ' . ltrim(str_replace($lastname, '', $name));
                             } else {
@@ -143,7 +143,7 @@ class Data
                     default:
                         break;
                 }
-                $temp[$personlist[$key]['ID']] = $name;
+                $temp[$contactlist[$key]['ID']] = $name;
             }
             natcasesort($temp);
 
@@ -165,7 +165,7 @@ class Data
     public static function get_standortdata()
     {
         $args = array(
-            'post_type' => 'standort',
+            'post_type' => 'location',
             'numberposts' => -1
         );
 
@@ -188,7 +188,7 @@ class Data
         if (isset($_GET["rrze_contact_typ"]) && $_GET["rrze_contact_typ"] == 'einrichtung') {
             $default_rrze_contact_typ = 'einrichtung';
         } else {
-            $default_rrze_contact_typ = 'realperson';
+            $default_rrze_contact_typ = 'realcontact';
         }
         return $default_rrze_contact_typ;
     }
@@ -223,7 +223,7 @@ class Data
         }
         return $fields;
     }
-    public static function get_more_link($targeturl, $screenreadertext = '', $class = 'person-info-more', $withdiv = true, $linktitle = '')
+    public static function get_more_link($targeturl, $screenreadertext = '', $class = 'contact-info-more', $withdiv = true, $linktitle = '')
     {
         if ((!isset($targeturl)) || empty($targeturl)) {
             return;
@@ -251,8 +251,8 @@ class Data
             $res .= ' title="' . esc_attr($linktitle) . '"';
         }
         $res .= '>';
-        if ((isset($viewopts['view_kontakt_linktext'])) && (!empty($viewopts['view_kontakt_linktext']))) {
-            $res .= esc_html($viewopts['view_kontakt_linktext']);
+        if ((isset($viewopts['view_contact_linktext'])) && (!empty($viewopts['view_contact_linktext']))) {
+            $res .= esc_html($viewopts['view_contact_linktext']);
         } else {
             $res .= __('Profil aufrufen', 'rrze-contact');
         }
@@ -294,7 +294,7 @@ class Data
     public static function get_standort_defaults($id = 0)
     {
         $post = get_post($id);
-        if (!is_null($post) && $post->post_type === 'person' && get_post_meta($id, 'rrze_contact_standort_id', true)) {
+        if (!is_null($post) && $post->post_type === 'contact' && get_post_meta($id, 'rrze_contact_standort_id', true)) {
             $standort_id = get_post_meta($id, 'rrze_contact_standort_id', true);
             $standort_default = self::get_fields_standort($id, $standort_id, 1);
             return $standort_default;
@@ -304,22 +304,22 @@ class Data
     }
 
     // Sortierung eines Arrays mit Objekten (z.B. bei einer Kategorie) alphabetisch nach Titel oder Nachname, je nach Typ
-    public static function sort_person_posts($personlist, $sorttype = 'name', $order = 'asc')
+    public static function sort_contact_posts($contactlist, $sorttype = 'name', $order = 'asc')
     {
-        if (is_array($personlist)) {
+        if (is_array($contactlist)) {
             $temp = array();
-            foreach ($personlist as $key => $value) {
+            foreach ($contactlist as $key => $value) {
                 if (is_int($value)) {
                     // value ist Post-ID
                     $id = $value;
                 } else {
-                    $id = $personlist[$key]['ID'];
+                    $id = $contactlist[$key]['ID'];
                 }
-                $fields = self::get_kontakt_data($id);
+                $fields = self::get_contact_data($id);
 
                 // Bei Personen Prüfung, ob Nachname im Feld eingetragen ist (ggf. aus UnivIS), wenn nicht letztes Wort von Titel als Nachname angenommen
                 switch ($fields['typ']) {
-                    case 'realperson':
+                    case 'realcontact':
                     case 'realmale':
                     case 'realfemale':
 
@@ -328,15 +328,15 @@ class Data
                         } elseif (($sorttype == 'familyName') || ($sorttype == 'nachname') || ($sorttype == 'name')) {
                             $sortname = $fields['familyName'] . " - " . $fields['givenName'];
                         } elseif ($sorttype == 'title') {
-                            $sortname =  $fields['kontakt_title'];
+                            $sortname =  $fields['contact_title'];
                         } elseif ($sorttype == 'sortierfeld') {
                             if (!empty($fields['alternateName'])) {
                                 $sortname = $fields['alternateName'];
                             } else {
-                                $sortname = "Z " . $fields['kontakt_title'];
+                                $sortname = "Z " . $fields['contact_title'];
                             }
                         } else {
-                            $sortname =  $fields['kontakt_title'];
+                            $sortname =  $fields['contact_title'];
                         }
 
                         break;
@@ -345,16 +345,16 @@ class Data
                             if (!empty($fields['alternateName'])) {
                                 $sortname = $fields['alternateName'];
                             } else {
-                                $sortname = "Z " . $fields['kontakt_title'];
+                                $sortname = "Z " . $fields['contact_title'];
                             }
                         } else {
-                            $sortname =  $fields['kontakt_title'];
+                            $sortname =  $fields['contact_title'];
                         }
 
                         break;
                 }
                 if (empty($sortname)) {
-                    $sortname = $fields['kontakt_title'];
+                    $sortname = $fields['contact_title'];
                 }
 
                 $temp[$id] = strtolower($sortname);
@@ -374,15 +374,15 @@ class Data
     }
 
 
-    public static function create_kontakt_image($id = 0, $size = 'person-thumb-page-v3', $class = '', $defaultimage = false, $showlink = false, $linkttitle = '', $showcaption = true, $linktarget = '')
+    public static function create_contact_image($id = 0, $size = 'contact-thumb-page-v3', $class = '', $defaultimage = false, $showlink = false, $linkttitle = '', $showcaption = true, $linktarget = '')
     {
         if ($id == 0) {
             return;
         }
         $res = '';
         $imagedata = array();
-        $fields = self::get_kontakt_data($id);
-        $alttext = esc_attr($fields['kontakt_title']);
+        $fields = self::get_contact_data($id);
+        $alttext = esc_attr($fields['contact_title']);
         $targetlink = '';
 
         $imagedata['alt'] = $alttext;
@@ -468,20 +468,20 @@ class Data
         } elseif ((isset($data['url'])) && (!empty(esc_url($data['url'])))) {
             $url = $data['url'];
         }
-        if (isset($args['view_kontakt_linkname'])) {
-            if (!empty($args['view_kontakt_linkname'])) {
+        if (isset($args['view_contact_linkname'])) {
+            if (!empty($args['view_contact_linkname'])) {
 
-                if ($args['view_kontakt_linkname'] == 'force-nolink') {
+                if ($args['view_contact_linkname'] == 'force-nolink') {
                     $url = '';
-                } elseif ($args['view_kontakt_linkname'] == 'url') {
+                } elseif ($args['view_contact_linkname'] == 'url') {
                     if ((isset($data['url'])) && (!empty(esc_url($data['url'])))) {
                         $url = $data['url'];
                     }
-                } elseif ($args['view_kontakt_linkname'] == 'permalink') {
+                } elseif ($args['view_contact_linkname'] == 'permalink') {
                     if ((isset($data['permalink'])) && (!empty(esc_url($data['permalink'])))) {
                         $url = $data['permalink'];
                     }
-                } elseif ($args['view_kontakt_linkname'] == 'use-link') {
+                } elseif ($args['view_contact_linkname'] == 'use-link') {
                     if ((isset($data['link'])) && (!empty(esc_url($data['link'])))) {
                         $url = $data['link'];
                     }
@@ -497,7 +497,7 @@ class Data
             return;
         }
 
-        $fields = self::get_kontakt_data($id);
+        $fields = self::get_contact_data($id);
         $viewopts = self::get_viewsettings();
 
         $content = '';
@@ -545,10 +545,10 @@ class Data
         $content .= '<div class="row">';
 
         if (isset($display['bild']) && (!empty($display['bild']))) {
-            $content .= Data::create_kontakt_image($id, 'person-thumb-v3', "person-thumb", true, true, '', false);
-            $content .= '<div class="person-default-thumb">';
+            $content .= Data::create_contact_image($id, 'contact-thumb-v3', "contact-thumb", true, true, '', false);
+            $content .= '<div class="contact-default-thumb">';
         } else {
-            $content .= '<div class="person-default">';
+            $content .= '<div class="contact-default">';
         }
         if ($arguments['hstart']) {
             $hstart = intval($arguments['hstart']);
@@ -579,7 +579,7 @@ class Data
         }
 
         if (isset($data['jobTitle']) && (!empty($data['jobTitle']))) {
-            $datacontent .= '<span class="person-info-position" itemprop="jobTitle">' . $data['jobTitle'] . '</span><br>';
+            $datacontent .= '<span class="contact-info-position" itemprop="jobTitle">' . $data['jobTitle'] . '</span><br>';
         }
         $orgadata = array();
         if (isset($data['worksFor']) && (!empty($data['worksFor']))) {
@@ -610,7 +610,7 @@ class Data
             $datacontent .= self::rrze_contact_connection($data['connection_text'], $data['connection_options'], $data['connections'], $hstart);
         }
         if (!empty($datacontent)) {
-            $content .= '<div class="person-info">';
+            $content .= '<div class="contact-info">';
             $content .= $datacontent;
             $content .= '</div>';
         }
@@ -627,7 +627,7 @@ class Data
         }
 
         if (!empty($data['description']) && isset($display['description']) && (!empty($display['description']))) {
-            $morecontent .= '<div class="person-info-description" itemprop="description"><p>' . $data['description'] . '</p></div>' . "\n";
+            $morecontent .= '<div class="contact-info-description" itemprop="description"><p>' . $data['description'] . '</p></div>' . "\n";
         }
 
         if (isset($display['link']) && (!empty($display['link']))) {
@@ -637,7 +637,7 @@ class Data
         }
 
         if (!empty($morecontent)) {
-            $content .= '</div><div class="person-default-more">';   // ende div class compactindex
+            $content .= '</div><div class="contact-default-more">';   // ende div class compactindex
             $content .= $morecontent;
         }
 
@@ -650,7 +650,7 @@ class Data
 
     public static function rrze_contact_page($id, $display = array(), $arguments = array(), $is_shortcode = false)
     {
-        $fields = self::get_kontakt_data($id);
+        $fields = self::get_contact_data($id);
 
 
         Main::enqueueForeignThemes();
@@ -691,12 +691,12 @@ class Data
         }
 
         $viewcaption = true;
-        if (isset($viewopts['view_kontakt_page_imagecaption'])) {
-            $viewcaption = $viewopts['view_kontakt_page_imagecaption'];
+        if (isset($viewopts['view_contact_page_imagecaption'])) {
+            $viewcaption = $viewopts['view_contact_page_imagecaption'];
         }
-        $use_size = 'person-thumb-page-v3';
-        if (isset($viewopts['view_kontakt_page_imagesize'])) {
-            $use_size = $viewopts['view_kontakt_page_imagesize'];
+        $use_size = 'contact-thumb-page-v3';
+        if (isset($viewopts['view_contact_page_imagesize'])) {
+            $use_size = $viewopts['view_contact_page_imagesize'];
         }
         if ((isset($viewopts['view_raum_prefix'])) && (!empty(trim($viewopts['view_raum_prefix'])))
             && (isset($data['workLocation']) && (!empty($data['workLocation'])))
@@ -712,17 +712,17 @@ class Data
         $data['morelink'] = '';
         $content .= Schema::create_Name($data, 'name', '', 'h' . $hstart, false, $viewopts);
         // }
-        $content .= '<div class="person-meta">';
-        $content .= Data::create_kontakt_image($id, $use_size, "person-image alignright $use_size", false, false, '', $viewcaption);
+        $content .= '<div class="contact-meta">';
+        $content .= Data::create_contact_image($id, $use_size, "contact-image alignright $use_size", false, false, '', $viewcaption);
 
-        $content .= '<div class="person-info">';
+        $content .= '<div class="contact-info">';
 
         if (isset($viewopts['view_some_position']) && $viewopts['view_some_position'] == 'nach-name') {
             $content .= Schema::create_SocialMedialist($data);
         }
 
         if (isset($data['jobTitle']) && (!empty($data['jobTitle']))) {
-            $content .= '<span class="person-info-position" itemprop="jobTitle">' . $data['jobTitle'] . '</span><br>';
+            $content .= '<span class="contact-info-position" itemprop="jobTitle">' . $data['jobTitle'] . '</span><br>';
         }
         $orgadata = array();
         if (isset($data['worksFor']) && (!empty($data['worksFor']))) {
@@ -764,7 +764,7 @@ class Data
         $postContent = $data['content'];
 
         if ($postContent) {
-            $postContent = self::stripShortcode(['kontakt', 'person', 'kontaktliste', 'persons'], $postContent);
+            $postContent = self::stripShortcode(['contact', 'contact', 'contactliste', 'contacts'], $postContent);
             $content .= '<div class="desc" itemprop="description">' . PHP_EOL;
             $content .= apply_filters('the_content', $postContent);
             $content .= '</div>';
@@ -791,7 +791,7 @@ class Data
         if ($id == 0) {
             return;
         }
-        $fields = self::get_kontakt_data($id);
+        $fields = self::get_contact_data($id);
         $viewopts = self::get_viewsettings();
 
         $content = '';
@@ -806,7 +806,7 @@ class Data
         ) {
             $data['workLocation'] = $viewopts['view_raum_prefix'] . ' ' . $data['workLocation'];
         }
-        $content .= '<tr class="person-info" itemscope itemtype="http://schema.org/Person">';
+        $content .= '<tr class="contact-info" itemscope itemtype="http://schema.org/Person">';
         $content .= '<td>' . Schema::create_Name($data, 'name', '', 'a', false, $viewopts) . '</td>';
         $content .=  Schema::create_contactpointlist($data, '', '', '', 'td', $viewopts, true, false);
 
@@ -835,7 +835,7 @@ class Data
         if ($id == 0) {
             return;
         }
-        $fields = self::get_kontakt_data($id);
+        $fields = self::get_contact_data($id);
         $viewopts = self::get_viewsettings();
 
         $content = '';
@@ -867,9 +867,9 @@ class Data
                 }
             }
             if ($thisurl) {
-                $content .= Data::create_kontakt_image($id, 'medium', "person-thumb", true, true, '', false, $thisurl);
+                $content .= Data::create_contact_image($id, 'medium', "contact-thumb", true, true, '', false, $thisurl);
             } else {
-                $content .= Data::create_kontakt_image($id, 'medium', "person-thumb", true, false, '', false);
+                $content .= Data::create_contact_image($id, 'medium', "contact-thumb", true, false, '', false);
             }
         }
 
@@ -891,7 +891,7 @@ class Data
 
 
         if (isset($data['jobTitle']) && (!empty($data['jobTitle']))) {
-            $content .= '<span class="person-info-position" itemprop="jobTitle">' . $data['jobTitle'] . '</span><br>';
+            $content .= '<span class="contact-info-position" itemprop="jobTitle">' . $data['jobTitle'] . '</span><br>';
         }
 
         if ((isset($arguments['class'])) && (!empty($arguments['class'])) && (preg_match("/shrink\-contact/i", $arguments['class']))) {
@@ -915,7 +915,7 @@ class Data
         if ($id == 0) {
             return;
         }
-        $fields = self::get_kontakt_data($id);
+        $fields = self::get_contact_data($id);
         $viewopts = self::get_viewsettings();
 
 
@@ -982,7 +982,7 @@ class Data
         if ($id == 0) {
             return;
         }
-        $fields = self::get_kontakt_data($id);
+        $fields = self::get_contact_data($id);
         $viewopts = self::get_viewsettings();
 
 
@@ -1009,7 +1009,7 @@ class Data
 
 
 
-        $class = 'rrze-contact person sidebar';
+        $class = 'rrze-contact contact sidebar';
         if (isset($viewopts['view_thumb_size'])) {
             if ((isset($arguments['class'])) && (!empty($arguments['class'])) && (preg_match("/thumb\-size\-/i", $arguments['class']))) {
                 // thumb-size ist in der Class bereits enthalten, daher ignoriere ich die globale Setting einstweile
@@ -1046,22 +1046,22 @@ class Data
         $content .= '<div class="row">' . "\n";
 
         if ((isset($display['bild'])) && (!empty($display['bild'])) && (has_post_thumbnail($id))) {
-            $content .= Data::create_kontakt_image($id, 'person-thumb-v3', "person-thumb", false, false, '', false);
+            $content .= Data::create_contact_image($id, 'contact-thumb-v3', "contact-thumb", false, false, '', false);
         }
 
-        $content .= '<div class="person-sidebar">' . "\n";
+        $content .= '<div class="contact-sidebar">' . "\n";
         $content .= '<h' . $hstart . '>';
         $content .= $fullname;
         $content .= '</h' . $hstart . '>' . "\n";
 
-        $content .= '<div class="person-info">';
+        $content .= '<div class="contact-info">';
         if (isset($viewopts['view_some_position']) && $viewopts['view_some_position'] == 'nach-name') {
             $content .= Schema::create_SocialMedialist($data);
         }
 
 
         if (isset($data['jobTitle']) && (!empty($data['jobTitle']))) {
-            $content .= '<span class="person-info-position" itemprop="jobTitle">' . $data['jobTitle'] . '</span><br>';
+            $content .= '<span class="contact-info-position" itemprop="jobTitle">' . $data['jobTitle'] . '</span><br>';
         }
         $orgadata = array();
         if (isset($data['worksFor']) && (!empty($data['worksFor']))) {
@@ -1097,7 +1097,7 @@ class Data
 
 
         if (!empty($data['description']) && isset($display['description'])) {
-            $content .= '<div class="person-info-description"><span class="screen-reader-text">' . __('Beschreibung', 'rrze-contact') . ': </span><span itemprop="description">' . $data['description'] . '</span></div>' . "\n";
+            $content .= '<div class="contact-info-description"><span class="screen-reader-text">' . __('Beschreibung', 'rrze-contact') . ': </span><span itemprop="description">' . $data['description'] . '</span></div>' . "\n";
         }
 
         if ((!empty($data['connection_text']) || !empty($data['connection_options']) || !empty($data['connections'])) && isset($display['ansprechpartner']) && $display['ansprechpartner'] == true) {
@@ -1229,7 +1229,7 @@ class Data
         /*
 	 * Felder, die nicht gelöscht werden sollen, wieder einfügen
 	 */
-        $dontfilter = "content, morelink, permalink, connection_only, hoursAvailable_group, kontakt_title";
+        $dontfilter = "content, morelink, permalink, connection_only, hoursAvailable_group, contact_title";
         $stay = explode(',', $dontfilter);
         foreach ($stay as $value) {
             $key = esc_attr(trim($value));
@@ -1341,7 +1341,7 @@ class Data
 
 
         if (isset($showfields['bild']) && ($showfields['bild']) && has_post_thumbnail($id)) {
-            $content .= Data::create_kontakt_image($id, 'full', "standort-image", false, false, '');
+            $content .= Data::create_contact_image($id, 'full', "standort-image", false, false, '');
         }
 
         if (isset($showfields['content']) && ($showfields['content'])) {
@@ -1407,7 +1407,7 @@ class Data
 
 
         if (isset($showfields['bild']) && ($showfields['bild']) && has_post_thumbnail($id)) {
-            $content .= Data::create_kontakt_image($id, 'full', "standort-image", false, false, '');
+            $content .= Data::create_contact_image($id, 'full', "standort-image", false, false, '');
         }
 
         if (isset($showfields['content']) && ($showfields['content'])) {
@@ -1425,12 +1425,12 @@ class Data
     public static function univis_defaults($id)
     {
         $post = get_post($id);
-        if (!is_null($post) && $post->post_type === 'person' && get_post_meta($id, 'rrze_contact_univis_id', true)) {
+        if (!is_null($post) && $post->post_type === 'contact' && get_post_meta($id, 'rrze_contact_univis_id', true)) {
             $univis_id = get_post_meta($id, 'rrze_contact_univis_id', true);
             $univis_default = self::get_fields($id, $univis_id, 1);
             return $univis_default;
         } else {
-            $univis_default = Config::get_keys_fields('persons');
+            $univis_default = Config::get_keys_fields('contacts');
             return $univis_default;
         }
     }
@@ -1457,7 +1457,7 @@ class Data
     // Zentraler Wrapper für self::get_fields(), bei dem das Ergebnis aus den
     // Datenfelder zwischengespeichert wird, damit weitere Datenbankanfragen unterbleiben
     // können
-    public static function get_kontakt_data($id)
+    public static function get_contact_data($id)
     {
         if (isset($id)) {
             $cacheddata = self::get_data_cache();
@@ -1478,7 +1478,7 @@ class Data
                 $data['post_excerpt'] = $post_excerpt;
             }
             $data['permalink'] = get_permalink($id);
-            $data['kontakt_title'] = get_the_title($id);
+            $data['contact_title'] = get_the_title($id);
 
             if ((isset($data)) && (!empty($data))) {
                 return self::set_data_cache($id, $data);
@@ -1490,13 +1490,13 @@ class Data
     //gibt die Werte der Person an, Inhalte abhängig von UnivIS, 
     //Übergabewerte: ID der Person, UnivIS-ID der Person, 
     //Default-Wert 1 für Ausgabe der hinterlegten Werte im Personeneingabeformular, 
-    //$ignore_connection=1 wenn die verknüpften Kontakte einer Person ignoriert werden sollen (z.B. wenn die Person selbst schon eine verknüpfte Kontaktperson ist)
+    //$ignore_connection=1 wenn die verknüpften Kontakte einer Person ignoriert werden sollen (z.B. wenn die Person selbst schon eine verknüpfte Kontaktcontact ist)
     public static function get_fields($id, $univis_id, $defaults, $ignore_connection = 0, $setfields = false)
     {
         $univis_sync = 0;
-        $person = array();
+        $contact = array();
         if ($univis_id) {
-            $person = UnivIS_Data::get_univisdata($univis_id);
+            $contact = UnivIS_Data::get_univisdata($univis_id);
             $univis_sync = 1;
         }
         $fields = array();
@@ -1568,7 +1568,7 @@ class Data
         /*
 	 * Felder, die nur aus FAU Person kommen und nicht aus UnivIS:
 	 */
-        $fields_fauperson = array(
+        $fields_faucontact = array(
             'contactPoint' => '',
             'typ' => '',
             'alternateName' => '',
@@ -1609,16 +1609,16 @@ class Data
             'connection_link' => 'link',
         );
         foreach ($fields_univis as $key => $value) {
-            if ($univis_sync && array_key_exists($value, $person)) {
+            if ($univis_sync && array_key_exists($value, $contact)) {
                 if ($value == 'orgname') {
                     $language = get_locale();
-                    if (strpos($language, 'en_') === 0 && array_key_exists('orgname_en', $person)) {
+                    if (strpos($language, 'en_') === 0 && array_key_exists('orgname_en', $contact)) {
                         $value = 'orgname_en';
                     } else {
                         $value = 'orgname';
                     }
                 }
-                $value = UnivIS_Data::sync_univis($id, $person, $key, $value, $defaults);
+                $value = UnivIS_Data::sync_univis($id, $contact, $key, $value, $defaults);
             } else {
                 if ($defaults) {
                     $value = '<p class="cmb2-metabox-description">' . __('In UnivIS ist hierfür kein Wert hinterlegt.', 'rrze-contact') . '</p>';
@@ -1632,10 +1632,10 @@ class Data
             $fields[$key] = $value;
         }
         foreach ($fields_univis_location as $key => $value) {
-            if ($univis_sync && array_key_exists('locations', $person) && array_key_exists('location', $person['locations'][0])) {
-                $person_location = $person['locations'][0]['location'][0];
+            if ($univis_sync && array_key_exists('locations', $contact) && array_key_exists('location', $contact['locations'][0])) {
+                $contact_location = $contact['locations'][0]['location'][0];
                 if (($key == 'telephone' || $key == 'faxNumber' || $key == 'mobilePhone') && !$defaults) {
-                    $phone_number = UnivIS_Data::sync_univis($id, $person_location, $key, $value, $defaults);
+                    $phone_number = UnivIS_Data::sync_univis($id, $contact_location, $key, $value, $defaults);
                     switch (get_post_meta($id, 'rrze_contact_telephone_select', true)) {
                         case 'erl':
                             $value = Sanitizer::correct_phone_number($phone_number, 'erl');
@@ -1648,7 +1648,7 @@ class Data
                             break;
                     }
                 } else {
-                    $value = UnivIS_Data::sync_univis($id, $person_location, $key, $value, $defaults);
+                    $value = UnivIS_Data::sync_univis($id, $contact_location, $key, $value, $defaults);
                 }
             } else {
                 if ($defaults) {
@@ -1680,17 +1680,17 @@ class Data
             // ist eine UnivIS-ID vorhanden?      
             switch ($univis_sync) {
                 case true:
-                    if (array_key_exists('officehours', $person) && array_key_exists('officehour', $person['officehours'][0])) { // sind in UnivIS überhaupt Sprechzeiten hinterlegt?
+                    if (array_key_exists('officehours', $contact) && array_key_exists('officehour', $contact['officehours'][0])) { // sind in UnivIS überhaupt Sprechzeiten hinterlegt?
                         if (get_post_meta($id, 'rrze_contact_univis_sync', true) || $defaults) { // ist der Haken zur Synchronisation da bzw. werden die UnivIS-Werte für das Backend abgefragt
-                            $person_officehours = $person['officehours'][0]['officehour'];
+                            $contact_officehours = $contact['officehours'][0]['officehour'];
                             $officehours = array();
-                            foreach ($person_officehours as $num => $num_val) {
-                                $repeat = isset($person_officehours[$num]['repeat']) ? $person_officehours[$num]['repeat'] : 0;
-                                $repeat_submode = isset($person_officehours[$num]['repeat_submode']) ? $person_officehours[$num]['repeat_submode'] : 0;
-                                $starttime = isset($person_officehours[$num]['starttime']) ? $person_officehours[$num]['starttime'] : 0;
-                                $endtime = isset($person_officehours[$num]['endtime']) ? $person_officehours[$num]['endtime'] : 0;
-                                $office = isset($person_officehours[$num]['office']) ? $person_officehours[$num]['office'] : 0;
-                                $comment = isset($person_officehours[$num]['comment']) ? $person_officehours[$num]['comment'] : 0;
+                            foreach ($contact_officehours as $num => $num_val) {
+                                $repeat = isset($contact_officehours[$num]['repeat']) ? $contact_officehours[$num]['repeat'] : 0;
+                                $repeat_submode = isset($contact_officehours[$num]['repeat_submode']) ? $contact_officehours[$num]['repeat_submode'] : 0;
+                                $starttime = isset($contact_officehours[$num]['starttime']) ? $contact_officehours[$num]['starttime'] : 0;
+                                $endtime = isset($contact_officehours[$num]['endtime']) ? $contact_officehours[$num]['endtime'] : 0;
+                                $office = isset($contact_officehours[$num]['office']) ? $contact_officehours[$num]['office'] : 0;
+                                $comment = isset($contact_officehours[$num]['comment']) ? $contact_officehours[$num]['comment'] : 0;
                                 $officehour = UnivIS_Data::officehours_repeat($repeat, $repeat_submode, $starttime, $endtime, $office, $comment);
                                 array_push($officehours, $officehour);
                             }
@@ -1706,16 +1706,16 @@ class Data
                         break;
                     }
                 default:  // keine UnivIS-ID da bzw. kein Haken bei Datenanzeige aus UnivIS => die Feldinhalte werden ausgegeben
-                    $person_officehours = get_post_meta($id, 'rrze_contact_hoursAvailable_group', true);
+                    $contact_officehours = get_post_meta($id, 'rrze_contact_hoursAvailable_group', true);
                     $officehours = array();
-                    if (!empty($person_officehours)) {
-                        foreach ($person_officehours as $num => $num_val) {
-                            $repeat = isset($person_officehours[$num]['repeat']) ? $person_officehours[$num]['repeat'] : 0;
-                            $repeat_submode = isset($person_officehours[$num]['repeat_submode']) ? $person_officehours[$num]['repeat_submode'] : 0;
-                            $starttime = isset($person_officehours[$num]['starttime']) ? $person_officehours[$num]['starttime'] : 0;
-                            $endtime = isset($person_officehours[$num]['endtime']) ? $person_officehours[$num]['endtime'] : 0;
-                            $office = isset($person_officehours[$num]['office']) ? $person_officehours[$num]['office'] : 0;
-                            $comment = isset($person_officehours[$num]['comment']) ? $person_officehours[$num]['comment'] : 0;
+                    if (!empty($contact_officehours)) {
+                        foreach ($contact_officehours as $num => $num_val) {
+                            $repeat = isset($contact_officehours[$num]['repeat']) ? $contact_officehours[$num]['repeat'] : 0;
+                            $repeat_submode = isset($contact_officehours[$num]['repeat_submode']) ? $contact_officehours[$num]['repeat_submode'] : 0;
+                            $starttime = isset($contact_officehours[$num]['starttime']) ? $contact_officehours[$num]['starttime'] : 0;
+                            $endtime = isset($contact_officehours[$num]['endtime']) ? $contact_officehours[$num]['endtime'] : 0;
+                            $office = isset($contact_officehours[$num]['office']) ? $contact_officehours[$num]['office'] : 0;
+                            $comment = isset($contact_officehours[$num]['comment']) ? $contact_officehours[$num]['comment'] : 0;
                             $officehour = UnivIS_Data::officehours_repeat($repeat, $repeat_submode, $starttime, $endtime, $office, $comment);
                             array_push($officehours, $officehour);
                         }
@@ -1726,20 +1726,20 @@ class Data
 
         foreach ($fields_univis_orgunits as $key => $value) {
             $language = get_locale();
-            if (strpos($language, 'en_') === 0 && array_key_exists('orgunit_ens', $person)) {
+            if (strpos($language, 'en_') === 0 && array_key_exists('orgunit_ens', $contact)) {
                 $orgunit = 'orgunit_en';
                 $orgunits = 'orgunit_ens';
             } else {
                 $orgunit = 'orgunit';
                 $orgunits = 'orgunits';
             }
-            if (array_key_exists($orgunits, $person)) {
-                $person_orgunits = $person[$orgunits][0][$orgunit];
-                $i = count($person_orgunits);
+            if (array_key_exists($orgunits, $contact)) {
+                $contact_orgunits = $contact[$orgunits][0][$orgunit];
+                $i = count($contact_orgunits);
                 if ($i > 1) {
-                    $i = count($person_orgunits) - 2;
+                    $i = count($contact_orgunits) - 2;
                 }
-                $value = UnivIS_Data::sync_univis($id, $person_orgunits, $key, $i, $defaults);
+                $value = UnivIS_Data::sync_univis($id, $contact_orgunits, $key, $i, $defaults);
             } else {
                 if ($defaults) {
                     $value = '<p class="cmb2-metabox-description">' . __('In UnivIS ist hierfür kein Wert hinterlegt.', 'rrze-contact') . '</p>';
@@ -1749,7 +1749,7 @@ class Data
             }
             $fields[$key] = $value;
         }
-        foreach ($fields_fauperson as $key => $value) {
+        foreach ($fields_faucontact as $key => $value) {
             $value = get_post_meta($id, 'rrze_contact_' . $key, true);
             $fields[$key] = $value;
         }
@@ -1765,7 +1765,7 @@ class Data
 
         foreach ($fields_exception as $key => $value) {
             if ($key == 'postalCode') {
-                if (get_post_meta($id, 'rrze_contact_univis_sync', true) && array_key_exists('locations', $person) && array_key_exists('location', $person['locations'][0]) && array_key_exists('ort', $person['locations'][0]['location'][0])) {
+                if (get_post_meta($id, 'rrze_contact_univis_sync', true) && array_key_exists('locations', $contact) && array_key_exists('location', $contact['locations'][0]) && array_key_exists('ort', $contact['locations'][0]['location'][0])) {
                     $value = '';
                 } else {
                     $value = get_post_meta($id, 'rrze_contact_' . $key, true);
