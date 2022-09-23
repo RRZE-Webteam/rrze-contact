@@ -93,6 +93,15 @@ class Contact extends Metaboxes
 
 
         // Meta-Box Contactinformation - rrze_contact_info
+        $text_url_options = [];
+        $myUrl = get_permalink($contact_id);
+        $text_url_options[$myUrl] = __('Automatically generated contact page', 'rrze-contact');
+
+        $pages = get_pages(); 
+        foreach($pages  as $page){
+            $text_url_options[$page->post_name] = ($page->post_parent != 0 ? '- ' : '') . $page->post_title;
+        }
+
         $meta_boxes['rrze_contact_info'] = array(
             'id' => 'rrze_contact_info',
             'title' => __('Contactinformationen', 'rrze-contact'),
@@ -273,13 +282,11 @@ class Contact extends Metaboxes
                 ),
                 array(
                     'name' => __('Name und "Mehr"-Link verlinken auf Seite ...', 'rrze-contact'),
-                    'desc' => __('Optionale URL-Angabe zu einer selbst gepflegten Seite für Details zum Contact. Wenn diese Angabe leer gelassen wird, wird zu der automatisch erstellten Contactseite verlinkt.', 'rrze-contact'),
-                    'type' => 'text_url',
+                    'desc' => __('Choose a page or the automatically generated page for contact details.', 'rrze-contact'),
+                    'type' => 'select',
                     'id' => $prefix . 'link',
-                    'attributes'  => array(
-                        'placeholder' => get_permalink($contact_id),
-                    ),
-                    //'after' => '<hr>' . __('Zum Anzeigen der Person verwenden Sie bitte die ID', 'rrze-contact') . ' ' . $helpuse,                
+                    'options' => $text_url_options,
+                    'default' => $myUrl
                 ),
             )
         );
