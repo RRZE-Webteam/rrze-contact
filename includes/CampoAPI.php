@@ -29,24 +29,28 @@ class CampoAPI
     }
 
 
-    private function getKey(){
+    private function getKey()
+    {
         $campoOptions = get_option('rrze-contact');
 
-        if (!empty($campoOptions['basic_ApiKey'])){
+        if (!empty($campoOptions['basic_ApiKey'])) {
             return $campoOptions['basic_ApiKey'];
-        }elseif(is_multisite()){
+        }
+        elseif (is_multisite()) {
             $settingsOptions = get_site_option('rrze_settings');
-            if (!empty($settingsOptions->plugins->campo_apiKey)){
+            if (!empty($settingsOptions->plugins->campo_apiKey)) {
                 return $settingsOptions->plugins->campo_apiKey;
             }
-        }else{
+        }
+        else {
             return '';
         }
     }
 
-    public function getResponse($sParam = NULL){
+    public function getResponse($sParam = NULL)
+    {
         $aRet = [
-            'valid' => FALSE, 
+            'valid' => FALSE,
             'content' => ''
         ];
 
@@ -54,20 +58,21 @@ class CampoAPI
             'headers' => [
                 'Content-Type' => 'application/json',
                 'X-Api-Key' => $this->getKey(),
-                ]
-            ];
+            ]
+        ];
 
         $apiResponse = wp_remote_get($this->api . $sParam, $aGetArgs);
 
-        if ($apiResponse['response']['code'] != 200){
+        if ($apiResponse['response']['code'] != 200) {
             $aRet = [
-                'valid' => FALSE, 
+                'valid' => FALSE,
                 'content' => $apiResponse['response']['code'] . ': ' . $apiResponse['response']['message']
-            ];    
-        }else{
+            ];
+        }
+        else {
             $content = json_decode($apiResponse['body'], true);
             $aRet = [
-                'valid' => TRUE, 
+                'valid' => TRUE,
                 'content' => $content['data']
             ];
         }
@@ -88,7 +93,8 @@ class CampoAPI
         if ($logType == 'DB') {
             global $wpdb;
             do_action('rrze.log.error', $pre . '$wpdb->last_result= ' . json_encode($wpdb->last_result) . '| $wpdb->last_query= ' . json_encode($wpdb->last_query . '| $wpdb->last_error= ' . json_encode($wpdb->last_error)));
-        } else {
+        }
+        else {
             do_action('rrze.log.' . $logType, __NAMESPACE__ . ' ' . $method . '() : ' . $msg);
         }
     }
@@ -209,17 +215,20 @@ class CampoAPI
                         if (is_int($v[1])) {
                             if (isset($data[$map['node']][$nr][$v[0]][$v[1]])) {
                                 $ret[$nr][$k] = $data[$map['node']][$nr][$v[0]][$v[1]];
-                            } elseif (isset($data[$map['node']][$nr][$v[0]][0])) {
+                            }
+                            elseif (isset($data[$map['node']][$nr][$v[0]][0])) {
                                 $ret[$nr][$k] = $data[$map['node']][$nr][$v[0]][0];
                             }
-                        } else {
+                        }
+                        else {
                             $y = 0;
                             while (isset($data[$map['node']][$nr][$v[0]][$y][$v[1]])) {
                                 $ret[$nr][$k] = $data[$map['node']][$nr][$v[0]][$y][$v[1]];
                                 $y++;
                             }
                         }
-                    } else {
+                    }
+                    else {
                         if (isset($data[$map['node']][$nr][$v])) {
                             $ret[$nr][$k] = $data[$map['node']][$nr][$v];
                         }
@@ -287,6 +296,7 @@ class CampoAPI
             if (!preg_match('/\+49 [1-9][0-9]{1,4} [1-9][0-9]+/', $phone)) {
                 $phone_data = preg_replace('/\D/', '', $phone);
                 $vorwahl_erl = '+49 9131 85-';
+                $vorwahl_erl_p1_p6 = '+49 9131 81146-'; // see: https://github.com/RRZE-Webteam/fau-person/issues/353
                 $vorwahl_nbg = '+49 911 5302-';
 
                 switch (strlen($phone_data)) {
@@ -328,6 +338,13 @@ class CampoAPI
                             if (strlen($durchwahl[1]) === 5) {
                                 $phone = $vorwahl_erl . $durchwahl[1];
                             }
+                            break;
+                        }
+
+                        // see: https://github.com/RRZE-Webteam/fau-person/issues/353
+                        if (strpos($phone_data, '913181146') !== FALSE) {
+                            $durchwahl = explode('913181146', $phone_data);
+                            $phone = $vorwahl_erl_p1_p6 . $durchwahl[1];
                             break;
                         }
 
@@ -420,7 +437,7 @@ class CampoAPI
             ],
             'locations' => '',
             'organizational' => '',
-            ];
+        ];
 
         foreach ($data as $nr => $row) {
             foreach ($fields as $field => $values) {
@@ -438,7 +455,8 @@ class CampoAPI
                             $data[$nr]['locations'][$l_nr]['mobile_call'] = '+' . self::getInt($data[$nr]['locations'][$l_nr]['mobile']);
                         }
                     }
-                } elseif ($field == 'repeat') {
+                }
+                elseif ($field == 'repeat') {
                     if (isset($data[$nr]['officehours'])) {
                         foreach ($data[$nr]['officehours'] as $c_nr => $entry) {
                             if (isset($data[$nr]['officehours'][$c_nr]['repeat'])) {
@@ -446,7 +464,8 @@ class CampoAPI
                             }
                         }
                     }
-                } elseif ($field == 'organizational') {
+                }
+                elseif ($field == 'organizational') {
                     if (isset($data[$nr][$field])) {
                         $data[$nr][$field] = self::formatCampo($data[$nr][$field]);
                     }
