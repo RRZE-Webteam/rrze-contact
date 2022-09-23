@@ -810,6 +810,29 @@ class Data
         $content .= '<td>' . Schema::create_Name($data, 'name', '', 'a', false, $viewopts) . '</td>';
         $content .=  Schema::create_contactpointlist($data, '', '', '', 'td', $viewopts, true, false);
 
+        $showorg = false;
+        $orgadata = [];
+        if (!empty($display['worksFor'])) {
+            $showorg = true;
+            if (isset($data['worksFor']) && (!empty($data['worksFor']))) {
+                $orgadata['name'] = $fields['worksFor'];
+            }
+        }
+        if (!empty($display['department'])) {
+            $showorg = true;
+            if (isset($data['department']) && (!empty($data['department']))) {
+                $orgadata['department'] = $data['department'];
+            }
+        }
+        if ($showorg){
+            $org = Schema::create_Organization($orgadata, 'td', 'worksFor', '', false, false, false);
+            if (!empty($org)){
+                $content .= $org;
+            }else{
+                $content .= "<td>&nbsp;</td>";
+            }
+        }
+
         if (isset($display['description']) && $display['description']) {
             $content .= "<td>" . $data['description'] . '</td>';
         }
