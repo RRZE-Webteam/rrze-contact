@@ -2,10 +2,10 @@
 
 namespace RRZE\Contact;
 
-use RRZE\Lib\UnivIS\Data as UnivIS_Data;
-use RRZE\Lib\DIP\Data as DIP_Data;
-use RRZE\Lib\UnivIS\Config;
-use RRZE\Lib\UnivIS\Sanitizer;
+use RRZE\OldLib\UnivIS\Data as UnivIS_Data;
+use RRZE\OldLib\DIP\Data as DIP_Data;
+use RRZE\OldLib\UnivIS\Config;
+use RRZE\OldLib\UnivIS\Sanitizer;
 use function RRZE\Contact\Config\getSocialMediaList;
 
 defined('ABSPATH') || exit;

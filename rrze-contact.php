@@ -4,7 +4,7 @@
  * Plugin Name:     RRZE Contact
  * Plugin URI:      https://github.com/RRZE-Webteam/rrze-contact
  * Description:     Einbindung von Daten aus Contact
- * Version:         0.0.23
+ * Version:         0.0.24
  * Author:          RRZE-Webteam
  * Author URI:      https://blogs.fau.de/webworking/
  * License:         GNU General Public License v3
@@ -97,10 +97,61 @@ function activation()
     flush_rewrite_rules();
 }
 
+// update();
+
+
 function add_endpoint()
 {
     add_rewrite_endpoint('id', EP_PERMALINK | EP_PAGES);
 }
+
+function showFAUPersonNotice()
+{
+    echo '<div class="notice notice-info is-dismissible">
+          <p>' . __('Plugin FAU-Person has automatically been deactivated. Please use RRZE-Contact instead. All old shortcodes will work. There is no update to be done.', 'rrze-contact') . '</p>
+          </div>';
+}
+
+function update()
+{
+    // update only one time
+    $isUpdated = get_option('rrze-contact-updated', FALSE);
+
+    if ($isUpdated) {
+        return;
+    }
+
+    $postIDs = get_posts([
+        'post_type' => 'person',
+        'post_status' => 'any',
+        'numberposts' => -1,
+        'fields' => 'ids',
+    ]);
+
+    foreach ($postIDs as $postID) {
+        set_post_type($postID, 'contact');
+    }
+
+    $postIDs = get_posts([
+        'post_type' => 'standort',
+        'post_status' => 'any',
+        'numberposts' => -1,
+        'fields' => 'ids',
+    ]);
+
+    foreach ($postIDs as $postID) {
+        set_post_type($postID, 'location');
+    }
+
+    // deactivate FAU-Person
+    if (is_plugin_active('fau-person/fau-person.php')) {
+        deactivate_plugins('fau-person/fau-person.php');
+        add_action('admin_notices', 'RRZE\Contact\showFAUPersonNotice');
+    }
+
+    update_option('rrze-contact-updated', 1);
+}
+
 
 /**
  * Wird durchgeführt, nachdem das Plugin deaktiviert wurde.
@@ -143,5 +194,6 @@ function loaded()
     // Hauptklasse (Main) wird instanziiert.
     $main = new Main(__FILE__);
     $main->onLoaded();
-}
 
+    update();
+}

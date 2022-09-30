@@ -9,7 +9,7 @@ use RRZE\Contact\Metaboxes\Contact;
 use RRZE\Contact\Metaboxes\Location;
 use RRZE\Contact\Metaboxes\Pages;
 use RRZE\Contact\Metaboxes\Posts;
-use RRZE\Lib\UnivIS\Data as UnivIS_Data;
+use RRZE\OldLib\UnivIS\Data as UnivIS_Data;
 
 
 class Metaboxes  {

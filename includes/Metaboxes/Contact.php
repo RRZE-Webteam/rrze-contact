@@ -3,7 +3,7 @@
 namespace RRZE\Contact\Metaboxes;
 
 use RRZE\Contact\Data;
-// use RRZE\Lib\UnivIS\Data as UnivIS_Data;
+use RRZE\OldLib\UnivIS\Data as UnivIS_Data;
 use function RRZE\Contact\Config\getSocialMediaList;
 
 defined('ABSPATH') || exit;

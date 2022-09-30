@@ -1,6 +1,6 @@
 <?php
 
-namespace RRZE\Lib;
+namespace RRZE\OldLib;
 
 /**
  * The initation loader for DIP, and the main plugin file.
@@ -82,7 +82,7 @@ class DIP
         //require_once DIP_DIR . 'includes/Config.php';
 
         // Now kick off the class autoloader.
-        spl_autoload_register('RRZE\Lib\dip_autoload_classes');
+        spl_autoload_register('RRZE\OldLib\dip_autoload_classes');
     }
 }
 
@@ -91,7 +91,7 @@ DIP::initiate();
 
 function dip_autoload_classes($class_name)
 {
-    $prefix = 'RRZE\Lib\DIP';
+    $prefix = 'RRZE\OldLib\DIP';
     $base_dir = DIP_DIR; //  . '/includes/';
     $len = strlen($prefix);
 

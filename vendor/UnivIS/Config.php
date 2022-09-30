@@ -1,6 +1,6 @@
 <?php
 
-namespace RRZE\Lib\UnivIS;
+namespace RRZE\OldLib\UnivIS;
 
 defined('ABSPATH') || exit;
 

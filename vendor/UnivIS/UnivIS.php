@@ -1,6 +1,6 @@
 <?php
 
-namespace RRZE\Lib;
+namespace RRZE\OldLib;
 /**
  * The initation loader for UnivIS, and the main plugin file.
  *
@@ -78,7 +78,7 @@ class UnivIS {
 		//require_once UnivIS_DIR . 'includes/Config.php';
 
 		// Now kick off the class autoloader.
-		spl_autoload_register( 'RRZE\Lib\univis_autoload_classes' );
+		spl_autoload_register( 'RRZE\OldLib\univis_autoload_classes' );
 
 
 	}
@@ -91,7 +91,7 @@ class UnivIS {
 UnivIS::initiate();
 
 function univis_autoload_classes( $class_name ) {
-    $prefix = 'RREZE\Lib\UnivIS';
+    $prefix = 'RRZE\OldLib\UnivIS';
     $base_dir = UnivIS_DIR; //  . '/includes/';
     $len = strlen($prefix);
 

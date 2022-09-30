@@ -1,6 +1,6 @@
 <?php
 
-namespace RRZE\Lib\DIP;
+namespace RRZE\OldLib\DIP;
 
 defined('ABSPATH') || exit;
 

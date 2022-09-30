@@ -2,6 +2,11 @@
 
 namespace RRZE\Contact\Taxonomy;
 
+use RRZE\Contact\Data;
+use RRZE\Contact\Schema;
+use RRZE\OldLib\UnivIS\Config;
+// use function FAU_Person\Config\get_fau_person_capabilities;
+
 defined('ABSPATH') || exit;
 
 /**

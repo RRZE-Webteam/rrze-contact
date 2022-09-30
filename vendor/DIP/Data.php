@@ -1,10 +1,10 @@
 <?php
 
-namespace RRZE\Lib\DIP;
+namespace RRZE\OldLib\DIP;
 
 defined('ABSPATH') || exit;
 
-use RRZE\Lib\DIP\Config;
+use RRZE\OldLib\DIP\Config;
 
 
 // if (!function_exists('__')) {

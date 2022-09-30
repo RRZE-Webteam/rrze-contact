@@ -1,15 +1,15 @@
 <?php
 
-namespace RRZE\Lib\UnivIS;
+namespace RRZE\OldLib\UnivIS;
 
 /*
  * UnivIS-Data API- und Cache-Funktionen
  */
 
-use RRZE\Lib\UnivIS\Config;
-use RRZE\Lib\UnivIS\Sanitizer;
+use RRZE\OldLib\UnivIS\Config;
+use RRZE\OldLib\UnivIS\Sanitizer;
 
-add_action('univis_data_async_task', array('RRZE\Lib\UnivIS\Data', 'async_task'));
+add_action('univis_data_async_task', array('RRZE\OldLib\UnivIS\Data', 'async_task'));
 
 add_action('save_post', function () {
     wp_schedule_single_event(time(), 'univis_data_async_task');
