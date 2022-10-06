@@ -4,7 +4,7 @@
  * Plugin Name:     RRZE Contact
  * Plugin URI:      https://github.com/RRZE-Webteam/rrze-contact
  * Description:     Einbindung von Daten aus Contact
- * Version:         0.0.25
+ * Version:         0.0.26
  * Author:          RRZE-Webteam
  * Author URI:      https://blogs.fau.de/webworking/
  * License:         GNU General Public License v3
@@ -115,9 +115,10 @@ function showFAUPersonNotice()
 function update()
 {
     // update only one time
+    $version = '0.0.25';
     $isUpdated = get_option('rrze-contact-updated', FALSE);
 
-    if ($isUpdated) {
+    if ($isUpdated == $version) {
         return;
     }
 
@@ -149,7 +150,7 @@ function update()
         add_action('admin_notices', 'RRZE\Contact\showFAUPersonNotice');
     }
 
-    update_option('rrze-contact-updated', 1);
+    update_option('rrze-contact-updated', $version);
 }
 
 

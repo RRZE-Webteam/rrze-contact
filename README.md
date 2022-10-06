@@ -1,7 +1,7 @@
 # RRZE-Contact
 
 Kontakte und Visitenkarten-Plugin für FAU Webauftritte  
-Es bezieht die Daten von DIP / Campo
+Es bezieht die Daten von DIP und UnivIS
 
 (Dieses Plugin wird rrze-contact ablösen)
 

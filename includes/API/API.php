@@ -1,6 +1,6 @@
 <?php
 
-namespace RRZE\Contact;
+namespace RRZE\Contact\API;
 
 defined('ABSPATH') || exit;
 
@@ -19,8 +19,9 @@ class API
     protected $atts;
     protected $APIParam;
 
-    public function __construct()
+    public function __construct($api)
     {
+        $this->api = $api;
     }
 
 
@@ -39,7 +40,7 @@ class API
         }
     }
 
-    public function getResponse($sParam = NULL){
+    private function getResponse($sParam = NULL){
         $aRet = [
             'valid' => FALSE, 
             'content' => ''

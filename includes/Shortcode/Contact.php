@@ -2,10 +2,8 @@
 
 namespace RRZE\Contact\Shortcode;
 
-// use function RRZE_Contact\Config\getShortcodeDefaults;
 use function RRZE\Contact\Config\getShortcodeSettings;
-// use RRZE_Contact\Data;
-// use RRZE_Contact\Main;
+use RRZE\Contact\API\UnivIS;
 
 defined('ABSPATH') || exit;
 
@@ -35,6 +33,12 @@ class Contact extends Shortcode
 
     public static function shortcode_contact($atts, $content = null)
     {
+
+
+        $univis = new UnivIS();
+        $data = $univis->getPerson('id=41944757');
+
+
         $defaults = getShortcodeDefaults('contact');
         $arguments = shortcode_atts($defaults, $atts);
         $arguments = self::translate_parameters($arguments);
