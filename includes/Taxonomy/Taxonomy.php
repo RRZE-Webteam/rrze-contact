@@ -12,28 +12,20 @@ use RRZE\Contact\Taxonomy\Location;
  */
 class Taxonomy
 {
-    protected $pluginFile;
-    private $settings = '';
 
-    public function __construct($pluginFile, $settings)
+    public function __construct()
     {
-        $this->pluginFile = $pluginFile;
-        $this->settings = $settings;
     }
 
     public function onLoaded()
     {
-        $contact_posttype = new Contact($this->pluginFile, $this->settings);
+        $contact_posttype = new Contact();
         $contact_posttype->onLoaded();
 
-        $standort_posttype = new Location($this->pluginFile, $this->settings);
+        $standort_posttype = new Location();
         $standort_posttype->onLoaded();
 
-        // 2DO: improve this. no need for transient as long as fired after update
-        if (get_site_transient('rrze-contact-options-updated')) {
-            flush_rewrite_rules();
-            delete_site_transient('rrze-contact-options-updated');
-        }
+        flush_rewrite_rules();
     }
 
     public function registerCPT($aParams = ['slug' => '', 'singular_name' => '', 'plural_name' => '', 'supports' => [],  'has_archive_page' => false, 'archive_title' => '', 'show_in_menu' => false, 'menu_name' => '', 'menu_icon' => ''])
@@ -105,7 +97,5 @@ class Taxonomy
         }            
 
         register_post_type($aParams['slug'], $args);
-
     }
-
 }

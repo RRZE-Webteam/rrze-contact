@@ -18,13 +18,8 @@ class Contact extends Taxonomy
     protected $postType = 'contact';
     protected $taxonomy = 'contact_category';
 
-    protected $pluginFile;
-    private $settings = '';
-
-    public function __construct($pluginFile, $settings)
+    public function __construct()
     {
-        $this->pluginFile = $pluginFile;
-        $this->settings = $settings;
     }
 
     public function onLoaded()

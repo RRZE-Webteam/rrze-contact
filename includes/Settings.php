@@ -82,20 +82,6 @@ class Settings
     {
         $this->pluginFile = $pluginFile;
         $this->settingsPrefix = dirname(plugin_basename($this->pluginFile)) . '-';
-
-        // einmalig alte Parameter holen
-        $oldOptions = get_option('_rrze_campo');
-        $updated = get_option('contact-updated');
-        if (!empty($oldOptions) && empty($updated)) {
-            foreach ($oldOptions as $k => $v) {
-                $oldOptions['basic_' . $k] = $v;
-            }
-            if (empty($oldOptions['basic_campo_url'])) {
-                $oldOptions['basic_campo_url'] = 'https://contact.uni-erlangen.de';
-            }
-            update_option('rrze-contact', $oldOptions);
-            update_option('contact-updated', 1);
-        }
     }
 
     /**
@@ -112,17 +98,19 @@ class Settings
         $this->optionName = getOptionName();
         $this->options = $this->getOptions();
 
-        // Save options if they haven't been saved at least once because we need them for ICS (see https://github.com/RRZE-Webteam/rrze-contact/issues/180)
-        $storedOptions = get_option('rrze-contact');
-        if (empty($storedOptions)) {
-            update_option('rrze-contact', $this->options);
-        }
-
         add_action('admin_init', [$this, 'adminInit']);
         add_action('admin_menu', [$this, 'adminMenu']);
         add_action('admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
         add_action('wp_ajax_GetCampoData', [$this, 'ajaxGetCampoData']);
         add_action('wp_ajax_nopriv_GetCampoData', [$this, 'ajaxGetCampoData']);
+
+        // if slug has changed we must update the CPT person
+        add_action('update_option_rrze-contact', [$this, 'refreshTaxonomy']);
+    }
+
+    protected function refreshTaxonomy(){
+        $taxonomy = new Taxonomy();
+        $taxonomy->onLoaded();
     }
 
     protected function setMenu()
@@ -842,6 +830,67 @@ class Settings
             $value,
             $placeholder
         );
+        $html .= $this->getFieldDescription($args);
+
+        echo $html;
+    }
+
+
+    /**
+     * Zeigt eine Auswahlliste (Selectbox) für ein Einstellungsfeld an zur Auswahl der im System verfügbaren Imagesizes an.
+     * @param array   $args Argumente des Einstellungsfelds
+     */
+    public function callbackSelectimagesizes($args)
+    {
+        global $_wp_additional_image_sizes;
+
+        $value = esc_attr($this->getOption($args['section'], $args['id'], $args['default']));
+        $size = isset($args['size']) && !is_null($args['size']) ? $args['size'] : 'regular';
+        $html = sprintf(
+            '<select class="%1$s" id="%3$s-%4$s" name="%2$s[%3$s_%4$s]">',
+            $size,
+            $this->optionName,
+            $args['section'],
+            $args['id']
+        );
+
+
+
+
+        $optionsizes = $args['options'];
+        $default_image_sizes = get_intermediate_image_sizes();
+
+        foreach ($default_image_sizes as $size) {
+            $width = intval(get_option("{$size}_size_w"));
+            $height = intval(get_option("{$size}_size_h"));
+            if (($width > 0) && ($height > 0)) {
+                $label = ucfirst($size) . ' (' . $width . ' x ' . $height . ')';
+                $optionsizes[$size] = $label;
+            }
+
+        }
+
+
+        if (isset($_wp_additional_image_sizes) && count($_wp_additional_image_sizes)) {
+            foreach ($_wp_additional_image_sizes as $key => $val) {
+                $label = ucfirst($key) . ' (' . $val['width'] . ' x ' . $val['height'] . ')';
+                $optionsizes[$key] = $label;
+            }
+        }
+
+
+
+        foreach ($optionsizes as $key => $label) {
+            $html .= sprintf(
+                '<option value="%s"%s>%s</option>',
+                $key,
+                selected($value, $key, false),
+                $label
+            );
+
+        }
+
+        $html .= sprintf('</select>');
         $html .= $this->getFieldDescription($args);
 
         echo $html;

@@ -12,10 +12,8 @@ class Location extends Taxonomy
 
     protected $postType = 'location';
 
-    public function __construct($pluginFile, $settings)
+    public function __construct()
     {
-        $this->pluginFile = $pluginFile;
-        $this->settings = $settings;
     }
 
     public function onLoaded()
