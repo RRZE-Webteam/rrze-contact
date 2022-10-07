@@ -214,18 +214,6 @@ class Contact extends Metaboxes
                     ),
                 ),
                 array(
-                    'name' => __('Standort Telefon- und Faxanschluss', 'rrze-contact'),
-                    'desc' => '',
-                    'type' => 'radio',
-                    'id' => $prefix . 'telephone_select',
-                    'options' => array(
-                        'erl' => __('Uni-intern, Standort Erlangen', 'rrze-contact'),
-                        'nbg' => __('Uni-intern, Standort Nürnberg', 'rrze-contact'),
-                        'standard' => __('Allgemeine Rufnummer', 'rrze-contact')
-                    ),
-                    'default' => 'standard'
-                ),
-                array(
                     'name' => __('Telefon', 'rrze-contact'),
                     'desc' => __('Bitte geben Sie uni-interne Nummern für Erlangen in der internationalen Form +49 9131 85-22222 und für Nürnberg in der internationalen Form +49 911 5302-555 an.', 'rrze-contact'),
                     'type' => 'text',

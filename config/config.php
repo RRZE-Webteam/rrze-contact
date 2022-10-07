@@ -9,6 +9,10 @@ defined('ABSPATH') || exit;
  *
  * @return string [description]
  */
+
+define('UNIVIS_URL', 'http://univis.uni-erlangen.de/prg'); 
+define('DIP_URL', 'https://api.fau.de/pub/v1/mschema/contacts'); 
+
 function getOptionName()
 {
     return 'rrze-contact';

@@ -4,8 +4,8 @@ namespace RRZE\Contact;
 
 // use RRZE\OldLib\UnivIS\Data as UnivIS_Data;
 // use RRZE\OldLib\DIP\Data as DIP_Data;
-use RRZE\OldLib\UnivIS\Config;
-use RRZE\OldLib\UnivIS\Sanitizer;
+// use RRZE\OldLib\UnivIS\Config;
+// use RRZE\OldLib\UnivIS\Sanitizer;
 use function RRZE\Contact\Config\getSocialMediaList;
 use RRZE\Contact\API\UnivIS;
 
@@ -1716,18 +1716,7 @@ class Data
                     $value =  '<p class="cmb2-metabox-description">' . __('In UnivIS ist hierfür kein Wert hinterlegt.', 'rrze-contact') . '</p>';
                 } else {
                     if ($key == 'telephone' || $key == 'faxNumber' || $key == 'mobilePhone') {
-                        $phone_number = get_post_meta($id, 'rrze_contact_' . $key, true);
-                        switch (get_post_meta($id, 'rrze_contact_telephone_select', true)) {
-                            case 'erl':
-                                $value = Sanitizer::correct_phone_number($phone_number, 'erl');
-                                break;
-                            case 'nbg':
-                                $value = Sanitizer::correct_phone_number($phone_number, 'nbg');
-                                break;
-                            default:
-                                $value = Sanitizer::correct_phone_number($phone_number, 'standard');
-                                break;
-                        }
+                        $phone_number = Functions::formatPhone(get_post_meta($id, 'rrze_contact_' . $key, true));
                     } else {
                         $value = get_post_meta($id, 'rrze_contact_' . $key, true);
                     }

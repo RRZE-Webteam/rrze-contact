@@ -153,10 +153,9 @@ class Contact extends Taxonomy
 
     public function custom_columns($column, $post_id)
     {
-        $dipid = get_post_meta($post_id, 'rrze_contact_univis_id', true);
-        $data = Data::get_fields($post_id, $dipid, 0);
-        $univisconfig = Config::get_Config();
-        $api_url = $univisconfig['api_url'];
+        $univis_id = get_post_meta($post_id, 'rrze_contact_univis_id', true);
+        $dip_id = get_post_meta($post_id, 'rrze_contact_dip_id', true);
+        $data = Data::get_fields($post_id, $univis_id, 0);
 
         switch ($column) {
             case 'thumb':
@@ -178,8 +177,10 @@ class Contact extends Taxonomy
 
                 break;
             case 'source':
-                if ($dipid) {
-                    echo __('DIP', 'rrze-contact') . ' (Id: <a target="univis" href="' . $api_url . '?search=contacts&id=' . $dipid . '&show=info">' . $dipid . '</a>)';
+                if ($univis_id) {
+                    echo __('UnivIS', 'rrze-contact') . ' (Id: <a target="univis" href="' . UNIVIS_URL . '?search=contacts&id=' . $univis_id . '&show=info">' . $univis_id . '</a>)';
+                } elseif ($dip_id) {
+                    echo __('UnivIS', 'rrze-contact') . ' (Id: <a target="univis" href="' . DIP_URL . '?' . $dipid . '&show=info">' . $dipid . '</a>)';
                 } else {
                     echo __('Lokal', 'rrze-contact');
                 }

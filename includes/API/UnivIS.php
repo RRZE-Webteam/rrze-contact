@@ -10,7 +10,7 @@ class UnivIS extends API
 
     public function __construct()
     {
-        parent::__construct('http://univis.uni-erlangen.de/prg?show=json&search=persons&');
+        parent::__construct(UNIVIS_URL . '?show=json&search=persons&');
     }
 
     private function getResponse($sParam = NULL){

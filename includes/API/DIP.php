@@ -16,7 +16,7 @@ class DIP extends API
 
     public function __construct()
     {
-        parent::__construct('https://api.fau.de/pub/v1/mschema/contacts');
+        parent::__construct(DIP_URL);
     }
 
 }
