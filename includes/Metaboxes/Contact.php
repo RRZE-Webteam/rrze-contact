@@ -3,7 +3,8 @@
 namespace RRZE\Contact\Metaboxes;
 
 use RRZE\Contact\Data;
-use RRZE\OldLib\UnivIS\Data as UnivIS_Data;
+// use RRZE\OldLib\UnivIS\Data as UnivIS_Data;
+use RRZE\Contact\API\UnivIS;
 use function RRZE\Contact\Config\getSocialMediaList;
 
 defined('ABSPATH') || exit;
@@ -26,8 +27,6 @@ class Contact extends Metaboxes
 
     public function onLoaded()
     {
-        require_once(plugin_dir_path($this->pluginFile) . 'vendor/UnivIS/UnivIS.php');
-        require_once(plugin_dir_path($this->pluginFile) . 'vendor/DIP/DIP.php');
         add_filter('cmb2_meta_boxes', array($this, 'cmb2_contact_metaboxes'));
     }
 
@@ -49,15 +48,24 @@ class Contact extends Metaboxes
         }
 
         $univis_id = get_post_meta($contact_id, 'rrze_contact_univis_id', true);
-        $univisdata = Data::get_fields($contact_id, $univis_id, 0, false, true);
+        $univisdata = [];
+        $univis = new UnivIS();
+        $univisResponse = $univis->getPerson('id=' . $univis_id);
 
-        if ($univisdata) {
+        // echo '<pre>';
+        // echo '$univis_id = ' . $univis_id;
+        // var_dump($univisdata);
+        // exit;
+
+
+        if ($univisResponse['valid']) {
             $univis_sync = '';
+            $univisdata = $univisResponse['content'];
         } else {
             $univis_sync = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
         }
         $standort_default = Data::get_standort_defaults($contact_id);
-        $univis_default = Data::univis_defaults($contact_id);
+        // $univis_default = Data::univis_defaults($contact_id);
 
         $defaultkurzauszug = '';
         if (get_post_field('post_excerpt', $contact_id)) {
@@ -125,7 +133,7 @@ class Contact extends Metaboxes
                         'PD Dr.' => __('Privatdozent Doktor', 'rrze-contact')
                     ),
                     'id' => $prefix . 'honorificPrefix',
-                    'after' => $univis_default['honorificPrefix'],
+                    // 'after' => $univis_default['honorificPrefix'],
                     'show_on_cb' => 'callback_cmb2_show_on_contact'
                 ),
                 array(
@@ -133,10 +141,10 @@ class Contact extends Metaboxes
                     'desc' => '',
                     'type' => 'text',
                     'id' => $prefix . 'givenName',
-                    'after' => $univis_default['givenName'],
+                    // 'after' => $univis_default['givenName'],
                     'show_on_cb' => 'callback_cmb2_show_on_contact',
                     'attributes'  => array(
-                        'placeholder' => $univisdata['givenName'],
+                        'placeholder' => (!empty($univisdata['givenName']) ? $univisdata['givenName'] : ''),
                     ),
                 ),
                 array(
@@ -144,9 +152,9 @@ class Contact extends Metaboxes
                     'desc' => '',
                     'type' => 'text',
                     'id' => $prefix . 'familyName',
-                    'after' => $univis_default['familyName'],
+                    // 'after' => $univis_default['familyName'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['familyName'],
+                        'placeholder' => (!empty($univisdata['familyName']) ? $univisdata['familyName'] : ''),
                     ),
                     'show_on_cb' => 'callback_cmb2_show_on_contact'
                 ),
@@ -156,9 +164,9 @@ class Contact extends Metaboxes
                     'desc' => '',
                     'type' => 'text',
                     'id' => $prefix . 'honorificSuffix',
-                    'after' => $univis_default['honorificSuffix'],
+                    // 'after' => $univis_default['honorificSuffix'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['honorificSuffix'],
+                        'placeholder' => (!empty($univisdata['honorificSuffix']) ? $univisdata['honorificSuffix'] : ''),
                     ),
                     'show_on_cb' => 'callback_cmb2_show_on_contact'
                 ),
@@ -167,9 +175,9 @@ class Contact extends Metaboxes
                     'desc' => '',
                     'id' => $prefix . 'jobTitle',
                     'type' => 'text',
-                    'after' => $univis_default['jobTitle'],
+                    // 'after' => $univis_default['jobTitle'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['jobTitle'],
+                        'placeholder' => (!empty($univisdata['jobTitle']) ? $univisdata['jobTitle'] : ''),
                     ),
                 ),
                 array(
@@ -177,9 +185,9 @@ class Contact extends Metaboxes
                     'desc' => __('Geben Sie hier die Organisation (Lehrstuhl oder Einrichtung) ein.', 'rrze-contact'),
                     'type' => 'text',
                     'id' => $prefix . 'worksFor',
-                    'after' => $univis_default['worksFor'],
+                    // 'after' => $univis_default['worksFor'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['worksFor'],
+                        'placeholder' => (!empty($univisdata['worksFor'])? $univisdata['worksFor'] : ''),
                     ),
                 ),
                 array(
@@ -187,9 +195,9 @@ class Contact extends Metaboxes
                     'desc' => __('Geben Sie hier die Abteilung oder Arbeitsgruppe ein.', 'rrze-contact'),
                     'type' => 'text',
                     'id' => $prefix . 'department',
-                    'after' => $univis_default['department'],
+                    // 'after' => $univis_default['department'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['department'],
+                        'placeholder' => (!empty($univisdata['department']) ? $univisdata['department'] : ''),
                     ),
 
                 ),
@@ -200,9 +208,9 @@ class Contact extends Metaboxes
                     'desc' => '',
                     'type' => 'text',
                     'id' => $prefix . 'workLocation',
-                    'after' => $univis_default['workLocation'],
+                    // 'after' => $univis_default['workLocation'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['workLocation'],
+                        'placeholder' => (!empty($univisdata['workLocation'])?$univisdata['workLocation'] : ''),
                     ),
                 ),
                 array(
@@ -223,9 +231,9 @@ class Contact extends Metaboxes
                     'type' => 'text',
                     'id' => $prefix . 'telephone',
                     'sanitization_cb' => 'validate_number',
-                    'after' => $univis_default['telephone'],
+                    // 'after' => $univis_default['telephone'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['telephone'],
+                        'placeholder' => (!empty($univisdata['telephone'])?$univisdata['telephone'] : ''),
                     ),
                 ),
                 array(
@@ -234,9 +242,9 @@ class Contact extends Metaboxes
                     'type' => 'text',
                     'id' => $prefix . 'faxNumber',
                     'sanitization_cb' => 'validate_number',
-                    'after' => $univis_default['faxNumber'],
+                    // 'after' => $univis_default['faxNumber'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['faxNumber'],
+                        'placeholder' => (!empty($univisdata['faxNumber']) ? $univisdata['faxNumber'] : ''),
                     ),
                 ),
                 array(
@@ -245,9 +253,9 @@ class Contact extends Metaboxes
                     'type' => 'text',
                     'sanitization_cb' => 'validate_number',
                     'id' => $prefix . 'mobilePhone',
-                    'after' => $univis_default['mobilePhone'],
+                    // 'after' => $univis_default['mobilePhone'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['mobilePhone'],
+                        'placeholder' => (!empty($univisdata['mobilePhone'])? $univisdata['mobilePhone'] : ''),
                     ),
                 ),
                 array(
@@ -255,9 +263,9 @@ class Contact extends Metaboxes
                     'desc' => '',
                     'type' => 'text_email',
                     'id' => $prefix . 'email',
-                    'after' => $univis_default['email'],
+                    // 'after' => $univis_default['email'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['email'],
+                        'placeholder' => (!empty($univisdata['email'])?$univisdata['email']:''),
                     ),
                 ),
                 array(
@@ -265,9 +273,9 @@ class Contact extends Metaboxes
                     'desc' => '',
                     'type' => 'text_url',
                     'id' => $prefix . 'url',
-                    'after' => $univis_default['url'],
+                    // 'after' => $univis_default['url'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['url'],
+                        'placeholder' => (!empty($univisdata['url'])?$univisdata['url'] : ''),
                     ),
                 ),
                 array(
@@ -276,7 +284,7 @@ class Contact extends Metaboxes
                     'type' => 'text_small',
                     'id' => $prefix . 'alternateName',
                     'attributes'  => array(
-                        'placeholder' => $univisdata['alternateName'],
+                        'placeholder' => (!empty($univisdata['alternateName'])?$univisdata['alternateName']:''),
                     ),
                     'show_on_cb' => 'callback_cmb2_show_on_einrichtung'
                 ),
@@ -317,7 +325,7 @@ class Contact extends Metaboxes
                     'id' => $prefix . 'streetAddress',
                     'after' =>  $standort_default['streetAddress'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['streetAddress'],
+                        'placeholder' => (!empty($univisdata['streetAddress'])?$univisdata['streetAddress'] : ''),
                     ),
 
                 ),
@@ -329,7 +337,7 @@ class Contact extends Metaboxes
                     'sanitization_cb' => 'validate_plz',
                     'after' => $standort_default['postalCode'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['postalCode'],
+                        'placeholder' => (!empty($univisdata['postalCode'])?$univisdata['postalCode']:''),
                     ),
                 ),
                 array(
@@ -338,7 +346,7 @@ class Contact extends Metaboxes
                     'id' => $prefix . 'addressLocality',
                     'after' => $standort_default['addressLocality'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['addressLocality'],
+                        'placeholder' => (!empty($univisdata['addressLocality'])?$univisdata['addressLocality']:''),
                     ),
                 ),
                 array(
@@ -347,7 +355,7 @@ class Contact extends Metaboxes
                     'id' => $prefix . 'addressCountry',
                     'after' => $standort_default['addressCountry'],
                     'attributes'  => array(
-                        'placeholder' => $univisdata['addressCountry'],
+                        'placeholder' => (!empty($univisdata['addressCountry'])?$univisdata['addressCountry']:''),
                     ),
                 ),
 
@@ -423,7 +431,7 @@ class Contact extends Metaboxes
                 array(
                     'id' => $prefix . 'hoursAvailable_group',
                     'type' => 'group',
-                    'desc' => $univis_default['hoursAvailable_group'],
+                    // 'desc' => $univis_default['hoursAvailable_group'],
                     //'desc' => __('Bitte geben Sie die Sprechzeiten an.', 'rrze-contact'),
                     'options' => array(
                         'group_title' => __('Sprechzeit {#}', 'rrze-contact'),

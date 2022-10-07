@@ -2,24 +2,19 @@
 
 namespace RRZE\Contact;
 
-use RRZE\OldLib\UnivIS\Data as UnivIS_Data;
-use RRZE\OldLib\DIP\Data as DIP_Data;
+// use RRZE\OldLib\UnivIS\Data as UnivIS_Data;
+// use RRZE\OldLib\DIP\Data as DIP_Data;
 use RRZE\OldLib\UnivIS\Config;
 use RRZE\OldLib\UnivIS\Sanitizer;
 use function RRZE\Contact\Config\getSocialMediaList;
+use RRZE\Contact\API\UnivIS;
+
 
 defined('ABSPATH') || exit;
 
 
 class Data
 {
-
-
-    public static function getDIPDataTest($id = null)
-    {
-        $myData = new DIP_Data(null);
-        return $myData->getResponse($id);
-    }
 
     private static function get_viewsettings($lookup = 'constants')
     {
@@ -1443,6 +1438,48 @@ class Data
     }
 
 
+        //$id = ID des Personeneintrags, 
+    //$person = Array mit Personendaten, 
+    //$fau_person_var = Bezeichnung Personenplugin, 
+    //$univis_var = Bezeichnung UnivIS, 
+    //$defaults = Default-Wert 1 für Ausgabe der hinterlegten Werte im Personeneingabeformular als HTML-Hinweis
+    public static function sync_univis($id, $person, $fau_person_var, $univis_var, $defaults)
+    {
+        //wird benötigt, falls jeder einzelne Wert abgefragt werden soll
+        //if( !empty( $person[$univis_var] ) && get_post_meta($id, 'fau_person_'.$fau_person_var_sync', true) ) {
+        $univisoverwrite = get_post_meta($id, 'fau_person_univis_sync', true);
+
+        if ($defaults) {
+            if (!empty($person[$univis_var])) {
+                $val = '<p class="cmb2-metabox-description">' . __('Inhalt aus UnivIS:', 'fau-person') . ' <code>' . $person[$univis_var] . '</code>';
+                if ($univisoverwrite) {
+                    $val .= '<br><strong>' . __('Dieser Inhalt überschreibt den manuellen Eintrag in der Ausgabe.', 'fau-person') . '</strong>';
+                }
+                $val .= '</p>';
+            } else {
+                $val = '<p class="cmb2-metabox-description">' . __('In UnivIS ist hierfür kein Wert hinterlegt.', 'fau-person') . '</p>';
+            }
+        } else {
+            if ($univisoverwrite) {
+                // Werte aus UnivIS haben Prio
+
+                if (!empty($person[$univis_var])) {
+                    $val = $person[$univis_var];
+                } else {
+                    $val = get_post_meta($id, 'fau_person_' . $fau_person_var, true);
+                }
+            } else {
+                // Werte aus der Post Meta haben Prio
+                $val = get_post_meta($id, 'fau_person_' . $fau_person_var, true);
+                if (empty($val) && (!empty($person[$univis_var]))) {
+                    $val = $person[$univis_var];
+                }
+            }
+        }
+
+        return $val;
+    }
+
 
     //Legt die in UnivIS hinterlegten Werte in einem Array ab, Feldbezeichnungen
     public static function univis_defaults($id)
@@ -1519,7 +1556,8 @@ class Data
         $univis_sync = 0;
         $contact = array();
         if ($univis_id) {
-            $contact = UnivIS_Data::get_univisdata($univis_id);
+            $univis = new UnivIS();
+            $contact = $univis->getPerson('id=' . $univis_id);
             $univis_sync = 1;
         }
         $fields = array();
@@ -1641,7 +1679,7 @@ class Data
                         $value = 'orgname';
                     }
                 }
-                $value = UnivIS_Data::sync_univis($id, $contact, $key, $value, $defaults);
+                $value = sync_univis($id, $contact, $key, $value, $defaults);
             } else {
                 if ($defaults) {
                     $value = '<p class="cmb2-metabox-description">' . __('In UnivIS ist hierfür kein Wert hinterlegt.', 'rrze-contact') . '</p>';
@@ -1658,7 +1696,7 @@ class Data
             if ($univis_sync && array_key_exists('locations', $contact) && array_key_exists('location', $contact['locations'][0])) {
                 $contact_location = $contact['locations'][0]['location'][0];
                 if (($key == 'telephone' || $key == 'faxNumber' || $key == 'mobilePhone') && !$defaults) {
-                    $phone_number = UnivIS_Data::sync_univis($id, $contact_location, $key, $value, $defaults);
+                    $phone_number = sync_univis($id, $contact_location, $key, $value, $defaults);
                     switch (get_post_meta($id, 'rrze_contact_telephone_select', true)) {
                         case 'erl':
                             $value = Sanitizer::correct_phone_number($phone_number, 'erl');
@@ -1671,7 +1709,7 @@ class Data
                             break;
                     }
                 } else {
-                    $value = UnivIS_Data::sync_univis($id, $contact_location, $key, $value, $defaults);
+                    $value = sync_univis($id, $contact_location, $key, $value, $defaults);
                 }
             } else {
                 if ($defaults) {
@@ -1762,7 +1800,7 @@ class Data
                 if ($i > 1) {
                     $i = count($contact_orgunits) - 2;
                 }
-                $value = UnivIS_Data::sync_univis($id, $contact_orgunits, $key, $i, $defaults);
+                $value = sync_univis($id, $contact_orgunits, $key, $i, $defaults);
             } else {
                 if ($defaults) {
                     $value = '<p class="cmb2-metabox-description">' . __('In UnivIS ist hierfür kein Wert hinterlegt.', 'rrze-contact') . '</p>';
