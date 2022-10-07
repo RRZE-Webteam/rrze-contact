@@ -41,17 +41,25 @@ class UnivIS extends API
         $map = [
             'personID' => 'id',
             'key' => 'key',
-            'title' => 'title',
-            'atitle' => 'atitle',
+            'honorificPrefix' => 'title',
+            'honorificSuffix' => 'atitle',
             'firstname' => 'firstname',
             'lastname' => 'lastname',
             'work' => 'work',
             'officehours' => 'officehour',
             'department' => 'orgname',
             // 'organization' => ['orgunit', 1],
-            'locations' => 'location',
         ];
 
+        $map_location = [
+            'city' => 'ort',
+            'street' => 'street',
+            'office' => 'office',
+            'phone' => 'tel',
+            'fax' => 'fax',
+            'email' => 'email',
+            'url' => 'url'
+        ];
         $ret = [];
 
         foreach($data as $person){
@@ -59,6 +67,11 @@ class UnivIS extends API
                 foreach($map as $field => $univisField){
                     if (!empty($person[$univisField])){
                         $tmp[$field] = $person[$univisField];
+                    }
+                }
+                foreach($person['location'] as $nr => $locationDetails){
+                    foreach($map_location as $field => $univisField){
+                        $tmp['locations'][$nr][$field] = $locationDetails[$univisField];
                     }
                 }
                 $ret[] = $tmp;
@@ -71,7 +84,10 @@ class UnivIS extends API
         $apiResponse = $this->getResponse($sParam);
 
         if ($apiResponse['valid']){
-            return $this->mapData($apiResponse['content']);
+            return [
+                'valid' => TRUE,
+                'content' => $this->mapData($apiResponse['content'])
+                ];
         }else{
             return $apiResponse;
         }

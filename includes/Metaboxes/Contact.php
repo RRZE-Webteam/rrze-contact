@@ -52,25 +52,19 @@ class Contact extends Metaboxes
         $univis = new UnivIS();
         $univisResponse = $univis->getPerson('id=' . $univis_id);
 
-        // echo '<pre>';
-        // echo '$univis_id = ' . $univis_id;
-        // var_dump($univisdata);
-        // exit;
-
-
         if ($univisResponse['valid']) {
             $univis_sync = '';
-            $univisdata = $univisResponse['content'];
+            $univisdata = $univisResponse['content'][0];
         } else {
             $univis_sync = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
         }
         $standort_default = Data::get_standort_defaults($contact_id);
-        // $univis_default = Data::univis_defaults($contact_id);
 
         $defaultkurzauszug = '';
         if (get_post_field('post_excerpt', $contact_id)) {
             $defaultkurzauszug  = get_post_field('post_excerpt', $contact_id);
         }
+
         // Meta-Box Weitere Informationen - rrze_contact_adds
         $meta_boxes['rrze_contact_textinfos'] = array(
             'id' => 'rrze_contact_textinfos',
@@ -110,11 +104,18 @@ class Contact extends Metaboxes
             $text_url_options[$page->post_name] = ($page->post_parent != 0 ? '- ' : '') . $page->post_title;
         }
 
+        $location = (!empty($univisdata['locations'][0]) ? $univisdata['locations'][0] : []);
+
+        $descFound = __('Value displayed from UnivIS:', 'rrze-contact') . ' ';
+        $descNotFound = __('No value is stored for this in UnivIS.', 'rrze-contact');
+
+
+        $bUnivisSync = get_post_meta($contact_id, 'rrze_contact_univis_sync', true);
+
         $meta_boxes['rrze_contact_info'] = array(
             'id' => 'rrze_contact_info',
             'title' => __('Contactinformationen', 'rrze-contact'),
             'object_types' => array('contact'), // post type
-            //'show_on_cb' => array( 'key' => 'submenu-slug', 'value' => 'contact' ),        
             'context' => 'normal',
             'priority' => 'default',
             'fields' => array(
@@ -133,7 +134,7 @@ class Contact extends Metaboxes
                         'PD Dr.' => __('Privatdozent Doktor', 'rrze-contact')
                     ),
                     'id' => $prefix . 'honorificPrefix',
-                    // 'after' => $univis_default['honorificPrefix'],
+                    'description' => ($bUnivisSync ? (!empty($univisdata['honorificPrefix']) ? $descFound . $univisdata['honorificPrefix'] : $descNotFound) : ''),
                     'show_on_cb' => 'callback_cmb2_show_on_contact'
                 ),
                 array(
@@ -141,10 +142,10 @@ class Contact extends Metaboxes
                     'desc' => '',
                     'type' => 'text',
                     'id' => $prefix . 'givenName',
-                    // 'after' => $univis_default['givenName'],
+                    'description' => ($bUnivisSync ? (!empty($univisdata['firstname']) ? $descFound . $univisdata['firstname'] : $descNotFound) : ''),
                     'show_on_cb' => 'callback_cmb2_show_on_contact',
                     'attributes'  => array(
-                        'placeholder' => (!empty($univisdata['givenName']) ? $univisdata['givenName'] : ''),
+                        'placeholder' => (!empty($univisdata['firstname']) ? $univisdata['firstname'] : ''),
                     ),
                 ),
                 array(
@@ -152,19 +153,18 @@ class Contact extends Metaboxes
                     'desc' => '',
                     'type' => 'text',
                     'id' => $prefix . 'familyName',
-                    // 'after' => $univis_default['familyName'],
+                    'description' => ($bUnivisSync ? (!empty($univisdata['lastname']) ? $descFound . $univisdata['lastname'] : $descNotFound) : ''),
                     'attributes'  => array(
-                        'placeholder' => (!empty($univisdata['familyName']) ? $univisdata['familyName'] : ''),
+                        'placeholder' => (!empty($univisdata['lastname']) ? $univisdata['lastname'] : ''),
                     ),
                     'show_on_cb' => 'callback_cmb2_show_on_contact'
                 ),
-
                 array(
                     'name' => __('Abschluss (Suffix)', 'rrze-contact'),
                     'desc' => '',
                     'type' => 'text',
                     'id' => $prefix . 'honorificSuffix',
-                    // 'after' => $univis_default['honorificSuffix'],
+                    'description' => ($bUnivisSync ? (!empty($univisdata['honorificSuffix']) ? $descFound . $univisdata['honorificSuffix'] : $descNotFound) : ''),
                     'attributes'  => array(
                         'placeholder' => (!empty($univisdata['honorificSuffix']) ? $univisdata['honorificSuffix'] : ''),
                     ),
@@ -175,7 +175,7 @@ class Contact extends Metaboxes
                     'desc' => '',
                     'id' => $prefix . 'jobTitle',
                     'type' => 'text',
-                    // 'after' => $univis_default['jobTitle'],
+                    'description' => ($bUnivisSync ? (!empty($univisdata['jobTitle']) ? $descFound . $univisdata['jobTitle'] : $descNotFound) : ''),
                     'attributes'  => array(
                         'placeholder' => (!empty($univisdata['jobTitle']) ? $univisdata['jobTitle'] : ''),
                     ),
@@ -185,90 +185,88 @@ class Contact extends Metaboxes
                     'desc' => __('Geben Sie hier die Organisation (Lehrstuhl oder Einrichtung) ein.', 'rrze-contact'),
                     'type' => 'text',
                     'id' => $prefix . 'worksFor',
-                    // 'after' => $univis_default['worksFor'],
+                    'description' => ($bUnivisSync ? (!empty($univisdata['work']) ? $descFound . $univisdata['work'] : $descNotFound) : ''),
                     'attributes'  => array(
-                        'placeholder' => (!empty($univisdata['worksFor'])? $univisdata['worksFor'] : ''),
+                        'placeholder' => (!empty($univisdata['work'])? $univisdata['work'] : ''),
                     ),
                 ),
-                array(
-                    'name' => __('Abteilung', 'rrze-contact'),
-                    'desc' => __('Geben Sie hier die Abteilung oder Arbeitsgruppe ein.', 'rrze-contact'),
-                    'type' => 'text',
-                    'id' => $prefix . 'department',
-                    // 'after' => $univis_default['department'],
+            array(
+                'name' => __('Raum', 'rrze-contact'),
+                'desc' => '',
+                'type' => 'text',
+                'id' => $prefix . 'workLocation',
+                'description' => ($bUnivisSync ? (!empty($location['office']) ? $descFound . $location['office'] : $descNotFound) : ''),
+                'attributes'  => array(
+                    'placeholder' => (!empty($location['office'])?$location['office'] : ''),
+                ),
+            ),
+            array(
+                'name' => __('Telefon', 'rrze-contact'),
+                'desc' => __('Bitte geben Sie uni-interne Nummern für Erlangen in der internationalen Form +49 9131 85-22222 und für Nürnberg in der internationalen Form +49 911 5302-555 an.', 'rrze-contact'),
+                'type' => 'text',
+                'id' => $prefix . 'phone',
+                'sanitization_cb' => 'validate_number',
+                'description' => ($bUnivisSync ? (!empty($location['phone']) ? $descFound . $location['phone'] : $descNotFound) : ''),
+                'attributes'  => array(
+                    'placeholder' => (!empty($location['phone'])?$location['phone'] : ''),
+                ),
+            ),
+            array(
+                'name' => __('Telefax', 'rrze-contact'),
+                'desc' => __('Bitte geben Sie uni-interne Nummern für Erlangen in der internationalen Form +49 9131 85-22222 und für Nürnberg in der internationalen Form +49 911 5302-555 an, uni-externe Nummern in der internationalen Form +49 9131 1111111.', 'rrze-contact'),
+                'type' => 'text',
+                'id' => $prefix . 'fax',
+                'sanitization_cb' => 'validate_number',
+                'description' => ($bUnivisSync ? (!empty($location['fax']) ? $descFound . $location['fax'] : $descNotFound) : ''),
+                'attributes'  => array(
+                    'placeholder' => (!empty($location['fax']) ? $location['fax'] : ''),
+                ),
+            ),
+            array(
+                'name' => __('Mobiltelefon', 'rrze-contact'),
+                'desc' => __('Bitte geben Sie die Nummer in der internationalen Form +49 176 1111111 an.', 'rrze-contact'),
+                'type' => 'text',
+                'sanitization_cb' => 'validate_number',
+                'id' => $prefix . 'mobile',
+                'description' => ($bUnivisSync ? (!empty($location['mobile']) ? $descFound . $location['mobile'] : $descNotFound) : ''),
+                'attributes'  => array(
+                    'placeholder' => (!empty($location['mobile'])? $location['mobile'] : ''),
+                ),
+            ),
+            array(
+                'name' => __('E-Mail', 'rrze-contact'),
+                'desc' => '',
+                'type' => 'text_email',
+                'id' => $prefix . 'email',
+                'description' => ($bUnivisSync ? (!empty($location['email']) ? $descFound . $location['email'] : $descNotFound) : ''),
+                'attributes'  => array(
+                    'placeholder' => (!empty($location['email'])?$location['email']:''),
+                ),
+            ),
+            array(
+                'name' => __('Webseite', 'rrze-contact'),
+                'desc' => '',
+                'type' => 'text_url',
+                'id' => $prefix . 'url',
+                'description' => ($bUnivisSync ? (!empty($location['url']) ? $descFound . $location['url'] : $descNotFound) : ''),
+                'attributes'  => array(
+                    'placeholder' => (!empty($location['url'])?$location['url'] : ''),
+                ),
+            ),
+            array(
+                'name' => __('Abteilung', 'rrze-contact'),
+                'desc' => __('Geben Sie hier die Abteilung oder Arbeitsgruppe ein.', 'rrze-contact'),
+                'type' => 'text',
+                'id' => $prefix . 'department',
+                'description' => ($bUnivisSync ? (!empty($univisdata['department']) ? $descFound . $univisdata['department'] : $descNotFound) : ''),
                     'attributes'  => array(
                         'placeholder' => (!empty($univisdata['department']) ? $univisdata['department'] : ''),
                     ),
 
                 ),
-
-
-                array(
-                    'name' => __('Raum', 'rrze-contact'),
-                    'desc' => '',
-                    'type' => 'text',
-                    'id' => $prefix . 'workLocation',
-                    // 'after' => $univis_default['workLocation'],
-                    'attributes'  => array(
-                        'placeholder' => (!empty($univisdata['workLocation'])?$univisdata['workLocation'] : ''),
-                    ),
-                ),
-                array(
-                    'name' => __('Telefon', 'rrze-contact'),
-                    'desc' => __('Bitte geben Sie uni-interne Nummern für Erlangen in der internationalen Form +49 9131 85-22222 und für Nürnberg in der internationalen Form +49 911 5302-555 an.', 'rrze-contact'),
-                    'type' => 'text',
-                    'id' => $prefix . 'telephone',
-                    'sanitization_cb' => 'validate_number',
-                    // 'after' => $univis_default['telephone'],
-                    'attributes'  => array(
-                        'placeholder' => (!empty($univisdata['telephone'])?$univisdata['telephone'] : ''),
-                    ),
-                ),
-                array(
-                    'name' => __('Telefax', 'rrze-contact'),
-                    'desc' => __('Bitte geben Sie uni-interne Nummern für Erlangen in der internationalen Form +49 9131 85-22222 und für Nürnberg in der internationalen Form +49 911 5302-555 an, uni-externe Nummern in der internationalen Form +49 9131 1111111.', 'rrze-contact'),
-                    'type' => 'text',
-                    'id' => $prefix . 'faxNumber',
-                    'sanitization_cb' => 'validate_number',
-                    // 'after' => $univis_default['faxNumber'],
-                    'attributes'  => array(
-                        'placeholder' => (!empty($univisdata['faxNumber']) ? $univisdata['faxNumber'] : ''),
-                    ),
-                ),
-                array(
-                    'name' => __('Mobiltelefon', 'rrze-contact'),
-                    'desc' => __('Bitte geben Sie die Nummer in der internationalen Form +49 176 1111111 an.', 'rrze-contact'),
-                    'type' => 'text',
-                    'sanitization_cb' => 'validate_number',
-                    'id' => $prefix . 'mobilePhone',
-                    // 'after' => $univis_default['mobilePhone'],
-                    'attributes'  => array(
-                        'placeholder' => (!empty($univisdata['mobilePhone'])? $univisdata['mobilePhone'] : ''),
-                    ),
-                ),
-                array(
-                    'name' => __('E-Mail', 'rrze-contact'),
-                    'desc' => '',
-                    'type' => 'text_email',
-                    'id' => $prefix . 'email',
-                    // 'after' => $univis_default['email'],
-                    'attributes'  => array(
-                        'placeholder' => (!empty($univisdata['email'])?$univisdata['email']:''),
-                    ),
-                ),
-                array(
-                    'name' => __('Webseite', 'rrze-contact'),
-                    'desc' => '',
-                    'type' => 'text_url',
-                    'id' => $prefix . 'url',
-                    // 'after' => $univis_default['url'],
-                    'attributes'  => array(
-                        'placeholder' => (!empty($univisdata['url'])?$univisdata['url'] : ''),
-                    ),
-                ),
                 array(
                     'name' => __('Sortierfeld', 'rrze-contact'),
-                    'desc' => __('Wird für eine Sortierung verwendet, die sich weder nach Name, Titel der Contactseite oder Vorname richten soll. Geben SIe hier Buchstaben oder Zahlen ein, nach denen sortiert werden sollen. Zur Sortierunge der Einträge geben Sie im Shortcode das Attribut <code>sort="sortierfeld"</code> ein.', 'rrze-contact'),
+                    'description' => __('Wird für eine Sortierung verwendet, die sich weder nach Name, Titel der Contactseite oder Vorname richten soll. Geben SIe hier Buchstaben oder Zahlen ein, nach denen sortiert werden sollen. Zur Sortierunge der Einträge geben Sie im Shortcode das Attribut <code>sort="sortierfeld"</code> ein.', 'rrze-contact'),
                     'type' => 'text_small',
                     'id' => $prefix . 'alternateName',
                     'attributes'  => array(

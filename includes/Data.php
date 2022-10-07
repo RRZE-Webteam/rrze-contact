@@ -1438,62 +1438,6 @@ class Data
     }
 
 
-        //$id = ID des Personeneintrags, 
-    //$person = Array mit Personendaten, 
-    //$fau_person_var = Bezeichnung Personenplugin, 
-    //$univis_var = Bezeichnung UnivIS, 
-    //$defaults = Default-Wert 1 für Ausgabe der hinterlegten Werte im Personeneingabeformular als HTML-Hinweis
-    public static function sync_univis($id, $person, $fau_person_var, $univis_var, $defaults)
-    {
-        //wird benötigt, falls jeder einzelne Wert abgefragt werden soll
-        //if( !empty( $person[$univis_var] ) && get_post_meta($id, 'fau_person_'.$fau_person_var_sync', true) ) {
-        $univisoverwrite = get_post_meta($id, 'fau_person_univis_sync', true);
-
-        if ($defaults) {
-            if (!empty($person[$univis_var])) {
-                $val = '<p class="cmb2-metabox-description">' . __('Inhalt aus UnivIS:', 'fau-person') . ' <code>' . $person[$univis_var] . '</code>';
-                if ($univisoverwrite) {
-                    $val .= '<br><strong>' . __('Dieser Inhalt überschreibt den manuellen Eintrag in der Ausgabe.', 'fau-person') . '</strong>';
-                }
-                $val .= '</p>';
-            } else {
-                $val = '<p class="cmb2-metabox-description">' . __('In UnivIS ist hierfür kein Wert hinterlegt.', 'fau-person') . '</p>';
-            }
-        } else {
-            if ($univisoverwrite) {
-                // Werte aus UnivIS haben Prio
-
-                if (!empty($person[$univis_var])) {
-                    $val = $person[$univis_var];
-                } else {
-                    $val = get_post_meta($id, 'fau_person_' . $fau_person_var, true);
-                }
-            } else {
-                // Werte aus der Post Meta haben Prio
-                $val = get_post_meta($id, 'fau_person_' . $fau_person_var, true);
-                if (empty($val) && (!empty($person[$univis_var]))) {
-                    $val = $person[$univis_var];
-                }
-            }
-        }
-
-        return $val;
-    }
-
-
-    //Legt die in UnivIS hinterlegten Werte in einem Array ab, Feldbezeichnungen
-    public static function univis_defaults($id)
-    {
-        $post = get_post($id);
-        if (!is_null($post) && $post->post_type === 'contact' && get_post_meta($id, 'rrze_contact_univis_id', true)) {
-            $univis_id = get_post_meta($id, 'rrze_contact_univis_id', true);
-            $univis_default = self::get_fields($id, $univis_id, 1);
-            return $univis_default;
-        } else {
-            $univis_default = Config::get_keys_fields('contacts');
-            return $univis_default;
-        }
-    }
 
     // Get Data Cache
     private static function get_data_cache()
