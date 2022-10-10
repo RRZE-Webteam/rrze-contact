@@ -1,8 +1,8 @@
 <?php
 
-namespace RRZE_Contact\Templates;
+namespace RRZE\Contact;
 
-use RRZE_Contact\Helper;
+use RRZE\Contact\Helper;
 
 defined('ABSPATH') || exit;
 

@@ -496,7 +496,7 @@ class Data
         $viewopts = self::get_viewsettings();
 
         $content = '';
-        Main::enqueueForeignThemes();
+        wp_enqueue_style('rrze-contact');
 
         $fields['description'] = self::get_description($id, $arguments['format'], $fields);
         $fields['morelink'] = self::get_morelink_url($fields, $viewopts);
@@ -648,7 +648,7 @@ class Data
         $fields = self::get_contact_data($id);
 
 
-        Main::enqueueForeignThemes();
+        wp_enqueue_style('rrze-contact');
         $viewopts = self::get_viewsettings();
         if (empty($display)) {
             $display = self::get_display_field('page');
@@ -790,7 +790,7 @@ class Data
         $viewopts = self::get_viewsettings();
 
         $content = '';
-        Main::enqueueForeignThemes();
+        wp_enqueue_style('rrze-contact');
 
         $fields['description'] = self::get_description($id, $arguments['format'], $fields);
         $fields['morelink'] = self::get_morelink_url($fields, $viewopts);
@@ -857,7 +857,7 @@ class Data
         $viewopts = self::get_viewsettings();
 
         $content = '';
-        Main::enqueueForeignThemes();
+        wp_enqueue_style('rrze-contact');
 
         $fields['description'] = self::get_description($id, $arguments['format'], $fields);
         $fields['morelink'] = self::get_morelink_url($fields, $viewopts);
@@ -938,7 +938,7 @@ class Data
 
 
         $content = '';
-        Main::enqueueForeignThemes();
+        wp_enqueue_style('rrze-contact');
 
         $fields['description'] = self::get_description($id, $arguments['format'], $fields);
         $fields['morelink'] = self::get_morelink_url($fields, $viewopts);
@@ -1005,7 +1005,7 @@ class Data
 
 
         $content = '';
-        Main::enqueueForeignThemes();
+        wp_enqueue_style('rrze-contact');
 
         $fields['description'] = self::get_description($id, 'sidebar', $fields);
         $fields['morelink'] = self::get_morelink_url($fields, $viewopts);

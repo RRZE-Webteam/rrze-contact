@@ -13,7 +13,7 @@ get_header();
 		     'hstart' => 1,
 		 ];
 
-                      echo RRZE_Contact\Data::rrze_contact_page($id,array(),$args,true);
+                      echo RRZE\Contact\Data::rrze_contact_page($id,array(),$args,true);
                     ?>         
                     </div>
                 </div>

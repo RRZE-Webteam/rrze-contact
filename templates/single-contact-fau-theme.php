@@ -16,7 +16,7 @@ get_header();
     $id = $post->ID;
     if ($id) {?>
 							<h1 id="droppoint" class="mobiletitle"><?php the_title();?></h1>
-<?php echo RRZE_Contact\Data::rrze_contact_page($id);
+<?php echo RRZE\Contact\Data::rrze_contact_page($id);
     } else { ?>
 						<h1 id="droppoint" class="mobiletitle"><?php _e('Error', 'fau');?></h1>
 						<p class="hinweis">

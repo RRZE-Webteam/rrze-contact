@@ -856,6 +856,17 @@ function getShortcodeSettings()
     ];
 }
 
+function getShortcodeDefaults($settings)
+{
+    $atts_default = [];
+    foreach ($settings as $k => $v) {
+        if ($k != 'block') {
+            $atts_default[$k] = $v['default'];
+        }
+    }
+    return $atts_default;
+}
+
 function get_all_image_sizes()
 {
 

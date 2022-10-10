@@ -1,8 +1,7 @@
 <?php
 
 namespace RRZE\Contact\Metaboxes;
-// use FAU_Person\Data;
-// use FAU_Person\Helper;
+use RRZE\Contact\Data;
 
 defined('ABSPATH') || exit;
 
