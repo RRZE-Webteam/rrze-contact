@@ -11,13 +11,13 @@ if (!function_exists('__')) {
     }
 }
 
-class CampoAPI
+class DIPAPI
 {
 
     protected $api;
     // protected $orgID;
     protected $atts;
-    protected $campoParam;
+    protected $DIPParam;
     protected $sem;
     protected $gast;
 
@@ -31,15 +31,15 @@ class CampoAPI
 
     private function getKey()
     {
-        $campoOptions = get_option('rrze-contact');
+        $DIPOptions = get_option('rrze-contact');
 
-        if (!empty($campoOptions['basic_ApiKey'])) {
-            return $campoOptions['basic_ApiKey'];
+        if (!empty($DIPOptions['basic_ApiKey'])) {
+            return $DIPOptions['basic_ApiKey'];
         }
         elseif (is_multisite()) {
             $settingsOptions = get_site_option('rrze_settings');
-            if (!empty($settingsOptions->plugins->campo_apiKey)) {
-                return $settingsOptions->plugins->campo_apiKey;
+            if (!empty($settingsOptions->plugins->DIP_apiKey)) {
+                return $settingsOptions->plugins->DIP_apiKey;
             }
         }
         else {
@@ -99,16 +99,16 @@ class CampoAPI
         }
     }
 
-    public function getData($dataType, $campoParam = null)
+    public function getData($dataType, $DIPParam = null)
     {
-        $this->campoParam = urlencode($campoParam);
+        $this->DIPParam = urlencode($DIPParam);
 
         if (!$url) {
-            return 'Set Campo Org ID in settings.';
+            return 'Set DIP Org ID in settings.';
         }
         $data = file_get_contents($url);
         if (!$data) {
-            CampoAPI::log('getData', 'error', "no data returned using $url");
+            DIPAPI::log('getData', 'error', "no data returned using $url");
             return false;
         }
         $data = json_decode($data, true);
@@ -366,7 +366,7 @@ class CampoAPI
                 }
                 elseif ($field == 'organizational') {
                     if (isset($data[$nr][$field])) {
-                        $data[$nr][$field] = self::formatCampo($data[$nr][$field]);
+                        $data[$nr][$field] = self::formatDIP($data[$nr][$field]);
                     }
                 }
             }

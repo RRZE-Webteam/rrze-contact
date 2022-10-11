@@ -101,8 +101,8 @@ class Settings
         add_action('admin_init', [$this, 'adminInit']);
         add_action('admin_menu', [$this, 'adminMenu']);
         add_action('admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
-        add_action('wp_ajax_GetCampoData', [$this, 'ajaxGetCampoData']);
-        add_action('wp_ajax_nopriv_GetCampoData', [$this, 'ajaxGetCampoData']);
+        add_action('wp_ajax_GetDIPData', [$this, 'ajaxGetDIPData']);
+        add_action('wp_ajax_nopriv_GetDIPData', [$this, 'ajaxGetDIPData']);
 
         // if slug has changed we must update the CPT person
         add_action('update_option_rrze-contact', [$this, 'refreshTaxonomy']);

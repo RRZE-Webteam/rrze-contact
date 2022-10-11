@@ -145,6 +145,7 @@ class Contact extends Taxonomy
     {
         $cols = array(
             'cb' => '<input type="checkbox" />',
+            'ID' => __('ID', 'rrze-contact'),
             'title' => __('Title', 'rrze-contact'),
             'thumb' => __('Image', 'rrze-contact'),
             'fullname' => __('Shown name', 'rrze-contact'),
@@ -190,6 +191,9 @@ class Contact extends Taxonomy
                 } else {
                     echo __('Lokal', 'rrze-contact');
                 }
+                break;
+            case 'ID':
+                echo $post_id;
                 break;
 
         }

@@ -19,7 +19,7 @@ class ContactWidget extends \WP_Widget
         $this->settings = $settings;
 
         parent::__construct(
-            'campo_widget',
+            'DIP_widget',
             __('Contact Widget', 'rrze-contact'),
             array('description' => __('Displays a lecture', 'rrze-contact'))
         );
@@ -31,13 +31,13 @@ class ContactWidget extends \WP_Widget
         $atts = '';
         $atts .= (!empty($instance['show']) ? ' show=' . $instance['show'] : '');
         $atts .= (!empty($instance['hide']) ? ' hide=' . $instance['hide'] : '');
-        $field = ($instance['task'] == 'lectures-single' ? 'lv_id' : 'campoid');
+        $field = ($instance['task'] == 'lectures-single' ? 'lv_id' : 'DIPid');
 
         $shortcode = new Shortcode($this->pluginFile, $this->settings);
         $shortcode->onLoaded();
 
         echo $args['before_widget'];
-        echo do_shortcode('[contact task="' . $instance['task'] . '" ' . $field . '=' . $instance['campoid'] . $atts . ']');
+        echo do_shortcode('[contact task="' . $instance['task'] . '" ' . $field . '=' . $instance['DIPid'] . $atts . ']');
         echo $args['after_widget'];
     }
 
@@ -65,7 +65,7 @@ class ContactWidget extends \WP_Widget
     {
         echo '<br \>';
         echo $this->getSelectHTML('task', !empty($instance['task']) ? $instance['task'] : null);
-        echo $this->getInputHTML('campoid', 'Contact ID', !empty($instance['campoid']) ? $instance['campoid'] : null);
+        echo $this->getInputHTML('DIPid', 'Contact ID', !empty($instance['DIPid']) ? $instance['DIPid'] : null);
         echo '<br \>&nbsp;';
     }
 
@@ -74,7 +74,7 @@ class ContactWidget extends \WP_Widget
     {
         $instance = [];
         $instance['task'] = (!empty($new_instance['task']) ? $new_instance['task'] : '');
-        $instance['campoid'] = (!empty($new_instance['campoid']) ? $new_instance['campoid'] : '');
+        $instance['DIPid'] = (!empty($new_instance['DIPid']) ? $new_instance['DIPid'] : '');
         $instance['show'] = (!empty($new_instance['show']) ? $new_instance['show'] : '');
         $instance['hide'] = (!empty($new_instance['hide']) ? $new_instance['hide'] : '');
         return $instance;

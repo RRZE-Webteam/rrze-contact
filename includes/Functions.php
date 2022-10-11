@@ -8,7 +8,7 @@ class Functions
 {
 
     protected $pluginFile;
-    const TRANSIENT_PREFIX = 'rrze_campo_cache_';
+    const TRANSIENT_PREFIX = 'rrze_DIP_cache_';
     const TRANSIENT_EXPIRATION = DAY_IN_SECONDS;
 
 
@@ -20,10 +20,10 @@ class Functions
     public function onLoaded()
     {
         // add_action('admin_enqueue_scripts', [$this, 'adminEnqueueScripts']);
-        add_action('wp_ajax_GetCampoData', [$this, 'ajaxGetCampoData']);
-        add_action('wp_ajax_nopriv_GetCampoData', [$this, 'ajaxGetCampoData']);
-        add_action('wp_ajax_GetCampoDataForBlockelements', [$this, 'ajaxGetCampoDataForBlockelements']);
-        add_action('wp_ajax_nopriv_GetCampoDataForBlockelements', [$this, 'ajaxGetCampoDataForBlockelements']);
+        add_action('wp_ajax_GetDIPData', [$this, 'ajaxGetDIPData']);
+        add_action('wp_ajax_nopriv_GetDIPData', [$this, 'ajaxGetDIPData']);
+        add_action('wp_ajax_GetDIPDataForBlockelements', [$this, 'ajaxGetDIPDataForBlockelements']);
+        add_action('wp_ajax_nopriv_GetDIPDataForBlockelements', [$this, 'ajaxGetDIPDataForBlockelements']);
     }
 
     public static function formatPhone($phone)
@@ -150,7 +150,7 @@ class Functions
         //     null
         // );
 
-        // wp_localize_script('rrze-unvis-ajax', 'campo_ajax', [
+        // wp_localize_script('rrze-unvis-ajax', 'DIP_ajax', [
         //     'ajax_url' => admin_url('admin-ajax.php'),
         //     'nonce' => wp_create_nonce('contact-ajax-nonce'),
         // ]);
@@ -179,11 +179,11 @@ class Functions
         return get_transient(self::TRANSIENT_PREFIX . md5(json_encode($aAtts)));
     }
 
-    public function ajaxGetCampoData()
+    public function ajaxGetDIPData()
     {
         check_ajax_referer('contact-ajax-nonce', 'nonce');
         $inputs = filter_input(INPUT_POST, 'data', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
-        $response = $this->getTableHTML($this->getCampoData(null, $inputs['dataType'], $inputs['keyword']));
+        $response = $this->getTableHTML($this->getDIPData(null, $inputs['dataType'], $inputs['keyword']));
         wp_send_json($response);
     }
 
@@ -200,20 +200,20 @@ class Functions
         return $ret;
     }
 
-    public function getCampoData($campoOrgID = null, $dataType = '', $keyword = null)
+    public function getDIPData($DIPOrgID = null, $dataType = '', $keyword = null)
     {
         $data = false;
         $ret = __('No matching entries found.', 'rrze-contact');
 
         $options = get_option('rrze-contact');
         $data = 0;
-        $CampoURL = (!empty($options['basic_campo_url']) ? $options['basic_campo_url'] : 'https://contact.uni-erlangen.de');
-        $campoOrgID = (!empty($campoOrgID) ? $campoOrgID : (!empty($options['basic_CampoOrgNr']) ? $options['basic_CampoOrgNr'] : 0));
+        $DIPURL = (!empty($options['basic_DIP_url']) ? $options['basic_DIP_url'] : 'https://contact.uni-erlangen.de');
+        $DIPOrgID = (!empty($DIPOrgID) ? $DIPOrgID : (!empty($options['basic_DIPOrgNr']) ? $options['basic_DIPOrgNr'] : 0));
 
-        if ($CampoURL) {
-            $contact = new CampoAPI($CampoURL, $campoOrgID, null);
+        if ($DIPURL) {
+            $contact = new DIPAPI($DIPURL, $DIPOrgID, null);
             $data = $contact->getData($dataType, $keyword);
-        } elseif (!$CampoURL) {
+        } elseif (!$DIPURL) {
             $ret = __('Link to Contact is missing.', 'rrze-contact');
         }
 
@@ -268,11 +268,11 @@ class Functions
         return $ret;
     }
 
-    public function ajaxGetCampoDataForBlockelements()
+    public function ajaxGetDIPDataForBlockelements()
     {
         check_ajax_referer('contact-ajax-nonce', 'nonce');
         $inputs = filter_input(INPUT_POST, 'data', FILTER_SANITIZE_STRING, FILTER_REQUIRE_ARRAY);
-        $response = $this->getSelectHTML($this->getCampoData($inputs['campoOrgID'], $inputs['dataType']));
+        $response = $this->getSelectHTML($this->getDIPData($inputs['DIPOrgID'], $inputs['dataType']));
         wp_send_json($response);
     }
 

@@ -30,7 +30,6 @@ class Contact extends Metaboxes
         add_filter('cmb2_meta_boxes', array($this, 'cmb2_contact_metaboxes'));
     }
 
-
     public function cmb2_contact_metaboxes($meta_boxes)
     {
         $prefix = $this->prefix;
@@ -91,8 +90,6 @@ class Contact extends Metaboxes
 
             )
         );
-
-
 
         // Meta-Box Contactinformation - rrze_contact_info
         $text_url_options = [];
@@ -601,4 +598,6 @@ class Contact extends Metaboxes
         }
         return $einrichtung;
     }
+
+
 }
