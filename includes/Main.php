@@ -68,20 +68,20 @@ class Main
     }
 
 
-    public static function getThemeGroup()
-    {
-        $constants = getConstants();
-        $ret = '';
-        $active_theme = wp_get_theme();
-        $active_theme = $active_theme->get('Name');
+    // public static function getThemeGroup()
+    // {
+    //     $constants = getConstants();
+    //     $ret = '';
+    //     $active_theme = wp_get_theme();
+    //     $active_theme = $active_theme->get('Name');
 
-        if (in_array($active_theme, $constants['fauthemes'])) {
-            $ret = 'fauthemes';
-        } elseif (in_array($active_theme, $constants['rrzethemes'])) {
-            $ret = 'rrzethemes';
-        }
-        return $ret;
-    }
+    //     if (in_array($active_theme, $constants['fauthemes'])) {
+    //         $ret = 'fauthemes';
+    //     } elseif (in_array($active_theme, $constants['rrzethemes'])) {
+    //         $ret = 'rrzethemes';
+    //     }
+    //     return $ret;
+    // }
 
     public function registerPluginStyles()
     {
