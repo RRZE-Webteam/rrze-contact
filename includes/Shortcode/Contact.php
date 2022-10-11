@@ -34,11 +34,6 @@ class Contact extends Shortcode
 
     public function shortcode_contact($atts, $content = null)
     {
-
-        // echo '<pre>';
-        // var_dump($this->settings);
-        // exit;
-
         $atts = shortcode_atts(getShortcodeDefaults($this->settings['contact']), $atts);
 
         $displayfield = Data::get_display_field($atts['format'], $atts['show'], $atts['hide']);

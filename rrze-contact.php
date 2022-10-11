@@ -4,7 +4,7 @@
  * Plugin Name:     RRZE Contact
  * Plugin URI:      https://github.com/RRZE-Webteam/rrze-contact
  * Description:     Einbindung von Daten aus Contact
- * Version:         0.0.30
+ * Version:         0.0.31
  * Author:          RRZE-Webteam
  * Author URI:      https://blogs.fau.de/webworking/
  * License:         GNU General Public License v3
@@ -94,15 +94,12 @@ function activation()
 
     // Endpoint hinzufügen
     add_endpoint(true);
-    flush_rewrite_rules();
 }
-
-// update();
-
 
 function add_endpoint()
 {
     add_rewrite_endpoint('id', EP_PERMALINK | EP_PAGES);
+    flush_rewrite_rules();
 }
 
 function showFAUPersonNotice()

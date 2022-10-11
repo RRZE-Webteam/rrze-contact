@@ -31,6 +31,9 @@ class Main
 
     public function onLoaded()
     {
+        add_action('wp_enqueue_scripts', [$this, 'registerPluginStyles']);
+        add_action('admin_enqueue_scripts', [$this, 'enqueueAdminScripts']);
+
         $functions = new Functions($this->pluginFile);
         $functions->onLoaded();
 
@@ -77,5 +80,21 @@ class Main
         }
         return $ret;
     }
+
+    public function registerPluginStyles()
+    {
+        wp_register_style('rrze-contact', plugins_url('css/rrze-contact.css', plugin_basename($this->pluginFile)));
+    }
+
+    public function enqueueAdminScripts()
+    {
+        wp_register_style('rrze-contact-adminstyle', plugins_url('css/rrze-contact-admin.css', plugin_basename($this->pluginFile)));
+        wp_enqueue_style('rrze-contact-adminstyle');
+        wp_register_script('rrze-contact-adminscripts', plugins_url('js/rrze-contact-admin.js', plugin_basename($this->pluginFile)));
+        wp_enqueue_script('rrze-contact-adminscripts');
+        wp_enqueue_script('jquery');
+
+    }
+
 
 }

@@ -38,9 +38,9 @@ class Templates
                 $template_path = $theme_file;
             } else {
                 if (Helper::isFAUTheme()) {
-                    $template_path = dirname($this->pluginFile) . '/single-contact-fau-theme.php';
+                    $template_path = dirname($this->pluginFile) . '/templates/single-contact-fau-theme.php';
                 } else {
-                    $template_path = dirname($this->pluginFile) . '/single-contact.php';
+                    $template_path = dirname($this->pluginFile) . '/templates/single-contact.php';
                 }
             }
             //}
@@ -53,9 +53,9 @@ class Templates
                 $template_path = $theme_file;
             } else {
                 if (Helper::isFAUTheme()) {
-                    $template_path = dirname($this->pluginFile) . '/single-location-fau-theme.php';
+                    $template_path = dirname($this->pluginFile) . '/templates/single-location-fau-theme.php';
                 } else {
-                    $template_path = dirname($this->pluginFile) . '/single-location.php';
+                    $template_path = dirname($this->pluginFile) . '/templates/single-location.php';
                 }
             }
             //}
