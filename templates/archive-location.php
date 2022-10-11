@@ -10,11 +10,11 @@ get_header();
     $adisplay = array_map('trim', explode(',', $display));
     $showfields = array();
     foreach ($adisplay as $val) {
-	$showfields[$val] = 1;
+    	$showfields[$val] = 1;
     }
     while ( have_posts() ) {
-	the_post();
-	echo RRZE_Contact\Data::create_rrze_location($post->ID, $showfields, 'h1'); 
+    	the_post();
+	    echo RRZE\Contact\Data::create_rrze_location($post->ID, $showfields, 'h1'); 
     }  ?>
 	 <nav class="navigation">
 	    <div class="nav-previous"><?php previous_posts_link(__('<span class="meta-nav">&laquo;</span> Back', 'rrze-contact')); ?></div>

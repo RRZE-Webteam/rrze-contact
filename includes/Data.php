@@ -1666,7 +1666,7 @@ class Data
                     }
                 }
             }
-            //add_action( 'admin_notices', array( 'FAU_Person', 'admin_notice_phone_number' ) );
+            //add_action( 'admin_notices', array( 'RRZE\Contact', 'admin_notice_phone_number' ) );
             $fields[$key] = $value;
         }
 

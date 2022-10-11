@@ -70,7 +70,7 @@ class Metaboxes  {
 	if ($str) {
 	    $location = get_post_meta( cmb2_Meta_Box::get_object_id(), 'rrze_contact_telephone_select', true );
 	    $str = UnivIS_Data::correct_phone_number( $str, $location );
-	 //   add_action( 'admin_notices', array( 'FAU_Person\Helper', 'admin_notice_phone_number' ) );
+	 //   add_action( 'admin_notices', array( 'RRZE\Contact\Helper', 'admin_notice_phone_number' ) );
 	    return $str;
 	}
     }

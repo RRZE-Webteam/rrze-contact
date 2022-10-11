@@ -18,7 +18,7 @@ get_header();
 		    <div class="row">
 			 <div <?php post_class("entry-content");?>>
 			    <main id="droppoint">
-				<?php echo RRZE_Contact\Data::create_rrze_location($post->ID, $showfields, 'h1'); ?>
+				<?php echo RRZE\Contact\Data::create_rrze_location($post->ID, $showfields, 'h1'); ?>
 			    </main>
 			</div>
 		    </div>

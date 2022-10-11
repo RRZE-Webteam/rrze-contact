@@ -22,6 +22,8 @@ class Main
      */
     protected $pluginFile;
     protected $widget;
+    private $settings = '';
+
 
     public function __construct($pluginFile)
     {
@@ -41,7 +43,7 @@ class Main
         $settings->onLoaded();
         $this->settings = $settings;
 
-        $taxonomy = new Taxonomy($this->pluginFile, $settings);
+        $taxonomy = new Taxonomy($settings);
         $taxonomy->onLoaded();
 
         $templates = new Templates($this->pluginFile, $settings);

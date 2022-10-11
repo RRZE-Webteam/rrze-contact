@@ -25,6 +25,7 @@ class Location extends Taxonomy
     public function register()
     {
         $aParams = [
+            'postType' => $this->postType,
             'slug' => 'location',
             'singular_name' => __('Location', 'rrze-contact'),
             'plural_name' => __('Locations', 'rrze-contact'),

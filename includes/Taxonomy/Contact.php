@@ -5,7 +5,7 @@ namespace RRZE\Contact\Taxonomy;
 use RRZE\Contact\Data;
 use RRZE\Contact\Schema;
 use RRZE\OldLib\UnivIS\Config;
-// use function FAU_Person\Config\get_fau_person_capabilities;
+// use function RRZE\Contact\Config\get_RRZE\Contact_capabilities;
 
 defined('ABSPATH') || exit;
 
@@ -17,9 +17,12 @@ class Contact extends Taxonomy
 
     protected $postType = 'contact';
     protected $taxonomy = 'contact_category';
+	private $settings = '';
 
-    public function __construct()
+
+    public function __construct($settings)
     {
+		$this->settings = $settings;
     }
 
     public function onLoaded()
@@ -41,13 +44,16 @@ class Contact extends Taxonomy
     
     public function register()
     {
-        $slug = (!empty($this->settings->options['constants_has_archive_page']) ? $this->settings->options['constants_has_archive_page'] : $this->postType);
+        $archive_slug = (!empty($this->settings->options['constants_has_archive_page']) ? $this->settings->options['constants_has_archive_page'] : $this->postType);
+		$archive_slug = ($archive_slug == 1 ? $this->postType : $archive_slug);
+
 		$has_archive_page = (!empty($this->settings->options['constants_has_archive_page']) && ($this->settings->options['constants_has_archive_page'] == $this->postType) ? true : false);
-		$archive_page = get_page_by_path($slug, OBJECT, 'page');
+		$archive_page = get_page_by_path($archive_slug, OBJECT, 'page');
 		$archive_title = (!empty($archive_page) ? $archive_page->post_title : __('Contacts', 'rrze-contact'));
 
         $aParams = [
-            'slug' => $slug,
+            'postType' => $this->postType,
+            'slug' => $archive_slug,
             'singular_name' => __('Contact', 'rrze-contact'),
             'plural_name' => __('Contacts', 'rrze-contact'),
             'supports' => ['title', 'editor', 'author', 'thumbnail', 'revisions'],

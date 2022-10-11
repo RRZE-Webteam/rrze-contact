@@ -11,10 +11,8 @@ $screenreadertitle = __('Contact list','rrze-contact');
 
                     <?php while ( have_posts() ) {
 			the_post();
-			$id = $post->ID;
-			if ($id) {			
-
-			     echo RRZE_Contact\Shortcodes\Contact::shortcode_contact(array("id"=> $post->ID, 'format' => 'kompakt', 'showlink' => 0, 'showlist' => 1 ));
+			if (!empty($post->ID)) {
+				echo do_shortcode('[contact id="' . $post->ID . '" ' . 'format="kompakt" showlink="0" showlist="1"]');
 			} else { ?>
 			    <p class="hinweis">
 				<strong><?php _e('We are sorry', 'rrze-contact');?></strong><br>

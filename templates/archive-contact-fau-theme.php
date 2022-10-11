@@ -1,5 +1,4 @@
 <?php
-
 get_header();
 get_template_part('template-parts/hero', 'index');
 $screenreadertitle = __('Contact list', 'rrze-contact');
@@ -12,10 +11,8 @@ $screenreadertitle = __('Contact list', 'rrze-contact');
 			<h1 id="droppoint" class="mobiletitle"><?php the_title();?></h1>
 <?php while (have_posts()) {
     the_post();
-    $id = $post->ID;
-    if ($id) {
-
-        echo FAU_Person\Shortcodes\Contact::shortcode_contact(array("id" => $post->ID, 'format' => 'kompakt', 'showlink' => 0, 'showlist' => 1));
+    if (!empty($post->ID)) {
+		echo do_shortcode('[contact id="' . $post->ID . '" ' . 'format="kompakt" showlink="0" showlist="1"]');
     } else {?>
 			    <p class="hinweis">
 				<strong><?php _e('We are sorry', 'rrze-contact');?></strong><br>

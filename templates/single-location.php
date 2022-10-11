@@ -16,7 +16,7 @@ foreach ($adisplay as $val) {
 while (have_posts()) {
     the_post();
     $id = $post->ID;
-    echo RRZE_Contact\Data::create_rrze_location($id, $showfields, 'h1');
+    echo RRZE\Contact\Data::create_rrze_location($id, $showfields, 'h1');
 }
 ?>
     </main><!-- .site-main -->

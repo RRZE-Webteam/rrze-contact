@@ -12,14 +12,17 @@ use RRZE\Contact\Taxonomy\Location;
  */
 class Taxonomy
 {
+    private $settings = '';
 
-    public function __construct()
+
+    public function __construct($settings)
     {
+        $this->settings = $settings;
     }
 
     public function onLoaded()
     {
-        $contact_posttype = new Contact();
+        $contact_posttype = new Contact($this->settings);
         $contact_posttype->onLoaded();
 
         $standort_posttype = new Location();
@@ -28,7 +31,7 @@ class Taxonomy
         flush_rewrite_rules();
     }
 
-    public function registerCPT($aParams = ['slug' => '', 'singular_name' => '', 'plural_name' => '', 'supports' => [],  'has_archive_page' => false, 'archive_title' => '', 'show_in_menu' => false, 'menu_name' => '', 'menu_icon' => ''])
+    public function registerCPT($aParams = ['postType' => '', 'slug' => '', 'singular_name' => '', 'plural_name' => '', 'supports' => [],  'has_archive_page' => false, 'archive_title' => '', 'show_in_menu' => false, 'menu_name' => '', 'menu_icon' => ''])
     {
         $pluralSlug = $aParams['slug'] . 's';
 
@@ -96,6 +99,6 @@ class Taxonomy
             $args['menu_icon'] = $aParams['menu_icon'];
         }            
 
-        register_post_type($aParams['slug'], $args);
+        register_post_type($aParams['postType'], $args);
     }
 }
