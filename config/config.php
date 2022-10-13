@@ -140,7 +140,7 @@ function getFields()
                 'default' => true,
             ],
             [
-                'name' => 'givenName',
+                'name' => 'firstName',
                 'label' => __('Vorname', 'rrze-contact'),
                 'type' => 'checkbox',
                 'checked' => true,

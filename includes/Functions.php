@@ -28,6 +28,8 @@ class Functions
 
     public static function formatPhone($phone)
     {
+        $phone = filter_var($phone, FILTER_SANITIZE_NUMBER_INT);
+
         if ((strpos($phone, '+49 9131 85-') !== 0) && (strpos($phone, '+49 911 5302-') !== 0)) {
             if (!preg_match('/\+49 [1-9][0-9]{1,4} [1-9][0-9]+/', $phone)) {
                 $phone_data = preg_replace('/\D/', '', $phone);
@@ -139,23 +141,6 @@ class Functions
             do_action('rrze.log.' . $logType, __NAMESPACE__ . ' ' . $method . '() : ' . $msg);
         }
     }
-
-
-    // public function adminEnqueueScripts()
-    // {
-        // wp_enqueue_script(
-        //     'rrze-unvis-ajax',
-        //     plugins_url('js/rrze-contact.js', plugin_basename($this->pluginFile)),
-        //     ['jquery'],
-        //     null
-        // );
-
-        // wp_localize_script('rrze-unvis-ajax', 'DIP_ajax', [
-        //     'ajax_url' => admin_url('admin-ajax.php'),
-        //     'nonce' => wp_create_nonce('contact-ajax-nonce'),
-        // ]);
-
-    // }
 
     public function getTableHTML($aIn)
     {

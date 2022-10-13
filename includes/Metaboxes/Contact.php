@@ -32,36 +32,39 @@ class Contact extends Metaboxes
 
     public function cmb2_contact_metaboxes($meta_boxes)
     {
-        $prefix = $this->prefix;
+
+        $contactID = 0;
+        if (isset($_GET['post'])) {
+            $contactID = intval($_GET['post']);
+        } elseif (isset($_POST['post_ID'])) {
+            $contactID = intval($_POST['post_ID']);
+        }
+        
+        $postMeta = get_post_meta($contactID);
 
         $contactselect_connection = Data::get_contactdata(1);
-        $standortselect =  Data::get_standortdata();
         $default_rrze_contact_typ = Data::get_default_rrze_contact_typ();
 
-        $contact_id = 0;
-
-        if (isset($_GET['post'])) {
-            $contact_id = intval($_GET['post']);
-        } elseif (isset($_POST['post_ID'])) {
-            $contact_id = intval($_POST['post_ID']);
-        }
-
-        $univis_id = get_post_meta($contact_id, 'rrze_contact_univis_id', true);
         $univisdata = [];
-        $univis = new UnivIS();
-        $univisResponse = $univis->getPerson('id=' . $univis_id);
 
-        if ($univisResponse['valid']) {
-            $univis_sync = '';
-            $univisdata = $univisResponse['content'][0];
-        } else {
-            $univis_sync = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
+        $bUnivisSync = (!empty($postMeta[$this->prefix . 'univis_sync'][0]) ? $postMeta[$this->prefix . 'univis_sync'][0] : false); // get_post_meta() can return '' for this field but we need a real false to set 'disabled' 
+        $univisSyncTxt = '';
+        $univisID = (!empty($postMeta[$this->prefix . 'univis_id'][0]) ? $postMeta[$this->prefix . 'univis_id'][0] : 0);
+
+        if ($univisID){
+            $univis = new UnivIS();
+            $univisResponse = $univis->getPerson('id=' . $univisID);
+
+            if ($univisResponse['valid']) {
+                $univisdata = $univisResponse['content'][0];
+            } else {
+                $univisSyncTxt = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
+            }
         }
-        $standort_default = Data::get_standort_defaults($contact_id);
 
         $defaultkurzauszug = '';
-        if (get_post_field('post_excerpt', $contact_id)) {
-            $defaultkurzauszug  = get_post_field('post_excerpt', $contact_id);
+        if (get_post_field('post_excerpt', $contactID)) {
+            $defaultkurzauszug  = get_post_field('post_excerpt', $contactID);
         }
 
         // Meta-Box Weitere Informationen - rrze_contact_adds
@@ -76,7 +79,7 @@ class Contact extends Metaboxes
                     'name' => __('Kurzbeschreibung', 'rrze-contact'),
                     'desc' => __('Kurzform und Zusammenfassung der Contactbeschreibung bei Nutzung des Attributs <code>show="description"</code>.', 'rrze-contact'),
                     'type' => 'textarea_small',
-                    'id' => $prefix . 'description',
+                    'id' => $this->prefix . 'description',
                     'default'    => $defaultkurzauszug
                 ),
 
@@ -84,7 +87,7 @@ class Contact extends Metaboxes
                     'name' => __('Kurzbeschreibung (Sidebar und Kompakt)', 'rrze-contact'),
                     'desc' => __('Diese Kurzbeschreibung wird bei der Anzeige von <code>show="description"</code> in einer Sidebar (<code>format="sidebar"</code>) oder einer Liste (<code>format="kompakt"</code>) verwendet.', 'rrze-contact'),
                     'type' => 'textarea_small',
-                    'id' => $prefix . 'small_description',
+                    'id' => $this->prefix . 'small_description',
                     'default'    => $defaultkurzauszug
                 ),
 
@@ -93,7 +96,7 @@ class Contact extends Metaboxes
 
         // Meta-Box Contactinformation - rrze_contact_info
         $text_url_options = [];
-        $myUrl = get_permalink($contact_id);
+        $myUrl = get_permalink($contactID);
         $text_url_options[$myUrl] = __('Automatically generated contact page', 'rrze-contact');
 
         $pages = get_pages(); 
@@ -106,9 +109,6 @@ class Contact extends Metaboxes
         $descFound = __('Value displayed from UnivIS:', 'rrze-contact') . ' ';
         $descNotFound = __('No value is stored for this in UnivIS.', 'rrze-contact');
 
-
-        $bUnivisSync = get_post_meta($contact_id, 'rrze_contact_univis_sync', true);
-
         $meta_boxes['rrze_contact_info'] = array(
             'id' => 'rrze_contact_info',
             'title' => __('Contactinformationen', 'rrze-contact'),
@@ -117,11 +117,11 @@ class Contact extends Metaboxes
             'priority' => 'default',
             'fields' => array(
                 array(
-                    'name' => __('Titel (Präfix)', 'rrze-contact'),
+                    'name' => __('Title (prefix)', 'rrze-contact'),
                     'desc' => '',
                     'type' => 'select',
                     'options' => array(
-                        '' => __('Keine Angabe', 'rrze-contact'),
+                        '' => __('No indication', 'rrze-contact'),
                         'Dr.' => __('Doktor', 'rrze-contact'),
                         'Prof.' => __('Professor', 'rrze-contact'),
                         'Prof. Dr.' => __('Professor Doktor', 'rrze-contact'),
@@ -130,7 +130,7 @@ class Contact extends Metaboxes
                         'PD' => __('Privatdozent', 'rrze-contact'),
                         'PD Dr.' => __('Privatdozent Doktor', 'rrze-contact')
                     ),
-                    'id' => $prefix . 'honorificPrefix',
+                    'id' => $this->prefix . 'honorificPrefix',
                     'description' => ($bUnivisSync ? (!empty($univisdata['honorificPrefix']) ? $descFound . $univisdata['honorificPrefix'] : $descNotFound) : ''),
                     'show_on_cb' => 'callback_cmb2_show_on_contact'
                 ),
@@ -138,18 +138,20 @@ class Contact extends Metaboxes
                     'name' => __('Vorname', 'rrze-contact'),
                     'desc' => '',
                     'type' => 'text',
-                    'id' => $prefix . 'givenName',
+                    'id' => $this->prefix . 'firstName',
                     'description' => ($bUnivisSync ? (!empty($univisdata['firstname']) ? $descFound . $univisdata['firstname'] : $descNotFound) : ''),
                     'show_on_cb' => 'callback_cmb2_show_on_contact',
                     'attributes'  => array(
-                        'placeholder' => (!empty($univisdata['firstname']) ? $univisdata['firstname'] : ''),
+                        // 'placeholder' => (!$bUnivisSync && !empty($univisdata['firstname']) ? $univisdata['firstname'] : ''),
+                        'disabled' => $bUnivisSync,
+                        'value' => ($bUnivisSync && !empty($univisdata['firstname']) ? $univisdata['firstname'] : (!empty($postMeta[$this->prefix . 'firstName'][0]) ? $postMeta[$this->prefix . 'firstName'][0] : '')),
                     ),
                 ),
                 array(
-                    'name' => __('Nachname', 'rrze-contact'),
+                    'name' => __('Family name', 'rrze-contact'),
                     'desc' => '',
                     'type' => 'text',
-                    'id' => $prefix . 'familyName',
+                    'id' => $this->prefix . 'familyName',
                     'description' => ($bUnivisSync ? (!empty($univisdata['lastname']) ? $descFound . $univisdata['lastname'] : $descNotFound) : ''),
                     'attributes'  => array(
                         'placeholder' => (!empty($univisdata['lastname']) ? $univisdata['lastname'] : ''),
@@ -160,7 +162,7 @@ class Contact extends Metaboxes
                     'name' => __('Abschluss (Suffix)', 'rrze-contact'),
                     'desc' => '',
                     'type' => 'text',
-                    'id' => $prefix . 'honorificSuffix',
+                    'id' => $this->prefix . 'honorificSuffix',
                     'description' => ($bUnivisSync ? (!empty($univisdata['honorificSuffix']) ? $descFound . $univisdata['honorificSuffix'] : $descNotFound) : ''),
                     'attributes'  => array(
                         'placeholder' => (!empty($univisdata['honorificSuffix']) ? $univisdata['honorificSuffix'] : ''),
@@ -170,7 +172,7 @@ class Contact extends Metaboxes
                 array(
                     'name' => __('Position/Funktion', 'rrze-contact'),
                     'desc' => '',
-                    'id' => $prefix . 'jobTitle',
+                    'id' => $this->prefix . 'jobTitle',
                     'type' => 'text',
                     'description' => ($bUnivisSync ? (!empty($univisdata['jobTitle']) ? $descFound . $univisdata['jobTitle'] : $descNotFound) : ''),
                     'attributes'  => array(
@@ -181,7 +183,7 @@ class Contact extends Metaboxes
                     'name' => __('Organisation', 'rrze-contact'),
                     'desc' => __('Geben Sie hier die Organisation (Lehrstuhl oder Einrichtung) ein.', 'rrze-contact'),
                     'type' => 'text',
-                    'id' => $prefix . 'worksFor',
+                    'id' => $this->prefix . 'worksFor',
                     'description' => ($bUnivisSync ? (!empty($univisdata['work']) ? $descFound . $univisdata['work'] : $descNotFound) : ''),
                     'attributes'  => array(
                         'placeholder' => (!empty($univisdata['work'])? $univisdata['work'] : ''),
@@ -191,17 +193,17 @@ class Contact extends Metaboxes
                 'name' => __('Raum', 'rrze-contact'),
                 'desc' => '',
                 'type' => 'text',
-                'id' => $prefix . 'workLocation',
+                'id' => $this->prefix . 'workLocation',
                 'description' => ($bUnivisSync ? (!empty($location['office']) ? $descFound . $location['office'] : $descNotFound) : ''),
                 'attributes'  => array(
                     'placeholder' => (!empty($location['office'])?$location['office'] : ''),
                 ),
             ),
             array(
-                'name' => __('Telefon', 'rrze-contact'),
+                'name' => __('Phone', 'rrze-contact'),
                 'desc' => __('Bitte geben Sie uni-interne Nummern für Erlangen in der internationalen Form +49 9131 85-22222 und für Nürnberg in der internationalen Form +49 911 5302-555 an.', 'rrze-contact'),
                 'type' => 'text',
-                'id' => $prefix . 'phone',
+                'id' => $this->prefix . 'phone',
                 'sanitization_cb' => 'validate_number',
                 'description' => ($bUnivisSync ? (!empty($location['phone']) ? $descFound . $location['phone'] : $descNotFound) : ''),
                 'attributes'  => array(
@@ -209,10 +211,10 @@ class Contact extends Metaboxes
                 ),
             ),
             array(
-                'name' => __('Telefax', 'rrze-contact'),
+                'name' => __('Fax', 'rrze-contact'),
                 'desc' => __('Bitte geben Sie uni-interne Nummern für Erlangen in der internationalen Form +49 9131 85-22222 und für Nürnberg in der internationalen Form +49 911 5302-555 an, uni-externe Nummern in der internationalen Form +49 9131 1111111.', 'rrze-contact'),
                 'type' => 'text',
-                'id' => $prefix . 'fax',
+                'id' => $this->prefix . 'fax',
                 'sanitization_cb' => 'validate_number',
                 'description' => ($bUnivisSync ? (!empty($location['fax']) ? $descFound . $location['fax'] : $descNotFound) : ''),
                 'attributes'  => array(
@@ -220,11 +222,11 @@ class Contact extends Metaboxes
                 ),
             ),
             array(
-                'name' => __('Mobiltelefon', 'rrze-contact'),
+                'name' => __('Mobile', 'rrze-contact'),
                 'desc' => __('Bitte geben Sie die Nummer in der internationalen Form +49 176 1111111 an.', 'rrze-contact'),
                 'type' => 'text',
                 'sanitization_cb' => 'validate_number',
-                'id' => $prefix . 'mobile',
+                'id' => $this->prefix . 'mobile',
                 'description' => ($bUnivisSync ? (!empty($location['mobile']) ? $descFound . $location['mobile'] : $descNotFound) : ''),
                 'attributes'  => array(
                     'placeholder' => (!empty($location['mobile'])? $location['mobile'] : ''),
@@ -234,7 +236,7 @@ class Contact extends Metaboxes
                 'name' => __('E-Mail', 'rrze-contact'),
                 'desc' => '',
                 'type' => 'text_email',
-                'id' => $prefix . 'email',
+                'id' => $this->prefix . 'email',
                 'description' => ($bUnivisSync ? (!empty($location['email']) ? $descFound . $location['email'] : $descNotFound) : ''),
                 'attributes'  => array(
                     'placeholder' => (!empty($location['email'])?$location['email']:''),
@@ -244,7 +246,7 @@ class Contact extends Metaboxes
                 'name' => __('Webseite', 'rrze-contact'),
                 'desc' => '',
                 'type' => 'text_url',
-                'id' => $prefix . 'url',
+                'id' => $this->prefix . 'url',
                 'description' => ($bUnivisSync ? (!empty($location['url']) ? $descFound . $location['url'] : $descNotFound) : ''),
                 'attributes'  => array(
                     'placeholder' => (!empty($location['url'])?$location['url'] : ''),
@@ -254,7 +256,7 @@ class Contact extends Metaboxes
                 'name' => __('Abteilung', 'rrze-contact'),
                 'desc' => __('Geben Sie hier die Abteilung oder Arbeitsgruppe ein.', 'rrze-contact'),
                 'type' => 'text',
-                'id' => $prefix . 'department',
+                'id' => $this->prefix . 'department',
                 'description' => ($bUnivisSync ? (!empty($univisdata['department']) ? $descFound . $univisdata['department'] : $descNotFound) : ''),
                     'attributes'  => array(
                         'placeholder' => (!empty($univisdata['department']) ? $univisdata['department'] : ''),
@@ -265,7 +267,7 @@ class Contact extends Metaboxes
                     'name' => __('Sortierfeld', 'rrze-contact'),
                     'description' => __('Wird für eine Sortierung verwendet, die sich weder nach Name, Titel der Contactseite oder Vorname richten soll. Geben SIe hier Buchstaben oder Zahlen ein, nach denen sortiert werden sollen. Zur Sortierunge der Einträge geben Sie im Shortcode das Attribut <code>sort="sortierfeld"</code> ein.', 'rrze-contact'),
                     'type' => 'text_small',
-                    'id' => $prefix . 'alternateName',
+                    'id' => $this->prefix . 'alternateName',
                     'attributes'  => array(
                         'placeholder' => (!empty($univisdata['alternateName'])?$univisdata['alternateName']:''),
                     ),
@@ -275,12 +277,17 @@ class Contact extends Metaboxes
                     'name' => __('Name und "Mehr"-Link verlinken auf Seite ...', 'rrze-contact'),
                     'desc' => __('Choose a page or the automatically generated page for contact details.', 'rrze-contact'),
                     'type' => 'select',
-                    'id' => $prefix . 'link',
+                    'id' => $this->prefix . 'link',
                     'options' => $text_url_options,
                     'default' => $myUrl
                 ),
             )
         );
+
+
+        $locationDefault = Data::get_standort_defaults($contactID);
+        $locationSelect =  Data::get_standortdata();
+
 
         $meta_boxes['rrze_contact_adressdaten'] = array(
             'id' => 'rrze_contact_adressdaten',
@@ -293,20 +300,20 @@ class Contact extends Metaboxes
                     'name' => __('Zugeordneter Standort', 'rrze-contact'),
                     //'desc' => 'Der Standort, von dem die Daten angezeigt werden sollen.',
                     'type' => 'select',
-                    'id' => $prefix . 'standort_id',
-                    'options' => $standortselect,
+                    'id' => $this->prefix . 'standort_id',
+                    'options' => $locationSelect,
                 ),
                 array(
                     'name' => __('Standort-Daten für Adressanzeige nutzen', 'rrze-contact'),
                     'desc' => __('Die Adressdaten werden aus dem Standort bezogen; die folgenden optionalen Felder und Adressdaten aus UnivIS werden überschrieben.', 'rrze-contact'),
                     'type' => 'checkbox',
-                    'id' => $prefix . 'standort_sync',
+                    'id' => $this->prefix . 'standort_sync',
                 ),
                 array(
                     'name' => __('Straße und Hausnummer', 'rrze-contact'),
                     'type' => 'text',
-                    'id' => $prefix . 'streetAddress',
-                    'after' =>  $standort_default['streetAddress'],
+                    'id' => $this->prefix . 'streetAddress',
+                    'after' =>  $locationDefault['streetAddress'],
                     'attributes'  => array(
                         'placeholder' => (!empty($univisdata['streetAddress'])?$univisdata['streetAddress'] : ''),
                     ),
@@ -316,9 +323,9 @@ class Contact extends Metaboxes
                     'name' => __('Postleitzahl', 'rrze-contact'),
                     //'desc' => 'Wenn der Ort aus UnivIS übernommen werden soll bitte leer lassen!',
                     'type' => 'text_small',
-                    'id' => $prefix . 'postalCode',
+                    'id' => $this->prefix . 'postalCode',
                     'sanitization_cb' => 'validate_plz',
-                    'after' => $standort_default['postalCode'],
+                    'after' => $locationDefault['postalCode'],
                     'attributes'  => array(
                         'placeholder' => (!empty($univisdata['postalCode'])?$univisdata['postalCode']:''),
                     ),
@@ -326,8 +333,8 @@ class Contact extends Metaboxes
                 array(
                     'name' => __('Ort', 'rrze-contact'),
                     'type' => 'text',
-                    'id' => $prefix . 'addressLocality',
-                    'after' => $standort_default['addressLocality'],
+                    'id' => $this->prefix . 'addressLocality',
+                    'after' => $locationDefault['addressLocality'],
                     'attributes'  => array(
                         'placeholder' => (!empty($univisdata['addressLocality'])?$univisdata['addressLocality']:''),
                     ),
@@ -335,8 +342,8 @@ class Contact extends Metaboxes
                 array(
                     'name' => __('Land', 'rrze-contact'),
                     'type' => 'text',
-                    'id' => $prefix . 'addressCountry',
-                    'after' => $standort_default['addressCountry'],
+                    'id' => $this->prefix . 'addressCountry',
+                    'after' => $locationDefault['addressCountry'],
                     'attributes'  => array(
                         'placeholder' => (!empty($univisdata['addressCountry'])?$univisdata['addressCountry']:''),
                     ),
@@ -371,7 +378,7 @@ class Contact extends Metaboxes
             $thissome['name'] = $name . ' URL';
             $thissome['desc'] = $desc;
             $thissome['type'] = 'text_url';
-            $thissome['id'] =  $prefix . $key . '_url';
+            $thissome['id'] =  $this->prefix . $key . '_url';
             $thissome['protocols'] = array('https');
 
             array_push($somefields, $thissome);
@@ -403,16 +410,16 @@ class Contact extends Metaboxes
                     'name' => __('Sprechzeiten: Überschrift', 'rrze-contact'),
                     'desc' => __('Wird in Fettdruck über den Sprechzeiten ausgegeben.', 'rrze-contact'),
                     'type' => 'text',
-                    'id' => $prefix . 'hoursAvailable_text'
+                    'id' => $this->prefix . 'hoursAvailable_text'
                 ),
                 array(
                     'name' => __('Sprechzeiten: Allgemeines oder Anmerkungen', 'rrze-contact'),
                     'desc' => __('Zur Formatierung können HTML-Befehle verwendet werden (z.B. &lt;br&gt; für Zeilenumbruch). Wird vor den Sprechzeiten ausgegeben.', 'rrze-contact'),
                     'type' => 'textarea_small',
-                    'id' => $prefix . 'hoursAvailable'
+                    'id' => $this->prefix . 'hoursAvailable'
                 ),
                 array(
-                    'id' => $prefix . 'hoursAvailable_group',
+                    'id' => $this->prefix . 'hoursAvailable_group',
                     'type' => 'group',
                     // 'desc' => $univis_default['hoursAvailable_group'],
                     //'desc' => __('Bitte geben Sie die Sprechzeiten an.', 'rrze-contact'),
@@ -496,23 +503,23 @@ class Contact extends Metaboxes
                         'einrichtung' => __('Einrichtung', 'rrze-contact'),
                         'pseudo' => __('Pseudonym', 'rrze-contact'),
                     ),
-                    'id' => $prefix . 'typ',
+                    'id' => $this->prefix . 'typ',
                     'default' => $default_rrze_contact_typ
                 ),
                 array(
                     'name' => __('UnivIS-Id', 'rrze-contact'),
                     'desc' => 'UnivIS-Id des Contacts (<a href="/wp-admin/edit.php?post_type=contact&page=search-univis-id">UnivIS-Id suchen</a>)',
                     'type' => 'text_small',
-                    'id' => $prefix . 'univis_id',
+                    'id' => $this->prefix . 'univis_id',
                     'sanitization_cb' => 'validate_univis_id',
                     'show_on_cb' => 'callback_cmb2_show_on_contact'
                 ),
                 array(
                     'name' => __('UnivIS-Daten verwenden', 'rrze-contact'),
-                    'desc' => __('Daten aus UnivIS überschreiben die Contactdaten.', 'rrze-contact'),
+                    'desc' => __('Overwrite contact data with data from UnivIS.', 'rrze-contact'),
                     'type' => 'checkbox',
-                    'id' => $prefix . 'univis_sync',
-                    'after' => $univis_sync,
+                    'id' => $this->prefix . 'univis_sync',
+                    'after' => $univisSyncTxt,
                     'show_on_cb' => 'callback_cmb2_show_on_contact'
                 ),
 
@@ -532,13 +539,13 @@ class Contact extends Metaboxes
                 array(
                     'name' => __('Art der Verknüpfung', 'rrze-contact'),
                     'desc' => __('Der hier eingegebene Text wird vor der Ausgabe des verknüpften Contactes angezeigt (z.B. Vorzimmer, Contact über).', 'rrze-contact'),
-                    'id' => $prefix . 'connection_text',
+                    'id' => $this->prefix . 'connection_text',
                     'type' => 'text',
                 ),
                 array(
                     'name' => __('Verknüpfte Contacte auswählen', 'rrze-contact'),
                     'desc' => '',
-                    'id' => $prefix . 'connection_id',
+                    'id' => $this->prefix . 'connection_id',
                     'type' => 'select',
                     'options' => $contactselect_connection,
                     'repeatable' => true,
@@ -546,7 +553,7 @@ class Contact extends Metaboxes
                 array(
                     'name' => __('Angezeigte Daten der verknüpften Contacte', 'rrze-contact'),
                     'desc' => '',
-                    'id' => $prefix . 'connection_options',
+                    'id' => $this->prefix . 'connection_options',
                     'type' => 'multicheck',
                     'options' => array(
                         'contactPoint' => __('Adresse', 'rrze-contact'),
@@ -560,7 +567,7 @@ class Contact extends Metaboxes
                     'name' => __('Eigene Daten ausblenden', 'rrze-contact'),
                     'desc' => __('Ausschließlich die verknüpften Contacte werden in der Ausgabe angezeigt.', 'rrze-contact'),
                     'type' => 'checkbox',
-                    'id' => $prefix . 'connection_only',
+                    'id' => $this->prefix . 'connection_only',
                     //'before' => $standort_sync,
                 ),
             )

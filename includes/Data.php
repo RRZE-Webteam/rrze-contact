@@ -44,60 +44,60 @@ class Data
     // $filtertype defaults empty = all contacts
     // $filtertype values: realcontact, realmale, realfemale, einrichtung
 
-    public static function get_contact_list($filtertype = '')
-    {
-        $args = array(
-            'post_type' => 'contact',
-            'numberposts' => -1,
-            'meta_key' => 'rrze_contact_typ',
-        );
-        $contactlist = get_posts($args);
+    // public static function get_contact_list($filtertype = '')
+    // {
+    //     $args = array(
+    //         'post_type' => 'contact',
+    //         'numberposts' => -1,
+    //         'meta_key' => 'rrze_contact_typ',
+    //     );
+    //     $contactlist = get_posts($args);
 
-        if ($contactlist) {
-            foreach ($contactlist as $key => $value) {
-                $contactlist[$key] = (array) $contactlist[$key];
-                $name = $contactlist[$key]['post_title'];
+    //     if ($contactlist) {
+    //         foreach ($contactlist as $key => $value) {
+    //             $contactlist[$key] = (array) $contactlist[$key];
+    //             $name = $contactlist[$key]['post_title'];
 
-                $thistype = get_post_meta($contactlist[$key]['ID'], 'rrze_contact_typ', true);
-                if (!empty($filtertype)) {
-                    if ($thistype != $filtertype) {
-                        continue;
-                    }
-                }
-                switch ($thistype) {
-                    case 'realcontact':
-                    case 'realmale':
-                    case 'realfemale':
-                        if (get_post_meta($contactlist[$key]['ID'], 'rrze_contact_familyName', true)) {
-                            $lastname = get_post_meta($contactlist[$key]['ID'], 'rrze_contact_familyName', true);
-                            if (get_post_meta($contactlist[$key]['ID'], 'rrze_contact_givenName', true)) {
-                                $name = $lastname . ', ' . get_post_meta($contactlist[$key]['ID'], 'rrze_contact_givenName', true);
-                            } elseif (ltrim(strpos($name, $lastname))) {
-                                $name = $lastname . ', ' . ltrim(str_replace($lastname, '', $name));
-                            } else {
-                                $name = $lastname;
-                            }
-                        } else {
-                            if (ltrim(strpos($name, ' '))) {
-                                $lastname = ltrim(strrchr($name, ' '));
-                                $firstname = ltrim(str_replace($lastname, '', $name));
-                                $name = $lastname . ', ' . $firstname;
-                            }
-                        }
-                        break;
-                    default:
-                        break;
-                }
-                $temp[$contactlist[$key]['ID']] = $name;
-            }
-            natcasesort($temp);
+    //             $thistype = get_post_meta($contactlist[$key]['ID'], 'rrze_contact_typ', true);
+    //             if (!empty($filtertype)) {
+    //                 if ($thistype != $filtertype) {
+    //                     continue;
+    //                 }
+    //             }
+    //             switch ($thistype) {
+    //                 case 'realcontact':
+    //                 case 'realmale':
+    //                 case 'realfemale':
+    //                     if (get_post_meta($contactlist[$key]['ID'], 'rrze_contact_familyName', true)) {
+    //                         $lastname = get_post_meta($contactlist[$key]['ID'], 'rrze_contact_familyName', true);
+    //                         if (get_post_meta($contactlist[$key]['ID'], 'rrze_contact_firstName', true)) {
+    //                             $name = $lastname . ', ' . get_post_meta($contactlist[$key]['ID'], 'rrze_contact_firstName', true);
+    //                         } elseif (ltrim(strpos($name, $lastname))) {
+    //                             $name = $lastname . ', ' . ltrim(str_replace($lastname, '', $name));
+    //                         } else {
+    //                             $name = $lastname;
+    //                         }
+    //                     } else {
+    //                         if (ltrim(strpos($name, ' '))) {
+    //                             $lastname = ltrim(strrchr($name, ' '));
+    //                             $firstname = ltrim(str_replace($lastname, '', $name));
+    //                             $name = $lastname . ', ' . $firstname;
+    //                         }
+    //                     }
+    //                     break;
+    //                 default:
+    //                     break;
+    //             }
+    //             $temp[$contactlist[$key]['ID']] = $name;
+    //         }
+    //         natcasesort($temp);
 
-            foreach ($temp as $key => $value) {
-                $contactselect[$key] = $value;
-            }
-        }
-        return $contactselect;
-    }
+    //         foreach ($temp as $key => $value) {
+    //             $contactselect[$key] = $value;
+    //         }
+    //     }
+    //     return $contactselect;
+    // }
 
 
     public static function get_contactdata($connection = 0)
@@ -120,8 +120,8 @@ class Data
                     case 'realfemale':
                         if (get_post_meta($contactlist[$key]['ID'], 'rrze_contact_familyName', true)) {
                             $lastname = get_post_meta($contactlist[$key]['ID'], 'rrze_contact_familyName', true);
-                            if (get_post_meta($contactlist[$key]['ID'], 'rrze_contact_givenName', true)) {
-                                $name = $lastname . ', ' . get_post_meta($contactlist[$key]['ID'], 'rrze_contact_givenName', true);
+                            if (get_post_meta($contactlist[$key]['ID'], 'rrze_contact_firstName', true)) {
+                                $name = $lastname . ', ' . get_post_meta($contactlist[$key]['ID'], 'rrze_contact_firstName', true);
                             } elseif (ltrim(strpos($name, $lastname))) {
                                 $name = $lastname . ', ' . ltrim(str_replace($lastname, '', $name));
                             } else {
@@ -318,10 +318,10 @@ class Data
                     case 'realmale':
                     case 'realfemale':
 
-                        if (($sorttype == 'givenName') || ($sorttype == 'vorname') || ($sorttype == 'fullname')) {
-                            $sortname = $fields['givenName'] . " - " . $fields['familyName'];
+                        if (($sorttype == 'firstName') || ($sorttype == 'vorname') || ($sorttype == 'fullname')) {
+                            $sortname = $fields['firstName'] . " - " . $fields['familyName'];
                         } elseif (($sorttype == 'familyName') || ($sorttype == 'nachname') || ($sorttype == 'name')) {
-                            $sortname = $fields['familyName'] . " - " . $fields['givenName'];
+                            $sortname = $fields['familyName'] . " - " . $fields['firstName'];
                         } elseif ($sorttype == 'title') {
                             $sortname =  $fields['contact_title'];
                         } elseif ($sorttype == 'sortierfeld') {
@@ -1510,7 +1510,7 @@ class Data
             'department'    => 'orgname',
             'honorificPrefix'    => 'title',
             'honorificSuffix'    => 'atitle',
-            'givenName'        => 'firstname',
+            'firstName'        => 'firstname',
             'familyName'    => 'lastname',
             'jobTitle'        => 'work',
         );
@@ -1595,7 +1595,7 @@ class Data
             'connection_only' => '',
             'connection_options' => array(),
             'connection_honorificPrefix' => 'honorificPrefix',
-            'connection_givenName' => 'givenName',
+            'connection_firstName' => 'firstName',
             'connection_familyName' => 'familyName',
             'connection_honorificSuffix' => 'honorificSuffix',
             'connection_alternateName' => 'alternateName',
@@ -1643,13 +1643,13 @@ class Data
                     $phone_number = sync_univis($id, $contact_location, $key, $value, $defaults);
                     switch (get_post_meta($id, 'rrze_contact_telephone_select', true)) {
                         case 'erl':
-                            $value = Sanitizer::correct_phone_number($phone_number, 'erl');
+                            $value = Functions::formatPhone($phone_number, 'erl');
                             break;
                         case 'nbg':
-                            $value = Sanitizer::correct_phone_number($phone_number, 'nbg');
+                            $value = Functions::formatPhone($phone_number, 'nbg');
                             break;
                         default:
-                            $value = Sanitizer::correct_phone_number($phone_number, 'standard');
+                            $value = Functions::formatPhone($phone_number, 'standard');
                             break;
                     }
                 } else {
@@ -1803,25 +1803,25 @@ class Data
         $display = '';
         switch ($format) {
             case 'name':
-                $display = 'titel, familyName, givenName, name, suffix, permalink, url, link';
+                $display = 'titel, familyName, firstName, name, suffix, permalink, url, link';
                 break;
             case 'shortlist':
-                $display = 'titel, familyName, givenName, name, mail, telefon, suffix, permalink, url, link';
+                $display = 'titel, familyName, firstName, name, mail, telefon, suffix, permalink, url, link';
                 break;
             case 'plain':
-                $display = 'titel, familyName, givenName, name';
+                $display = 'titel, familyName, firstName, name';
                 break;
             case 'full':
             case 'compactindex':
             case 'kompakt':
-                $display = 'titel, familyName, givenName, name, suffix, position, telefon, mobilePhone, email,  socialmedia, adresse, bild, permalink, url, border, border, link';
+                $display = 'titel, familyName, firstName, name, suffix, position, telefon, mobilePhone, email,  socialmedia, adresse, bild, permalink, url, border, border, link';
                 break;
             case 'page':
                 $display = '_all';
                 break;
             case 'listentry':
             case 'liste':
-                $display = 'titel, familyName, givenName, name, suffix, description, permalink, url, link';
+                $display = 'titel, familyName, firstName, name, suffix, description, permalink, url, link';
                 break;
             case 'sidebar':
                 $display = '';
@@ -1837,17 +1837,17 @@ class Data
                     }
                 }
                 if (empty(trim($display))) {
-                    $display = 'titel, familyName, givenName, name, suffix, workLocation, worksFor, jobTitle, telefon, mobilePhone, email, socialmedia, fax, url, adresse, bild, permalink, url, sprechzeiten, ansprechpartner, description';
+                    $display = 'titel, familyName, firstName, name, suffix, workLocation, worksFor, jobTitle, telefon, mobilePhone, email, socialmedia, fax, url, adresse, bild, permalink, url, sprechzeiten, ansprechpartner, description';
                 }
                 break;
             case 'table':
-                $display = 'titel, familyName, givenName, name, suffix, telefon, email, permalink, url, link';
+                $display = 'titel, familyName, firstName, name, suffix, telefon, email, permalink, url, link';
                 break;
             case 'card':
-                $display = 'titel, familyName, givenName, name, suffix, bild, position, permalink, socialmedia';
+                $display = 'titel, familyName, firstName, name, suffix, bild, position, permalink, socialmedia';
                 break;
             default:
-                $display = 'titel, familyName, givenName, name, suffix, worksFor, department, jobTitle, telefon, email, permalink, border, ansprechpartner';
+                $display = 'titel, familyName, firstName, name, suffix, worksFor, department, jobTitle, telefon, email, permalink, border, ansprechpartner';
         }
         return $display;
     }
