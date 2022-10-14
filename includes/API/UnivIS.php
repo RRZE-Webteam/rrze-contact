@@ -40,6 +40,25 @@ class UnivIS extends API
         return $aRet;
     }
 
+    private function sanitizeData($data){
+        foreach($data as $nr => $person){
+            if (!empty($data[$nr]['phone'])){
+                $data[$nr]['phone'] = Functions::formatPhone($data[$nr]['phone']);
+            }
+            if (!empty($data[$nr]['fax'])){
+                $data[$nr]['fax'] = Functions::formatPhone($data[$nr]['fax']);
+            }
+            if (!empty($data[$nr]['mobile'])){
+                $data[$nr]['mobile'] = Functions::formatPhone($data[$nr]['mobile']);
+            }
+            if (!empty($data[$nr]['email'])){
+                $data[$nr]['email'] = sanitize_email($data[$nr]['email']);
+            }
+        }
+        
+        return $data;
+    }
+
     private function mapData($data){
         $map = [
             'personID' => 'id',
@@ -89,7 +108,7 @@ class UnivIS extends API
         if ($apiResponse['valid']){
             return [
                 'valid' => TRUE,
-                'content' => $this->mapData($apiResponse['content'])
+                'content' => $this->sanitizeData($this->mapData($apiResponse['content'])),
                 ];
         }else{
             return $apiResponse;
