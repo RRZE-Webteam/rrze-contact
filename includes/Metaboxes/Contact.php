@@ -60,13 +60,7 @@ class Contact extends Metaboxes
         $contactselect_connection = Data::get_contactdata(1);
         $default_rrze_contact_typ = Data::get_default_rrze_contact_typ();
 
-        $contactID = 0;
-        if (isset($_GET['post'])) {
-            $contactID = intval($_GET['post']);
-        }
-        elseif (isset($_POST['post_ID'])) {
-            $contactID = intval($_POST['post_ID']);
-        }
+        $contactID = intval(!empty($_GET['post']) ? $_GET['post'] : (!empty($_POST['post_ID']) ? $_POST['post_ID'] : 0));
 
         $this->postMeta = get_post_meta($contactID);
 
@@ -153,14 +147,12 @@ class Contact extends Metaboxes
             'show_on_cb' => 'callback_cmb2_show_on_einrichtung'
         ];
 
-        // Meta-Box Contactinformation - rrze_contact_info
-        $text_url_options = [];
         $myUrl = get_permalink($contactID);
-        $text_url_options[$myUrl] = __('Automatically generated contact page', 'rrze-contact');
+        $linkOptions = [$myUrl => __('Automatically generated contact page', 'rrze-contact')];
 
         $pages = get_pages();
         foreach ($pages as $page) {
-            $text_url_options[$page->post_name] = ($page->post_parent != 0 ? '- ' : '') . $page->post_title;
+            $linkOptions[$page->post_name] = ($page->post_parent != 0 ? '- ' : '') . $page->post_title;
         }
 
         $aFields['link'] = [
@@ -168,43 +160,37 @@ class Contact extends Metaboxes
             'desc' => __('Choose a page or the automatically generated page for contact details.', 'rrze-contact'),
             'type' => 'select',
             'id' => $this->prefix . 'link',
-            'options' => $text_url_options,
+            'options' => $linkOptions,
             'default' => $myUrl
         ];
 
-
-
-        $defaultkurzauszug = '';
-        if (get_post_field('post_excerpt', $contactID)) {
-            $defaultkurzauszug = get_post_field('post_excerpt', $contactID);
-        }
+        $defaultExcerpt = get_post_field('post_excerpt', $contactID);
 
         // Meta-Box Weitere Informationen - rrze_contact_adds
-        $meta_boxes['rrze_contact_textinfos'] = array(
+        $meta_boxes['rrze_contact_textinfos'] = [
             'id' => 'rrze_contact_textinfos',
-            'title' => __('Contact Beschreibung in Kurzform', 'rrze-contact'),
+            'title' => __('Contact description in shortform', 'rrze-contact'),
             'object_types' => array('contact'), // post type
             'context' => 'normal',
             'priority' => 'high',
-            'fields' => array(
-                    array(
-                    'name' => __('Kurzbeschreibung', 'rrze-contact'),
+            'fields' => [
+                    [
+                    'name' => __('Excerpt', 'rrze-contact'),
                     'desc' => __('Kurzform und Zusammenfassung der Contactbeschreibung bei Nutzung des Attributs <code>show="description"</code>.', 'rrze-contact'),
                     'type' => 'textarea_small',
                     'id' => $this->prefix . 'description',
-                    'default' => $defaultkurzauszug
-                ),
+                    'default' => $defaultExcerpt
+                    ],
 
-                    array(
+                    [
                     'name' => __('Kurzbeschreibung (Sidebar und Kompakt)', 'rrze-contact'),
                     'desc' => __('Diese Kurzbeschreibung wird bei der Anzeige von <code>show="description"</code> in einer Sidebar (<code>format="sidebar"</code>) oder einer Liste (<code>format="kompakt"</code>) verwendet.', 'rrze-contact'),
                     'type' => 'textarea_small',
                     'id' => $this->prefix . 'small_description',
-                    'default' => $defaultkurzauszug
-                ),
-
-            )
-        );
+                    'default' => $defaultExcerpt
+                    ],
+                ]
+            ];
 
 
         $location = (!empty($this->univisData['locations'][0]) ? $this->univisData['locations'][0] : []);
