@@ -24,13 +24,15 @@ class Functions
         add_action('wp_ajax_nopriv_GetDIPData', [$this, 'ajaxGetDIPData']);
         add_action('wp_ajax_GetDIPDataForBlockelements', [$this, 'ajaxGetDIPDataForBlockelements']);
         add_action('wp_ajax_nopriv_GetDIPDataForBlockelements', [$this, 'ajaxGetDIPDataForBlockelements']);
+        add_filter('sanitize_post_meta_rrze_contact_phone', [$this, 'formatPhone']);
+        add_filter('sanitize_post_meta_rrze_contact_fax', [$this, 'formatPhone']);
+        add_filter('sanitize_post_meta_rrze_contact_mobile', [$this, 'formatPhone']);
+        add_filter('sanitize_post_meta_rrze_contact_email', 'sanitize_email');
+        add_filter('sanitize_post_meta_rrze_contact_url', 'sanitize_url');
     }
 
     public static function formatPhone($phone)
     {
-
-        return 'TEST formatPhone';
-        
         $phone = filter_var($phone, FILTER_SANITIZE_NUMBER_INT);
 
         if ((strpos($phone, '+49 9131 85-') !== 0) && (strpos($phone, '+49 911 5302-') !== 0)) {

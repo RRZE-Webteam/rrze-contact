@@ -35,16 +35,6 @@ class Main
     {
         add_action('wp_enqueue_scripts', [$this, 'registerPluginStyles']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminScripts']);
-        // add_action('save_post_contact', [$this, 'clearData'], 10, 3 );
-        // add_filter( 'update_post_metadata', [$this, 'clearData'], 10, 4 );
-
-        // prevent using the archive slug (which is editable) as slug for posts, pages or media
-        add_filter( 'wp_unique_post_slug_is_bad_hierarchical_slug', [$this, 'archiveSlugIsBadHierarchicalSlug'], 10, 4 );
-        add_filter( 'wp_unique_post_slug_is_bad_hierarchical_slug', [$this, 'archiveSlugIsBadFlatSlug'], 10, 4 );
-
-        // sanatize our meta data
-        add_filter('sanitize_post_meta_rrze_contact_phone', ['Functions', 'formatPhone'] );
-
 
         $functions = new Functions($this->pluginFile);
         $functions->onLoaded();
@@ -72,6 +62,7 @@ class Main
         apply_filters('gutenberg_use_widgets_block_editor', get_theme_support('widgets-block-editor'));
     }
 
+
     public function loadWidget()
     {
         register_widget($this->widget);
@@ -92,13 +83,6 @@ class Main
 
     }
 
-    public function test($value){
-
-        echo "value = " . $value;
-        exit;
-
-    }
-
     public function clearData($post_id, $post, $update){
         // public function clearData($post_id, $post, $update){
         // fires if clicked on "Add new" as well, but at this moment we don't have any details to be handled 
@@ -112,31 +96,4 @@ class Main
         echo '<br>' . ($update?'is an update' : 'is not an update');
         exit;
     }
-
-    function archiveSlugIsBadHierarchicalSlug( $isBadSlug, $slug, $post_type, $post_parent ) {
-        if ($post_type == 'contact'){
-            return false;
-        }
-        $CPTdata = get_post_type_object('contact');
-        $archiveSlug = $CPTdata->rewrite['slug'];
-
-        if ( !$post_parent && $slug == $archiveSlug ){
-            return true;
-        }
-        return $isBadSlug;
-    }
-
-    function archiveSlugIsBadFlatSlug( $isBadSlug, $slug, $post_type) {
-        if ($post_type == 'contact'){
-            return false;
-        }
-        $CPTdata = get_post_type_object('contact');
-        $archiveSlug = $CPTdata->rewrite['slug'];
-
-        if ($slug == $archiveSlug ){
-            return true;
-        }
-        return $isBadSlug;
-    }
-
 }

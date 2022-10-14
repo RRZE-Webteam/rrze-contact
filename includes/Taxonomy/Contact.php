@@ -40,6 +40,9 @@ class Contact extends Taxonomy
         add_filter('manage_edit-contact_sortable_columns', array($this, 'sortable_columns'));
         add_action('pre_get_posts', array($this, 'posttype_contact_custom_columns_orderby'));
 
+        // prevent using the archive slug (which is editable) as slug for posts, pages or media
+        add_filter('wp_unique_post_slug_is_bad_hierarchical_slug', [$this, 'archiveSlugIsBadHierarchicalSlug'], 10, 4);
+        add_filter('wp_unique_post_slug_is_bad_hierarchical_slug', [$this, 'archiveSlugIsBadFlatSlug'], 10, 3);
     }
     
     public function register()
@@ -257,5 +260,32 @@ class Contact extends Taxonomy
             }
         }
     }
+
+    private function archiveSlugIsBadHierarchicalSlug( $isBadSlug, $slug, $post_type, $post_parent ) {
+        if ($post_type == 'contact'){
+            return false;
+        }
+        $CPTdata = get_post_type_object('contact');
+        $archiveSlug = $CPTdata->rewrite['slug'];
+
+        if ( !$post_parent && $slug == $archiveSlug ){
+            return true;
+        }
+        return $isBadSlug;
+    }
+
+    private function archiveSlugIsBadFlatSlug( $isBadSlug, $slug, $post_type) {
+        if ($post_type == 'contact'){
+            return false;
+        }
+        $CPTdata = get_post_type_object('contact');
+        $archiveSlug = $CPTdata->rewrite['slug'];
+
+        if ($slug == $archiveSlug ){
+            return true;
+        }
+        return $isBadSlug;
+    }
+
 
 }

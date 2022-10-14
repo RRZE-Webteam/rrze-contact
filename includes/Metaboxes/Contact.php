@@ -2,6 +2,7 @@
 
 namespace RRZE\Contact\Metaboxes;
 
+use RRZE\Contact\Functions;
 use RRZE\Contact\Data;
 // use RRZE\OldLib\UnivIS\Data as UnivIS_Data;
 use RRZE\Contact\API\UnivIS;
@@ -36,8 +37,13 @@ class Contact extends Metaboxes
 
     public function onLoaded()
     {
-        add_filter('cmb2_meta_boxes', array($this, 'cmb2_contact_metaboxes'));
+        add_filter('cmb2_meta_boxes', [$this, 'cmb2_contact_metaboxes']);
     }
+
+    public static function test($val){
+        return "JUHU";
+    }
+
 
     private function getVal($fieldname)
     {
