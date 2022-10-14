@@ -43,8 +43,8 @@ class UnivIS extends API
             'key' => 'key',
             'honorificPrefix' => 'title',
             'honorificSuffix' => 'atitle',
-            'firstname' => 'firstname',
-            'lastname' => 'lastname',
+            'firstName' => 'firstname',
+            'familyName' => 'lastname',
             'work' => 'work',
             'officehours' => 'officehour',
             'department' => 'orgname',
@@ -71,7 +71,7 @@ class UnivIS extends API
                 }
                 foreach($person['location'] as $nr => $locationDetails){
                     foreach($map_location as $field => $univisField){
-                        $tmp['locations'][$nr][$field] = $locationDetails[$univisField];
+                        $tmp[$field] = $locationDetails[$univisField];
                     }
                 }
                 $ret[] = $tmp;

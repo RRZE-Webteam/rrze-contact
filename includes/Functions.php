@@ -28,6 +28,9 @@ class Functions
 
     public static function formatPhone($phone)
     {
+
+        return 'TEST formatPhone';
+        
         $phone = filter_var($phone, FILTER_SANITIZE_NUMBER_INT);
 
         if ((strpos($phone, '+49 9131 85-') !== 0) && (strpos($phone, '+49 911 5302-') !== 0)) {
@@ -215,7 +218,7 @@ class Functions
                 // case 'contactByName':
                 //     foreach ($data as $entry) {
                 //         if (isset($entry['contact_id'])) {
-                //             $ret[$entry['contact_id']] = $entry['lastname'] . ', ' . $entry['firstname'];
+                //             $ret[$entry['contact_id']] = $entry['lastname'] . ', ' . $entry['firstName'];
                 //         }
                 //     }
                 //     break;
@@ -223,7 +226,7 @@ class Functions
                 //     foreach ($data as $position => $entries) {
                 //         foreach ($entries as $entry) {
                 //             if (isset($entry['contact_id'])) {
-                //                 $ret[$entry['contact_id']] = $entry['lastname'] . ', ' . $entry['firstname'];
+                //                 $ret[$entry['contact_id']] = $entry['lastname'] . ', ' . $entry['firstName'];
                 //             }
                 //         }
                 //     }

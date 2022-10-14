@@ -233,8 +233,8 @@ class Schema
 		elseif ((isset($data['name'])) && (!empty($data['name']))) {
 			$fullname = $data['name'];
 		}
-		elseif ((isset($data['alternateName'])) && (!empty($data['alternateName']))) {
-			$fullname = '<span itemprop="alternateName">' . $data['alternateName'] . '</span>';
+		elseif ((isset($data['sortField'])) && (!empty($data['sortField']))) {
+			$fullname = '<span itemprop="sortField">' . $data['sortField'] . '</span>';
 		}
 
 		if (!empty($fullname)) {
@@ -298,8 +298,8 @@ class Schema
 		elseif ((isset($data['name'])) && (!empty($data['name']))) {
 			$fullname = esc_html($data['name']);
 		}
-		elseif ((isset($data['alternateName'])) && (!empty($data['alternateName']))) {
-			$fullname = esc_html($data['alternateName']);
+		elseif ((isset($data['sortField'])) && (!empty($data['sortField']))) {
+			$fullname = esc_html($data['sortField']);
 		}
 
 		if (empty($fullname)) {

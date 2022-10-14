@@ -80,8 +80,8 @@ class Data
     //                     } else {
     //                         if (ltrim(strpos($name, ' '))) {
     //                             $lastname = ltrim(strrchr($name, ' '));
-    //                             $firstname = ltrim(str_replace($lastname, '', $name));
-    //                             $name = $lastname . ', ' . $firstname;
+    //                             $firstName = ltrim(str_replace($lastname, '', $name));
+    //                             $name = $lastname . ', ' . $firstName;
     //                         }
     //                     }
     //                     break;
@@ -130,8 +130,8 @@ class Data
                         } else {
                             if (ltrim(strpos($name, ' '))) {
                                 $lastname = ltrim(strrchr($name, ' '));
-                                $firstname = ltrim(str_replace($lastname, '', $name));
-                                $name = $lastname . ', ' . $firstname;
+                                $firstName = ltrim(str_replace($lastname, '', $name));
+                                $name = $lastname . ', ' . $firstName;
                             }
                         }
                         break;
@@ -325,8 +325,8 @@ class Data
                         } elseif ($sorttype == 'title') {
                             $sortname =  $fields['contact_title'];
                         } elseif ($sorttype == 'sortierfeld') {
-                            if (!empty($fields['alternateName'])) {
-                                $sortname = $fields['alternateName'];
+                            if (!empty($fields['sortField'])) {
+                                $sortname = $fields['sortField'];
                             } else {
                                 $sortname = "Z " . $fields['contact_title'];
                             }
@@ -337,8 +337,8 @@ class Data
                         break;
                     default:
                         if ($sorttype == 'sortierfeld') {
-                            if (!empty($fields['alternateName'])) {
-                                $sortname = $fields['alternateName'];
+                            if (!empty($fields['sortField'])) {
+                                $sortname = $fields['sortField'];
                             } else {
                                 $sortname = "Z " . $fields['contact_title'];
                             }
@@ -1510,7 +1510,7 @@ class Data
             'department'    => 'orgname',
             'honorificPrefix'    => 'title',
             'honorificSuffix'    => 'atitle',
-            'firstName'        => 'firstname',
+            'firstName'        => 'firstName',
             'familyName'    => 'lastname',
             'jobTitle'        => 'work',
         );
@@ -1576,7 +1576,7 @@ class Data
         $fields_faucontact = array(
             'contactPoint' => '',
             'typ' => '',
-            'alternateName' => '',
+            'sortField' => '',
             'addressCountry' => '',
             'link' => '',
             'hoursAvailable_text' => '',
@@ -1598,7 +1598,7 @@ class Data
             'connection_firstName' => 'firstName',
             'connection_familyName' => 'familyName',
             'connection_honorificSuffix' => 'honorificSuffix',
-            'connection_alternateName' => 'alternateName',
+            'connection_sortField' => 'sortField',
             'connection_streetAddress' => 'streetAddress',
             'connection_postalCode' => 'postalCode',
             'connection_addressLocality' => 'addressLocality',
