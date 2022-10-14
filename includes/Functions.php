@@ -135,7 +135,7 @@ class Functions
         return $txt;
     }
 
-    private static function log(string $method, string $logType = 'error', string $msg = '')
+    public static function log(string $method, string $logType = 'error', string $msg = '')
     {
         // uses plugin rrze-log
         $pre = __NAMESPACE__ . ' ' . $method . '() : ';

@@ -4,6 +4,8 @@ namespace RRZE\Contact\API;
 
 defined('ABSPATH') || exit;
 
+use RRZE\Contact\Functions;
+
 
 class UnivIS extends API
 {
@@ -26,7 +28,8 @@ class UnivIS extends API
             $aRet = [
                 'valid' => FALSE, 
                 'content' => __('No contact found.', 'rrze-contact')
-            ];    
+            ];  
+            Functions::log('getResponse', 'error', $this->api . $sParam . ' returns ' . $aRet['content']);
         }else{
             $aRet = [
                 'valid' => TRUE, 

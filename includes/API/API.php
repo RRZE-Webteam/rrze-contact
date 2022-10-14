@@ -4,12 +4,7 @@ namespace RRZE\Contact\API;
 
 defined('ABSPATH') || exit;
 
-if (!function_exists('__')) {
-    function __($txt, $domain)
-    {
-        return $txt;
-    }
-}
+use RRZE\Contact\Functions;
 
 class API
 {
@@ -59,7 +54,8 @@ class API
             $aRet = [
                 'valid' => FALSE, 
                 'content' => $apiResponse['response']['code'] . ': ' . $apiResponse['response']['message']
-            ];    
+            ];  
+            Functions::log('getResponse', 'error', $this->api . $sParam . ' returns ' . $aRet['content']);
         }else{
             $content = json_decode($apiResponse['body'], true);
             $aRet = [
@@ -70,20 +66,6 @@ class API
 
         return $aRet;
     }
-
-    private function sanitize($value = '', $fieldType = ''){
-
-        switch($fieldType){
-            case 'phone': return Functions::formatPhone($value);
-                break;
-            case 'univis': return Functions::formatUnivis($value);
-                break;
-            case 'string': 
-        }
-
-
-    }
-
 
 
 
