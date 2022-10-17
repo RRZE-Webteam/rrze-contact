@@ -291,7 +291,7 @@ class Functions
             $semEnd = (!empty($options['basic_' . $sem . 'End']) ? $options['basic_' . $sem . 'End'] : null);
 
             if (empty($semStart) || empty($semEnd)) {
-                $defaults = getFields();
+                $defaults = getSettingsFields();
                 foreach ($defaults['basic'] as $nr => $aVal) {
                     if ($aVal['name'] == $sem . 'Start') {
                         $semStart = $aVal['default'];
@@ -397,6 +397,5 @@ class Functions
             'linkTxt' => __('ICS', 'rrze-univis') . ': ' . __('Date', 'rrze-univis') . ' ' . (!empty($t['repeat']) ? $t['repeat'] : '') . ' ' . (!empty($t['date']) ? $t['date'] . ' ' : '') . $t['time'] . ' ' . __('import to calendar', 'rrze-univis'),
         ];
     }
-
 
 }

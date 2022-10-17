@@ -188,11 +188,11 @@ class Contact extends Taxonomy
                 break;
             case 'source':
                 if ($univis_id) {
-                    echo __('UnivIS', 'rrze-contact') . ' (Id: <a target="univis" href="' . UNIVIS_URL . '?search=contacts&id=' . $univis_id . '&show=info">' . $univis_id . '</a>)';
+                    echo __('UnivIS', 'rrze-contact') . ' (ID: <a target="univis" href="' . UNIVIS_URL . '?search=contacts&id=' . $univis_id . '&show=info">' . $univis_id . '</a>)';
                 } elseif ($dip_id) {
-                    echo __('UnivIS', 'rrze-contact') . ' (Id: <a target="univis" href="' . DIP_URL . '?' . $dipid . '&show=info">' . $dipid . '</a>)';
+                    echo __('DIP', 'rrze-contact') . ' (ID: <a target="univis" href="' . DIP_URL . '?' . $dipid . '&show=info">' . $dipid . '</a>)';
                 } else {
-                    echo __('Lokal', 'rrze-contact');
+                    echo __('Local', 'rrze-contact');
                 }
                 break;
             case 'ID':
@@ -206,6 +206,7 @@ class Contact extends Taxonomy
     public function sortable_columns($columns)
     {
         $columns = array(
+            'ID' => 'ID',
             'title' => 'title',
             'source' => 'source',
             'date' => 'date',

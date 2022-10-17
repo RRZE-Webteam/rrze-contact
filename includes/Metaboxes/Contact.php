@@ -6,6 +6,7 @@ use RRZE\Contact\Functions;
 use RRZE\Contact\Data;
 // use RRZE\OldLib\UnivIS\Data as UnivIS_Data;
 use RRZE\Contact\API\UnivIS;
+use function RRZE\Contact\Config\getFields;
 use function RRZE\Contact\Config\getSocialMediaList;
 
 defined('ABSPATH') || exit;
@@ -18,12 +19,12 @@ class Contact extends Metaboxes
 
     protected $pluginFile;
     private $settings = '';
-    private $bUnivisSync = false;
-    private $univisData = [];
-    private $postMeta = [];
-    private $descFound = '';
-    private $descNotFound = '';
-    private $univisID = 0;
+    public $bUnivisSync = false;
+    public $univisData = [];
+    public $postMeta = [];
+    public $descFound = '';
+    public $descNotFound = '';
+    public $univisID = 0;
 
 
     public function __construct($pluginFile, $settings)
@@ -44,21 +45,6 @@ class Contact extends Metaboxes
         return "JUHU";
     }
 
-
-    private function getVal($fieldname)
-    {
-        return ($this->bUnivisSync && !empty($this->univisData[$fieldname]) ? $this->univisData[$fieldname] : (!empty($this->postMeta[$this->prefix . $fieldname][0]) ? $this->postMeta[$this->prefix . $fieldname][0] : (!empty($this->univisData[$fieldname]) ? $this->univisData[$fieldname] : '')));
-    }
-
-    private function getDesc($fieldname)
-    {
-        return (!empty($this->univisData[$fieldname]) ? $this->descFound . $this->univisData[$fieldname] : ($this->univisID ? $this->descNotFound : ''));
-    }
-
-    private function getDisabled($fieldname)
-    {
-        return ($this->bUnivisSync && !empty($this->univisData[$fieldname]));
-    }
 
     public function cmb2_contact_metaboxes($meta_boxes)
     {
@@ -88,59 +74,20 @@ class Contact extends Metaboxes
         }
 
         // set values depending on checkbox univis_sync
-        $aFields = [
-            'firstName' => ['name' => __('First name', 'rrze-contact')],
-            'familyName' => ['name' => __('Family name', 'rrze-contact')],
-            'honorificSuffix' => ['name' => __('Degree (suffix)', 'rrze-contact')],
-            'jobTitle' => ['name' => __('Position/Function', 'rrze-contact')],
-            'worksFor' => ['name' => __('Organization', 'rrze-contact')],
-            'workLocation' => ['name' => __('Room', 'rrze-contact')],
-            'phone' => ['name' => __('Phone', 'rrze-contact')],
-            'fax' => ['name' => __('Fax', 'rrze-contact')],
-            'mobile' => ['name' => __('Mobile', 'rrze-contact')],
-            'email' => ['name' => __('eMail', 'rrze-contact')],
-            'url' => ['name' => __('Website', 'rrze-contact')],
-            'department' => ['name' => __('Department', 'rrze-contact')],
+        $aFields = [];
+        $aFields = $this->makeCMB2fields(getFields('contact'));
+
+        $aFields['honorificPrefix']['type'] = 'select';
+        $aFields['honorificPrefix']['options'] = [
+            '' => __('No indication', 'rrze-contact'),
+            'Dr.' => __('Doktor', 'rrze-contact'),
+            'Prof.' => __('Professor', 'rrze-contact'),
+            'Prof. Dr.' => __('Professor Doktor', 'rrze-contact'),
+            'Prof. em.' => __('Professor (Emeritus)', 'rrze-contact'),
+            'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-contact'),
+            'PD' => __('Privatdozent', 'rrze-contact'),
+            'PD Dr.' => __('Privatdozent Doktor', 'rrze-contact')
         ];
-
-        foreach ($aFields as $fieldname => $details) {
-            $aFields[$fieldname] = [
-                'name' => $details['name'],
-                'type' => 'text',
-                'id' => $this->prefix . $fieldname,
-                'description' => $this->getDesc($fieldname),
-                'show_on_cb' => 'callback_cmb2_show_on_contact',
-                'attributes' => [
-                    'value' => $this->getVal($fieldname),
-                    'disabled' => $this->getDisabled($fieldname),
-                ],
-            ];
-        }
-
-        // add at first array element
-        $aTmp = ['honorificPrefix' =>
-            [
-                'name' => __('Title (prefix)', 'rrze-contact'),
-                'type' => 'select',
-                'options' => array(
-                    '' => __('No indication', 'rrze-contact'),
-                    'Dr.' => __('Doktor', 'rrze-contact'),
-                    'Prof.' => __('Professor', 'rrze-contact'),
-                    'Prof. Dr.' => __('Professor Doktor', 'rrze-contact'),
-                    'Prof. em.' => __('Professor (Emeritus)', 'rrze-contact'),
-                    'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-contact'),
-                    'PD' => __('Privatdozent', 'rrze-contact'),
-                    'PD Dr.' => __('Privatdozent Doktor', 'rrze-contact')
-                ),
-                'id' => $this->prefix . 'honorificPrefix',
-                'show_on_cb' => 'callback_cmb2_show_on_contact',
-                'description' => $this->getDesc('honorificPrefix'),
-                'attributes' => [
-                    'value' => $this->getVal('honorificPrefix'),
-                    'disabled' => $this->getDisabled('honorificPrefix'),
-                ],
-            ]];
-        $aFields = $aTmp + $aFields;
 
         $aFields['sortField'] = [
             'name' => __('Sortierfeld', 'rrze-contact'),
@@ -150,7 +97,7 @@ class Contact extends Metaboxes
             'attributes' => array(
                 'value' => $this->getVal('sortField'),
             ),
-            'show_on_cb' => 'callback_cmb2_show_on_einrichtung'
+            'show_on_cb' => 'callback_cmb2_show_on_institution'
         ];
 
         $myUrl = get_permalink($contactID);
@@ -170,9 +117,18 @@ class Contact extends Metaboxes
             'default' => $myUrl
         ];
 
-        $defaultExcerpt = get_post_field('post_excerpt', $contactID);
+        $meta_boxes['rrze_contact_info'] = [
+            'id' => 'rrze_contact_info',
+            'title' => __('Contact\'s informations', 'rrze-contact'),
+            'object_types' => ['contact'], // post type
+            'context' => 'normal',
+            'priority' => 'default',
+            'fields' => $aFields,
+        ];
 
         // Meta-Box Weitere Informationen - rrze_contact_adds
+        $defaultExcerpt = get_post_field('post_excerpt', $contactID);
+
         $meta_boxes['rrze_contact_textinfos'] = [
             'id' => 'rrze_contact_textinfos',
             'title' => __('Contact description in shortform', 'rrze-contact'),
@@ -197,18 +153,6 @@ class Contact extends Metaboxes
                     ],
                 ]
             ];
-
-
-        $location = (!empty($this->univisData['locations'][0]) ? $this->univisData['locations'][0] : []);
-
-        $meta_boxes['rrze_contact_info'] = [
-            'id' => 'rrze_contact_info',
-            'title' => __('Contact\'s informations', 'rrze-contact'),
-            'object_types' => ['contact'], // post type
-            'context' => 'normal',
-            'priority' => 'default',
-            'fields' => $aFields,
-        ];
 
 
         $locationDefault = Data::get_standort_defaults($contactID);
@@ -521,7 +465,7 @@ class Contact extends Metaboxes
     }
 
     //Anzeigen des Feldes nur bei Einrichtungen
-    function callback_cmb2_show_on_einrichtung($field)
+    function callback_cmb2_show_on_institution($field)
     {
         $default_rrze_contact_typ = Data::default_rrze_contact_typ();
         $typ = get_post_meta($field->object_id, 'rrze_contact_typ', true);

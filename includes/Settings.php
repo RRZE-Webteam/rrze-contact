@@ -4,7 +4,7 @@ namespace RRZE\Contact;
 
 defined('ABSPATH') || exit;
 
-use function RRZE\Contact\Config\getFields;
+use function RRZE\Contact\Config\getSettingsFields;
 use function RRZE\Contact\Config\getMenuSettings;
 use function RRZE\Contact\Config\getOptionName;
 use function RRZE\Contact\Config\getSections;
@@ -140,7 +140,7 @@ class Settings
      */
     protected function setFields()
     {
-        $this->settingsFields = getFields();
+        $this->settingsFields = getSettingsFields();
     }
 
     /**

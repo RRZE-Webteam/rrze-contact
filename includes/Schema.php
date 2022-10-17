@@ -312,12 +312,6 @@ class Schema
 
 	public static function create_contactpointlist($data, $blockstart = 'ul', $itemprop = '', $class = 'contact-info', $liststart = 'li', $args = array(), $fillempty = false, $addcomma = false)
 	{
-
-
-		// echo '<pre>';
-		// var_dump($data);
-		// exit;
-	
 		if (!is_array($data)) {
 			return;
 		}

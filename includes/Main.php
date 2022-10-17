@@ -8,6 +8,7 @@ use function RRZE\Contact\Config\getConstants;
 use RRZE\Contact\Settings;
 use RRZE\Contact\Taxonomy\Taxonomy;
 use RRZE\Contact\Templates;
+// use RRZE\Contact\Metaboxes\Metaboxes;
 use RRZE\Contact\Metaboxes\Metaboxes;
 use RRZE\Contact\Shortcode\Shortcode;
 
@@ -51,7 +52,7 @@ class Main
 
         $metaboxes = new Metaboxes($this->pluginFile, $settings);
         $metaboxes->onLoaded();
-
+        
         $shortcode = new Shortcode($this->pluginFile, $settings);
         $shortcode->onLoaded();
 

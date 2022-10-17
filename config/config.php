@@ -10,8 +10,8 @@ defined('ABSPATH') || exit;
  * @return string [description]
  */
 
-define('UNIVIS_URL', 'http://univis.uni-erlangen.de/prg'); 
-define('DIP_URL', 'https://api.fau.de/pub/v1/mschema/contacts'); 
+define('UNIVIS_URL', 'http://univis.uni-erlangen.de/prg');
+define('DIP_URL', 'https://api.fau.de/pub/v1/mschema/contacts');
 
 function getOptionName()
 {
@@ -95,13 +95,123 @@ function getSections()
     ];
 }
 
+
+function getFields($group)
+{
+    $aFields =
+        [
+            'contact' => [
+                [
+                    'name' => 'honorificPrefix',
+                    'label' => __('Title (prefix)', 'rrze-contact'),
+                ],
+                [
+                    'name' => 'firstName',
+                    'label' => __('First name', 'rrze-contact'),
+                ],
+                [
+                    'name' => 'familyName',
+                    'label' => __('Family name', 'rrze-contact')
+                ],
+                [
+                    'name' => 'honorificSuffix',
+                    'label' => __('Degree (suffix)', 'rrze-contact'),
+                ],
+                [
+                    'name' => 'jobTitle',
+                    'label' => __('Position/Function', 'rrze-contact'),
+                ],
+            [
+            'name' => 'worksFor',
+                'label' => __('Organization', 'rrze-contact'),
+            ],
+            [
+            'name' => 'workLocation',
+                'label' => __('Room', 'rrze-contact'),
+            ],
+            [
+            'name' => 'phone',
+                'label' => __('Phone', 'rrze-contact'),
+            ],
+            [
+            'name' => 'fax',
+                'label' => __('Fax', 'rrze-contact'),
+            ],
+            [
+            'name' => 'mobile',
+                'label' => __('Mobile', 'rrze-contact'),
+            ],
+            [
+            'name' => 'email',
+                'label' => __('eMail', 'rrze-contact'),
+            ],
+            [
+            'name' => 'url',
+                'label' => __('Website', 'rrze-contact'),
+            ],
+            [
+            'name' => 'department',
+                'label' => __('Department', 'rrze-contact'),
+            ],
+        ],
+
+        'location' => [
+            [
+                'name' => 'street',
+                'label' => __('', 'rrze-contact'),
+            ],
+            [
+                'name' => 'city',
+                'label' => __('', 'rrze-contact'),
+            ],
+            [
+                'name' => 'office',
+                'label' => __('', 'rrze-contact'),
+            ],
+            [
+                'name' => 'phone',
+                'label' => __('', 'rrze-contact'),
+            ],
+            [
+                'name' => 'fax',
+                'label' => __('', 'rrze-contact'),
+            ],
+            [
+                'name' => 'email',
+                'label' => __('', 'rrze-contact'),
+            ],
+            [
+                'name' => 'url',
+                'label' => __('', 'rrze-contact'),
+            ],
+        ],
+        ];
+
+    return (!empty($aFields[$group]) ? $aFields[$group] : []);
+}
+
+function makeSettingsFields($aIn){
+    $aRet = [];
+    foreach($aIn as $details){
+        $aRet[] = [
+            'name' => $details['name'],
+            'label' => $details['label'],
+            'type' => 'checkbox',
+            'checked' => true,
+            'default' => true,
+        ];
+    }
+    return $aRet;
+}
+
 /**
  * Gibt die Einstellungen der Optionsfelder zurück.
  *
  * @return array [description]
  */
-function getFields()
+function getSettingsFields()
 {
+    $aRet = [];
 
     $imagesizes = array();
     $isizes = get_all_image_sizes();
@@ -113,123 +223,19 @@ function getFields()
         }
     }
 
-    $archive_options =	[
-		'contact' => __('Automatisch generieren', 'rrze-contact') . ' ('  . site_url( '/contact/') . ')',
-		'0' => __('Keine Übersichtsseite anzeigen', 'rrze-contact'),
-	];
+    $archive_options = [
+        'contact' => __('Automatisch generieren', 'rrze-contact') . ' (' . site_url('/contact/') . ')',
+        '0' => __('Keine Übersichtsseite anzeigen', 'rrze-contact'),
+    ];
 
-	$pages = get_pages(); 
-	foreach($pages  as $page){
-		$archive_options[$page->post_name] = ($page->post_parent != 0 ? '- ' : '') . $page->post_title;
-	}
+    $pages = get_pages();
+    foreach ($pages as $page) {
+        $archive_options[$page->post_name] = ($page->post_parent != 0 ? '- ' : '') . $page->post_title;
+    }
 
-    return [
-        'sidebar' => [
-            [
-                'name' => 'titel',
-                'label' => __('Akademischer Titel', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'familyName',
-                'label' => __('Nachname', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'firstName',
-                'label' => __('Vorname', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'name',
-                'label' => __('Vollständiger Name', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'suffix',
-                'label' => __('Suffix (nachgestellter Titel)', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'position',
-                'label' => __('Position', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'organisation',
-                'label' => __('Organisation', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'abteilung',
-                'label' => __('Abteilung', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'adresse',
-                'label' => __('Adresse', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'workLocation',
-                'label' => __('Raum', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'telefon',
-                'label' => __('Telefonnummer', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'mobil',
-                'label' => __('Handynummer anzeigen', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'fax',
-                'label' => __('Faxnummer', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => false,
-                'default' => false,
-            ],
-            [
-                'name' => 'mail',
-                'label' => __('E-Mail-Adresse', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'webseite',
-                'label' => __('Website', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
+    $aRet['sidebar'] = makeSettingsFields(getFields('contact'));
+
+        $aAdded = [
             [
                 'name' => 'sprechzeiten',
                 'label' => __('Sprechzeiten', 'rrze-contact'),
@@ -266,9 +272,10 @@ function getFields()
                 'checked' => false,
                 'default' => false,
             ],
-        ],
+        ];
+        $aRet['sidebar'] = $aRet['sidebar'] + $aAdded;
 
-        'constants' => [
+        $aRet['constants'] = [
             [
                 'name' => 'view_telefonlink',
                 'label' => __('Telefonnummer als Link', 'rrze-contact'),
@@ -386,8 +393,9 @@ function getFields()
                 'type' => 'Select',
                 'options' => $archive_options,
             ],
-        ],
-        'api' => [
+        ];
+
+        $aRet['api'] = [
             [
                 'name' => 'url',
                 'label' => __('Link to DIP', 'rrze-contact'),
@@ -435,8 +443,9 @@ function getFields()
                 'default' => '2',
                 'sanitize_callback' => 'floatval',
             ],
-        ],
-    ];
+        ];
+
+        return $aRet;
 }
 
 /**
