@@ -4,7 +4,6 @@ namespace RRZE\Contact\Metaboxes;
 
 use RRZE\Contact\Functions;
 use RRZE\Contact\Data;
-// use RRZE\OldLib\UnivIS\Data as UnivIS_Data;
 use RRZE\Contact\API\UnivIS;
 use function RRZE\Contact\Config\getFields;
 use function RRZE\Contact\Config\getSocialMediaList;
