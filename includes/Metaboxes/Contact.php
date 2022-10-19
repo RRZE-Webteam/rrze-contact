@@ -36,6 +36,8 @@ class Contact extends Metaboxes
     {
         // add_filter('cmb2_meta_boxes', [$this, 'cmb2_contact_metaboxes']);
         add_action('cmb2_admin_init', [$this, 'makeContactMetaboxes']);
+        add_filter('cmb2_render_address', [$this, 'cmb2_render_address_field_callback'], 10, 5 );
+
     }
 
     public function makeContactMetaboxes()
@@ -180,10 +182,16 @@ class Contact extends Metaboxes
 
         $iCnt = (!empty($this->univisData['locationsCount']) ? $this->univisData['locationsCount'] : 0);
 
+
+        // echo '<pre>';
+        // var_dump($this->makeCMB2fields(getFields('location'), 'locations', 0));
+        // exit;
+        // $aFields = [];
         $groupID = $cmb->add_field(
             [
             'id' => $this->prefix . 'locationsGroup',
             'type' => 'group',
+            'repeatable'  => true,
             'options' => [
                 'group_title' => __('Location', 'rrze-contact') . ' {#}',
                 'add_button' => __('Add location', 'rrze-contact'),
@@ -191,17 +199,24 @@ class Contact extends Metaboxes
             ],
         ]);
 
-        // echo '<pre>';
-        // var_dump($this->makeCMB2fields(getFields('location'), 'locations', 0));
-        // exit;
-        // $aFields = [];
-
 
         for ($i=0; $i < $iCnt; $i++){
+            $groupID = $cmb->add_field(
+                [
+                'id' => $this->prefix . 'locationsGroup' . $i,
+                'type' => 'group',
+                'repeatable'  => false,
+                'options' => [
+                    'group_title' => __('Location', 'rrze-contact') . ' {#}',
+                    'add_button' => __('Add location', 'rrze-contact'),
+                    'remove_button' => __('Delete location', 'rrze-contact'),
+                ],
+            ]);
+
             $locationsID = $cmb->add_group_field($groupID, 
                 [
-                'id' => $this->prefix . 'location',
-                'type' => 'group',
+                'id' => $this->prefix . 'location' . $i,
+                'type' => 'address',
                 'repeatable'  => false,
                 'options' => [
                     // 'group_  title' => __('TEST Location', 'rrze-contact') . ' {#}',
@@ -219,10 +234,10 @@ class Contact extends Metaboxes
             // wahrscheinlich über einen Filter mit dem das Field-Set eingebunden wird: 
             // https://github.com/CMB2/CMB2/wiki/Adding-your-own-field-types#example-4-multiple-inputs-one-field-lets-create-an-address-field
 
-            $aFields = $this->makeCMB2fields(getFields('location'), 'locations', $i);
-            foreach($aFields as $aVal){
-                $cmb->add_group_field($this->prefix . 'location', $aVal);
-            }
+            // $aFields = $this->makeCMB2fields(getFields('location'), 'locations', $i);
+            // foreach($aFields as $aVal){
+            //     $cmb->add_group_field($this->prefix . 'location', $aVal);
+            // }
         }
 
         return;
@@ -469,4 +484,64 @@ class Contact extends Metaboxes
         return $einrichtung;
     }
 
+    function cmb2_render_address_field_callback( $field, $value, $object_id, $object_type, $field_type ) {
+
+        // make sure we specify each part of the value we need.
+        $value = wp_parse_args( $value, array(
+            'address-1' => '',
+            'address-2' => '',
+            'city'      => '',
+            'state'     => '',
+            'zip'       => '',
+        ) );
+    
+        ?>
+        <div><p><label for="<?php echo $field_type->_id( '_address_1' ); ?>">Address 1</label></p>
+            <?php echo $field_type->input( array(
+                'name'  => $field_type->_name( '[address-1]' ),
+                'id'    => $field_type->_id( '_address_1' ),
+                'value' => $value['address-1'],
+                'desc'  => '',
+            ) ); ?>
+        </div>
+        <div><p><label for="<?php echo $field_type->_id( '_address_2' ); ?>'">Address 2</label></p>
+            <?php echo $field_type->input( array(
+                'name'  => $field_type->_name( '[address-2]' ),
+                'id'    => $field_type->_id( '_address_2' ),
+                'value' => $value['address-2'],
+                'desc'  => '',
+            ) ); ?>
+        </div>
+        <div class="alignleft"><p><label for="<?php echo $field_type->_id( '_city' ); ?>'">City</label></p>
+            <?php echo $field_type->input( array(
+                'class' => 'cmb_text_small',
+                'name'  => $field_type->_name( '[city]' ),
+                'id'    => $field_type->_id( '_city' ),
+                'value' => $value['city'],
+                'desc'  => '',
+            ) ); ?>
+        </div>
+        <div class="alignleft"><p><label for="<?php echo $field_type->_id( '_state' ); ?>'">State</label></p>
+            <?php echo $field_type->select( array(
+                'name'    => $field_type->_name( '[state]' ),
+                'id'      => $field_type->_id( '_state' ),
+                // 'options' => cmb2_get_state_options( $value['state'] ),
+                'desc'    => '',
+            ) ); ?>
+        </div>
+        <div class="alignleft"><p><label for="<?php echo $field_type->_id( '_zip' ); ?>'">Zip</label></p>
+            <?php echo $field_type->input( array(
+                'class' => 'cmb_text_small',
+                'name'  => $field_type->_name( '[zip]' ),
+                'id'    => $field_type->_id( '_zip' ),
+                'value' => $value['zip'],
+                'type'  => 'number',
+                'desc'  => '',
+            ) ); ?>
+        </div>
+        <br class="clear">
+        <?php
+        echo $field_type->_desc( true );
+    
+    }
 }
