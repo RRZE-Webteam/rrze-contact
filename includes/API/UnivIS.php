@@ -6,7 +6,6 @@ defined('ABSPATH') || exit;
 
 use RRZE\Contact\Functions;
 
-
 class UnivIS extends API
 {
 
@@ -15,54 +14,57 @@ class UnivIS extends API
         parent::__construct(UNIVIS_URL . '?show=json&search=persons&');
     }
 
-    private function getResponse($sParam = NULL){
+    private function getResponse($sParam = null)
+    {
         $aRet = [
-            'valid' => FALSE, 
-            'content' => ''
+            'valid' => false,
+            'content' => '',
         ];
 
         $apiResponse = file_get_contents($this->api . $sParam);
         $apiResponse = json_decode($apiResponse, true);
 
-        if (empty($apiResponse['Person'])){
+        if (empty($apiResponse['Person'])) {
             $aRet = [
-                'valid' => FALSE, 
-                'content' => __('No contact found.', 'rrze-contact')
-            ];  
+                'valid' => false,
+                'content' => __('No contact found.', 'rrze-contact'),
+            ];
             Functions::log('getResponse', 'error', $this->api . $sParam . ' returns ' . $aRet['content']);
-        }else{
+        } else {
             $aRet = [
-                'valid' => TRUE, 
-                'content' => $apiResponse['Person']
+                'valid' => true,
+                'content' => $apiResponse['Person'],
             ];
         }
 
         return $aRet;
     }
 
-    private function sanitizeData($data){
+    private function sanitizeData($data)
+    {
         $aPhoneTypes = ['phone', 'fax', 'mobile'];
 
-        foreach($data as $nr => $person){
-            if (!empty($person['locations'])){
-                foreach($person['locations'] as $lnr => $location){
-                    foreach($aPhoneTypes as $phoneType){
-                        if (!empty($location[$phoneType])){
+        foreach ($data as $nr => $person) {
+            if (!empty($person['locations'])) {
+                foreach ($person['locations'] as $lnr => $location) {
+                    foreach ($aPhoneTypes as $phoneType) {
+                        if (!empty($location[$phoneType])) {
                             $data[$nr]['locations'][$lnr][$phoneType] = Functions::formatPhone($data[$nr]['locations'][$lnr][$phoneType]);
                         }
-            
+
                     }
-                    if (!empty($data[$nr]['locations'][$lnr]['email'])){
+                    if (!empty($data[$nr]['locations'][$lnr]['email'])) {
                         $data[$nr]['locations'][$lnr]['email'] = sanitize_email($data[$nr]['locations'][$lnr]['email']);
                     }
                 }
             }
         }
-        
+
         return $data;
     }
 
-    private function mapData($data){
+    private function mapData($data)
+    {
         $map = [
             'personID' => 'id',
             'IDM' => 'idm_id',
@@ -77,14 +79,14 @@ class UnivIS extends API
                     'institution' => 0,
                     'organization' => 1,
                     'department' => 2,
-                ]
+                ],
             ],
             'organization_en' => [
                 'orgunit_en' => [
                     'institution' => 0,
                     'organization' => 1,
                     'department' => 2,
-                ]
+                ],
             ],
             'locations' => [
                 'location' => [
@@ -97,7 +99,7 @@ class UnivIS extends API
                     'email' => 'email',
                     'pgp' => 'pgp',
                     'url' => 'url',
-                ]
+                ],
             ],
             'consultations' => [
                 'officehour' => [
@@ -111,34 +113,37 @@ class UnivIS extends API
                     'fax' => 'fax',
                     'email' => 'email',
                     'pgp' => 'pgp',
-                    'url' => 'url'
-                ],        
-            ],        
+                    'url' => 'url',
+                ],
+            ],
         ];
 
         $ret = [];
-        foreach($data as $person){
+        foreach ($data as $person) {
             $tmp = [];
-            foreach($map as $field => $univisField){
-                if (is_array($univisField)){
-                    foreach($univisField as $univisSubfield => $aDetails){
-                        if (!in_array($univisSubfield, ['orgunit', 'orgunit_en'])){
-                            if (!empty($person[$univisSubfield])){
-                                foreach($person[$univisSubfield] as $nr => $val){
+            foreach ($map as $field => $univisField) {
+                if (is_array($univisField)) {
+                    foreach ($univisField as $univisSubfield => $aDetails) {
+                        if (!in_array($univisSubfield, ['orgunit', 'orgunit_en'])) {
+                            if (!empty($person[$univisSubfield])) {
+                                $i = 0;
+                                foreach ($person[$univisSubfield] as $nr => $val) {
                                     $tmpDetails = [];
-                                    foreach($aDetails as $subfield => $univisSubSubfield){
-                                        if (!empty($person[$univisSubfield][$nr][$univisSubSubfield])){
+                                    foreach ($aDetails as $subfield => $univisSubSubfield) {
+                                        if (!empty($person[$univisSubfield][$nr][$univisSubSubfield])) {
                                             $tmpDetails[$subfield] = $person[$univisSubfield][$nr][$univisSubSubfield];
                                         }
-            
                                     }
                                     $tmp[$field][] = $tmpDetails;
+                                    $i++;
                                 }
+                                $tmp[$field . 'Count'] = $i;
+
                             }
-                        }else{
+                        } else {
                             $tmpDetails = [];
-                            foreach($aDetails as $subfield => $univisSubSubfield){
-                                if (!empty($person[$univisSubfield][$univisSubSubfield])){
+                            foreach ($aDetails as $subfield => $univisSubSubfield) {
+                                if (!empty($person[$univisSubfield][$univisSubSubfield])) {
                                     $tmpDetails[$subfield] = $person[$univisSubfield][$univisSubSubfield];
                                 }
 
@@ -146,7 +151,7 @@ class UnivIS extends API
                             $tmp[$field] = $tmpDetails;
                         }
                     }
-                }elseif (!empty($person[$univisField])){
+                } elseif (!empty($person[$univisField])) {
                     $tmp[$field] = $person[$univisField];
                 }
             }
@@ -155,19 +160,24 @@ class UnivIS extends API
         return $ret;
     }
 
-    public function getPerson($sParam = NULL){
+    public function getPerson($sParam = null)
+    {
+        // $sParam = 'id=40014582'; // TEST
+
         $apiResponse = $this->getResponse($sParam);
 
-        if ($apiResponse['valid']){
+        // echo '<pre>';
+        // var_dump($apiResponse);
+        // exit;
+
+        if ($apiResponse['valid']) {
             return [
-                'valid' => TRUE,
+                'valid' => true,
                 'content' => $this->sanitizeData($this->mapData($apiResponse['content'])),
-                ];
-        }else{
+            ];
+        } else {
             return $apiResponse;
         }
     }
-
-
 
 }

@@ -11,7 +11,6 @@ class Functions
     const TRANSIENT_PREFIX = 'rrze_DIP_cache_';
     const TRANSIENT_EXPIRATION = DAY_IN_SECONDS;
 
-
     public function __construct($pluginFile)
     {
         $this->pluginFile = $pluginFile;
@@ -85,7 +84,7 @@ class Functions
                         }
 
                         // see: https://github.com/RRZE-Webteam/fau-person/issues/353
-                        if (strpos($phone_data, '913181146') !== FALSE) {
+                        if (strpos($phone_data, '913181146') !== false) {
                             $durchwahl = explode('913181146', $phone_data);
                             $phone = $vorwahl_erl_p1_p6 . $durchwahl[1];
                             break;
@@ -160,7 +159,8 @@ class Functions
         return $ret;
     }
 
-    public static function setDataToCache($data = '', $aAtts = []){
+    public static function setDataToCache($data = '', $aAtts = [])
+    {
         set_transient(self::TRANSIENT_PREFIX . md5(json_encode($aAtts)), $data, self::TRANSIENT_EXPIRATION);
     }
 
@@ -371,10 +371,10 @@ class Functions
             $givenWeekday = date('N', strtotime($aProps['DTSTART']));
             if (!in_array($givenWeekday, $aGivenDays)) {
                 // move to next possible date
-                while(!in_array($givenWeekday, $aGivenDays)){
+                while (!in_array($givenWeekday, $aGivenDays)) {
                     $givenWeekday++;
                     $givenWeekday = ($givenWeekday > 5 ? 1 : $givenWeekday);
-                    if (in_array($givenWeekday, $aGivenDays)){
+                    if (in_array($givenWeekday, $aGivenDays)) {
                         $aProps['DTSTART'] = date('Ymd', strtotime("next " . $aWeekdays[$givenWeekday]['long'], strtotime($aProps['DTSTART'])));
                         $aProps['DTEND'] = $aProps['DTSTART'] . date('\THis', strtotime($tEnd));
                         $aProps['DTSTART'] .= date('\THis', strtotime($tStart));
@@ -396,6 +396,22 @@ class Functions
             'link' => wp_nonce_url(plugin_dir_url(__DIR__) . 'ics.php?' . http_build_query($linkParams), 'createICS', 'ics_nonce'),
             'linkTxt' => __('ICS', 'rrze-univis') . ': ' . __('Date', 'rrze-univis') . ' ' . (!empty($t['repeat']) ? $t['repeat'] : '') . ' ' . (!empty($t['date']) ? $t['date'] . ' ' : '') . $t['time'] . ' ' . __('import to calendar', 'rrze-univis'),
         ];
+    }
+
+    public static function searchMultiArrayByKey($needle, &$haystack)
+    {
+        foreach ($haystack as $key => $value) {
+            if ($key == $needle){
+                return $value;
+            }
+            if (is_array($value)) {
+                if (($result = array_search_key($needle, $value)) !== false) {
+                    return $result;
+
+                }
+            }
+        }
+        return false;
     }
 
 }

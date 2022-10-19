@@ -95,104 +95,104 @@ function getSections()
     ];
 }
 
-
 function getFields($group)
 {
     $aFields =
         [
-            'contact' => [
-                [
-                    'name' => 'honorificPrefix',
-                    'label' => __('Title (prefix)', 'rrze-contact'),
-                ],
-                [
-                    'name' => 'firstName',
-                    'label' => __('First name', 'rrze-contact'),
-                ],
-                [
-                    'name' => 'familyName',
-                    'label' => __('Family name', 'rrze-contact')
-                ],
-                [
-                    'name' => 'honorificSuffix',
-                    'label' => __('Degree (suffix)', 'rrze-contact'),
-                ],
-                [
-                    'name' => 'jobTitle',
-                    'label' => __('Position/Function', 'rrze-contact'),
-                ],
+        'contact' => [
             [
-            'name' => 'worksFor',
+                'name' => 'honorificPrefix',
+                'label' => __('Title (prefix)', 'rrze-contact'),
+            ],
+            [
+                'name' => 'firstName',
+                'label' => __('First name', 'rrze-contact'),
+            ],
+            [
+                'name' => 'familyName',
+                'label' => __('Family name', 'rrze-contact'),
+            ],
+            [
+                'name' => 'honorificSuffix',
+                'label' => __('Degree (suffix)', 'rrze-contact'),
+            ],
+            [
+                'name' => 'jobTitle',
+                'label' => __('Position/Function', 'rrze-contact'),
+            ],
+            [
+                'name' => 'worksFor',
                 'label' => __('Organization', 'rrze-contact'),
             ],
-            [
-            'name' => 'workLocation',
-                'label' => __('Room', 'rrze-contact'),
-            ],
-            [
-            'name' => 'phone',
-                'label' => __('Phone', 'rrze-contact'),
-            ],
-            [
-            'name' => 'fax',
-                'label' => __('Fax', 'rrze-contact'),
-            ],
-            [
-            'name' => 'mobile',
-                'label' => __('Mobile', 'rrze-contact'),
-            ],
-            [
-            'name' => 'email',
-                'label' => __('eMail', 'rrze-contact'),
-            ],
-            [
-            'name' => 'url',
-                'label' => __('Website', 'rrze-contact'),
-            ],
-            [
-            'name' => 'department',
-                'label' => __('Department', 'rrze-contact'),
-            ],
+            // [
+            //     'name' => 'workLocation',
+            //     'label' => __('Room', 'rrze-contact'),
+            // ],
+            // [
+            //     'name' => 'phone',
+            //     'label' => __('Phone', 'rrze-contact'),
+            // ],
+            // [
+            //     'name' => 'fax',
+            //     'label' => __('Fax', 'rrze-contact'),
+            // ],
+            // [
+            //     'name' => 'mobile',
+            //     'label' => __('Mobile', 'rrze-contact'),
+            // ],
+            // [
+            //     'name' => 'email',
+            //     'label' => __('eMail', 'rrze-contact'),
+            // ],
+            // [
+            //     'name' => 'url',
+            //     'label' => __('Website', 'rrze-contact'),
+            // ],
+            // [
+            //     'name' => 'department',
+            //     'label' => __('Department', 'rrze-contact'),
+            // ],
         ],
 
         'location' => [
             [
                 'name' => 'street',
-                'label' => __('', 'rrze-contact'),
+                'label' => __('Street', 'rrze-contact'),
             ],
             [
                 'name' => 'city',
-                'label' => __('', 'rrze-contact'),
+                'label' => __('City', 'rrze-contact'),
             ],
             [
-                'name' => 'office',
-                'label' => __('', 'rrze-contact'),
+                'name' => 'room',
+                'label' => __('Office', 'rrze-contact'),
             ],
             [
                 'name' => 'phone',
-                'label' => __('', 'rrze-contact'),
+                'label' => __('Phone', 'rrze-contact'),
             ],
             [
                 'name' => 'fax',
-                'label' => __('', 'rrze-contact'),
+                'label' => __('Fax', 'rrze-contact'),
             ],
             [
                 'name' => 'email',
-                'label' => __('', 'rrze-contact'),
+                'label' => __('eMail', 'rrze-contact'),
             ],
             [
                 'name' => 'url',
-                'label' => __('', 'rrze-contact'),
+                'label' => __('Url', 'rrze-contact'),
             ],
         ],
-        ];
+    ];
 
-    return (!empty($aFields[$group]) ? $aFields[$group] : []);
+    return (!empty($aFields[$group]) ? $aFields[$group] : $aFields);
 }
 
-function makeSettingsFields($aIn){
+function makeSettingsFields($aIn)
+{
     $aRet = [];
-    foreach($aIn as $details){
+    foreach ($aIn as $details) {
         $aRet[] = [
             'name' => $details['name'],
             'label' => $details['label'],
@@ -235,217 +235,217 @@ function getSettingsFields()
 
     $aRet['sidebar'] = makeSettingsFields(getFields('contact'));
 
-        $aAdded = [
-            [
-                'name' => 'sprechzeiten',
-                'label' => __('Sprechzeiten', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'kurzauszug',
-                'label' => __('Kurzbeschreibung', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'bild',
-                'label' => __('Bild', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'socialmedia',
-                'label' => __('Social Media Links', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'ansprechpartner',
-                'label' => __('Ansprechpartner', 'rrze-contact'),
-                'desc' => __('Im Sidebar-Widget werden nur dann Ansprechpartner gezeigt, wenn dieser Wert aktiviert ist oder alternativ bei dem Personeneintrag eingestellt ist, daß der Kontakt ausschließlich über angegebene Ansprechpartner erfolgt.', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => false,
-                'default' => false,
-            ],
-        ];
-        $aRet['sidebar'] = $aRet['sidebar'] + $aAdded;
+    $aAdded = [
+        [
+            'name' => 'sprechzeiten',
+            'label' => __('Sprechzeiten', 'rrze-contact'),
+            'type' => 'checkbox',
+            'checked' => true,
+            'default' => true,
+        ],
+        [
+            'name' => 'kurzauszug',
+            'label' => __('Kurzbeschreibung', 'rrze-contact'),
+            'type' => 'checkbox',
+            'checked' => true,
+            'default' => true,
+        ],
+        [
+            'name' => 'bild',
+            'label' => __('Bild', 'rrze-contact'),
+            'type' => 'checkbox',
+            'checked' => true,
+            'default' => true,
+        ],
+        [
+            'name' => 'socialmedia',
+            'label' => __('Social Media Links', 'rrze-contact'),
+            'type' => 'checkbox',
+            'checked' => true,
+            'default' => true,
+        ],
+        [
+            'name' => 'ansprechpartner',
+            'label' => __('Ansprechpartner', 'rrze-contact'),
+            'desc' => __('Im Sidebar-Widget werden nur dann Ansprechpartner gezeigt, wenn dieser Wert aktiviert ist oder alternativ bei dem Personeneintrag eingestellt ist, daß der Kontakt ausschließlich über angegebene Ansprechpartner erfolgt.', 'rrze-contact'),
+            'type' => 'checkbox',
+            'checked' => false,
+            'default' => false,
+        ],
+    ];
+    $aRet['sidebar'] = $aRet['sidebar'] + $aAdded;
 
-        $aRet['constants'] = [
-            [
-                'name' => 'view_telefonlink',
-                'label' => __('Telefonnummer als Link', 'rrze-contact'),
-                'desc' => __('Setzt die Telefonnummer als Link, so dass mobile Endgeräte und darauf vorbereitet Software bei einem Klick die Telefonwahlfunktion aufrufen.', 'rrze-contact'),
-                'type' => 'checkbox',
-                'default' => true,
+    $aRet['constants'] = [
+        [
+            'name' => 'view_telefonlink',
+            'label' => __('Telefonnummer als Link', 'rrze-contact'),
+            'desc' => __('Setzt die Telefonnummer als Link, so dass mobile Endgeräte und darauf vorbereitet Software bei einem Klick die Telefonwahlfunktion aufrufen.', 'rrze-contact'),
+            'type' => 'checkbox',
+            'default' => true,
+        ],
+        [
+            'name' => 'view_telefon_intformat',
+            'label' => __('Internationales Nummernformat', 'rrze-contact'),
+            'desc' => __('Die Telefonnnummer wird in dem internationalen Format angezeigt.', 'rrze-contact'),
+            'type' => 'checkbox',
+            'default' => true,
+        ],
+        [
+            'name' => 'view_some_position',
+            'label' => __('Position Social Media Icons', 'rrze-contact'),
+            'default' => 'nach-contact',
+            'type' => 'Select',
+            'options' => [
+                'nach-contact' => __('Nach den Kontaktdaten', 'rrze-contact'),
+                'nach-name' => __('Direkt nach dem Namen', 'rrze-contact'),
             ],
-            [
-                'name' => 'view_telefon_intformat',
-                'label' => __('Internationales Nummernformat', 'rrze-contact'),
-                'desc' => __('Die Telefonnnummer wird in dem internationalen Format angezeigt.', 'rrze-contact'),
-                'type' => 'checkbox',
-                'default' => true,
-            ],
-            [
-                'name' => 'view_some_position',
-                'label' => __('Position Social Media Icons', 'rrze-contact'),
-                'default' => 'nach-contact',
-                'type' => 'Select',
-                'options' => [
-                    'nach-contact' => __('Nach den Kontaktdaten', 'rrze-contact'),
-                    'nach-name' => __('Direkt nach dem Namen', 'rrze-contact'),
-                ],
-            ],
+        ],
 
-            [
-                'name' => 'view_raum_prefix',
-                'default' => __('Raum', 'rrze-contact'),
-                'placeholder' => __('Raum', 'rrze-contact'),
-                'label' => __('Anzuzeigender Text vor der Raumangabe', 'rrze-contact'),
-                'field_type' => 'text',
-                'type' => 'text',
+        [
+            'name' => 'view_raum_prefix',
+            'default' => __('Raum', 'rrze-contact'),
+            'placeholder' => __('Raum', 'rrze-contact'),
+            'label' => __('Anzuzeigender Text vor der Raumangabe', 'rrze-contact'),
+            'field_type' => 'text',
+            'type' => 'text',
+        ],
+        [
+            'name' => 'view_contact_linktext',
+            'default' => __('Mehr', 'rrze-contact') . ' ›',
+            'placeholder' => __('Mehr', 'rrze-contact') . ' ›',
+            'label' => __('Linktext für Kontaktseite', 'rrze-contact'),
+            'field_type' => 'text',
+            'type' => 'text',
+        ],
+        [
+            'name' => 'view_contact_linkname',
+            'label' => __('Link auf Kontaktname', 'rrze-contact'),
+            'default' => 'use-link',
+            'type' => 'Select',
+            'options' => [
+                'use-link' => __('Linkziel im Kontakteintrag', 'rrze-contact'),
+                'permalink' => __('Kontaktseite', 'rrze-contact'),
+                'url' => __('URL aus Profil', 'rrze-contact'),
+                'force-nolink' => __('Nicht verlinken, URL im Kontakteintrag ignorieren', 'rrze-contact'),
             ],
-            [
-                'name' => 'view_contact_linktext',
-                'default' => __('Mehr', 'rrze-contact') . ' ›',
-                'placeholder' => __('Mehr', 'rrze-contact') . ' ›',
-                'label' => __('Linktext für Kontaktseite', 'rrze-contact'),
-                'field_type' => 'text',
-                'type' => 'text',
+        ],
+        [
+            'name' => 'view_contact_page_imagecaption',
+            'label' => __('Bildbeschriftung Kontaktseite', 'rrze-contact'),
+            'desc' => __('Zeigt auf der Kontaktvisitenkarte und bei Nutzung des Shortcodes mit dem Attribut <code>format="page"</code> die Bildunterschriften eines Kontaktbildes an.', 'rrze-contact'),
+            'type' => 'checkbox',
+            'checked' => true,
+            'default' => true,
+        ],
+        [
+            'name' => 'view_contact_page_imagesize',
+            'label' => __('Bildformat Kontaktseite', 'rrze-contact'),
+            'desc' => __('Setzt auf der Kontaktseite oder bei Nutzung des Shortcodes mit dem Attribut <code>format="page"</code> das zu verwendete Bildformat.', 'rrze-contact'),
+            'default' => 'contact-thumb-page-v3',
+            'type' => 'Selectimagesizes',
+            'options' => $imagesizes,
+        ],
+        [
+            'name' => 'view_thumb_size',
+            'label' => __('Größe Thumbnail', 'rrze-contact'),
+            'desc' => __('Größe der Thumbnails bei der Anzeige von Kontaktlisten und Kontakt-Shortcodes, die nicht vom Format "page" oder "card" sind.', 'rrze-contact'),
+            'default' => 'small',
+            'type' => 'Select',
+            'options' => [
+                'small' => __('Klein (80 Pixel)', 'rrze-contact'),
+                'medium' => __('Mittel (100 Pixel)', 'rrze-contact'),
+                'large' => __('Groß (120 Pixel)', 'rrze-contact'),
+                // Notice: Take sure, that the maximum size will match to the thumbnail-size defined in the options array
             ],
-            [
-                'name' => 'view_contact_linkname',
-                'label' => __('Link auf Kontaktname', 'rrze-contact'),
-                'default' => 'use-link',
-                'type' => 'Select',
-                'options' => [
-                    'use-link' => __('Linkziel im Kontakteintrag', 'rrze-contact'),
-                    'permalink' => __('Kontaktseite', 'rrze-contact'),
-                    'url' => __('URL aus Profil', 'rrze-contact'),
-                    'force-nolink' => __('Nicht verlinken, URL im Kontakteintrag ignorieren', 'rrze-contact'),
-                ],
+        ],
+        [
+            'name' => 'view_card_size',
+            'label' => __('Größe Personen-Karten', 'rrze-contact'),
+            'desc' => __('Größe der Personen-Karten bei Nutzung des Formats <code>format="card"</code>.', 'rrze-contact'),
+            'default' => 'small',
+            'type' => 'Select',
+            'options' => [
+                'xsmall' => __('Sehr klein (150 Pixel)', 'rrze-contact'),
+                'small' => __('Klein (200 Pixel)', 'rrze-contact'),
+                'medium' => __('Mittel (250 Pixel)', 'rrze-contact'),
+                'large' => __('Groß (300 Pixel)', 'rrze-contact'),
             ],
-            [
-                'name' => 'view_contact_page_imagecaption',
-                'label' => __('Bildbeschriftung Kontaktseite', 'rrze-contact'),
-                'desc' => __('Zeigt auf der Kontaktvisitenkarte und bei Nutzung des Shortcodes mit dem Attribut <code>format="page"</code> die Bildunterschriften eines Kontaktbildes an.', 'rrze-contact'),
-                'type' => 'checkbox',
-                'checked' => true,
-                'default' => true,
-            ],
-            [
-                'name' => 'view_contact_page_imagesize',
-                'label' => __('Bildformat Kontaktseite', 'rrze-contact'),
-                'desc' => __('Setzt auf der Kontaktseite oder bei Nutzung des Shortcodes mit dem Attribut <code>format="page"</code> das zu verwendete Bildformat.', 'rrze-contact'),
-                'default' => 'contact-thumb-page-v3',
-                'type' => 'Selectimagesizes',
-                'options' => $imagesizes,
-            ],
-            [
-                'name' => 'view_thumb_size',
-                'label' => __('Größe Thumbnail', 'rrze-contact'),
-                'desc' => __('Größe der Thumbnails bei der Anzeige von Kontaktlisten und Kontakt-Shortcodes, die nicht vom Format "page" oder "card" sind.', 'rrze-contact'),
-                'default' => 'small',
-                'type' => 'Select',
-                'options' => [
-                    'small' => __('Klein (80 Pixel)', 'rrze-contact'),
-                    'medium' => __('Mittel (100 Pixel)', 'rrze-contact'),
-                    'large' => __('Groß (120 Pixel)', 'rrze-contact'),
-                    // Notice: Take sure, that the maximum size will match to the thumbnail-size defined in the options array
-                ],
-            ],
-            [
-                'name' => 'view_card_size',
-                'label' => __('Größe Personen-Karten', 'rrze-contact'),
-                'desc' => __('Größe der Personen-Karten bei Nutzung des Formats <code>format="card"</code>.', 'rrze-contact'),
-                'default' => 'small',
-                'type' => 'Select',
-                'options' => [
-                    'xsmall' => __('Sehr klein (150 Pixel)', 'rrze-contact'),
-                    'small' => __('Klein (200 Pixel)', 'rrze-contact'),
-                    'medium' => __('Mittel (250 Pixel)', 'rrze-contact'),
-                    'large' => __('Groß (300 Pixel)', 'rrze-contact'),
-                ],
-            ],
-            [
-                'name' => 'view_card_linkimage',
-                'label' => __('Personenbild verlinken', 'rrze-contact'),
-                'desc' => __('In der Card-Ansicht auch das Personenbild als Link setzen.', 'rrze-contact'),
-                'type' => 'checkbox',
-                'default' => false,
-            ],
-            [
-                'name' => 'backend_view_metabox_contactlist',
-                'label' => __('Metabox Kontakte', 'rrze-contact'),
-                'desc' => __('Zeigt in der Bearbeitung von Seiten und Beiträgen eine Kontakt-Box an, aus der man bequem die Liste der Kontakte ablesen kann.', 'rrze-contact'),
-                'type' => 'checkbox',
-                'default' => true,
-            ],
-            [
-                'name' => 'has_archive_page',
-                'label' => __('Kontakt-Übersichtsseite', 'rrze-contact'),
-                'desc' => __('Die automatisch generierte Übersichtsseite zeigt alle Kontakte an und ist stets aktuell.', 'rrze-contact'),
-                'default' => 'contact',
-                'type' => 'Select',
-                'options' => $archive_options,
-            ],
-        ];
+        ],
+        [
+            'name' => 'view_card_linkimage',
+            'label' => __('Personenbild verlinken', 'rrze-contact'),
+            'desc' => __('In der Card-Ansicht auch das Personenbild als Link setzen.', 'rrze-contact'),
+            'type' => 'checkbox',
+            'default' => false,
+        ],
+        [
+            'name' => 'backend_view_metabox_contactlist',
+            'label' => __('Metabox Kontakte', 'rrze-contact'),
+            'desc' => __('Zeigt in der Bearbeitung von Seiten und Beiträgen eine Kontakt-Box an, aus der man bequem die Liste der Kontakte ablesen kann.', 'rrze-contact'),
+            'type' => 'checkbox',
+            'default' => true,
+        ],
+        [
+            'name' => 'has_archive_page',
+            'label' => __('Kontakt-Übersichtsseite', 'rrze-contact'),
+            'desc' => __('Die automatisch generierte Übersichtsseite zeigt alle Kontakte an und ist stets aktuell.', 'rrze-contact'),
+            'default' => 'contact',
+            'type' => 'Select',
+            'options' => $archive_options,
+        ],
+    ];
 
-        $aRet['api'] = [
-            [
-                'name' => 'url',
-                'label' => __('Link to DIP', 'rrze-contact'),
-                'desc' => __('', 'rrze-contact'),
-                'placeholder' => __('', 'rrze-contact'),
-                'type' => 'text',
-                'default' => 'https://www.DIP.fau.de/',
-                'sanitize_callback' => 'sanitize_url',
-            ],
-            [
-                'name' => 'linkTxt',
-                'label' => __('Text for the link to DIP', 'rrze-contact'),
-                'desc' => __('', 'rrze-contact'),
-                'placeholder' => __('', 'rrze-contact'),
-                'type' => 'text',
-                'default' => __('DIP - Information System of the FAU', 'rrze-contact'),
-                'sanitize_callback' => 'sanitize_text_field',
-            ],
-            [
-                'name' => 'DIP_ApiKey',
-                'label' => __('DIP ApiKey', 'rrze-contact'),
-                'desc' => __('If you are not using a multisite installation of Wordpress, contact rrze-integration@fau.de to receive this key.', 'rrze-settings'),
-                'placeholder' => '',
-                'type' => 'text',
-                'default' => '',
-                'sanitize_callback' => 'sanitize_text_field',
-            ],
-            [
-                'name' => 'DIPID',
-                'label' => __('DIP ID', 'rrze-contact'),
-                'desc' => __('To receive lectures from another department use the attribute <strong>DIPID</strong> in the shortcode. F.e. [lectures DIPID="123"]', 'rrze-contact'),
-                'placeholder' => '',
-                'type' => 'text',
-                'default' => '',
-                'sanitize_callback' => 'sanitize_text_field',
-            ],
-            [
-                'name' => 'hstart',
-                'label' => __('Headline\'s size', 'rrze-contact'),
-                'desc' => __('Headlines start at this size.', 'rrze-contact'),
-                'min' => 2,
-                'max' => 10,
-                'step' => '1',
-                'type' => 'number',
-                'default' => '2',
-                'sanitize_callback' => 'floatval',
-            ],
-        ];
+    $aRet['api'] = [
+        [
+            'name' => 'url',
+            'label' => __('Link to DIP', 'rrze-contact'),
+            'desc' => __('', 'rrze-contact'),
+            'placeholder' => __('', 'rrze-contact'),
+            'type' => 'text',
+            'default' => 'https://www.DIP.fau.de/',
+            'sanitize_callback' => 'sanitize_url',
+        ],
+        [
+            'name' => 'linkTxt',
+            'label' => __('Text for the link to DIP', 'rrze-contact'),
+            'desc' => __('', 'rrze-contact'),
+            'placeholder' => __('', 'rrze-contact'),
+            'type' => 'text',
+            'default' => __('DIP - Information System of the FAU', 'rrze-contact'),
+            'sanitize_callback' => 'sanitize_text_field',
+        ],
+        [
+            'name' => 'DIP_ApiKey',
+            'label' => __('DIP ApiKey', 'rrze-contact'),
+            'desc' => __('If you are not using a multisite installation of Wordpress, contact rrze-integration@fau.de to receive this key.', 'rrze-settings'),
+            'placeholder' => '',
+            'type' => 'text',
+            'default' => '',
+            'sanitize_callback' => 'sanitize_text_field',
+        ],
+        [
+            'name' => 'DIPID',
+            'label' => __('DIP ID', 'rrze-contact'),
+            'desc' => __('To receive lectures from another department use the attribute <strong>DIPID</strong> in the shortcode. F.e. [lectures DIPID="123"]', 'rrze-contact'),
+            'placeholder' => '',
+            'type' => 'text',
+            'default' => '',
+            'sanitize_callback' => 'sanitize_text_field',
+        ],
+        [
+            'name' => 'hstart',
+            'label' => __('Headline\'s size', 'rrze-contact'),
+            'desc' => __('Headlines start at this size.', 'rrze-contact'),
+            'min' => 2,
+            'max' => 10,
+            'step' => '1',
+            'type' => 'number',
+            'default' => '2',
+            'sanitize_callback' => 'floatval',
+        ],
+    ];
 
-        return $aRet;
+    return $aRet;
 }
 
 /**

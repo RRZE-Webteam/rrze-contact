@@ -2,11 +2,10 @@
 
 namespace RRZE\Contact\Metaboxes;
 
-use RRZE\Contact\Functions;
-use RRZE\Contact\Data;
-use RRZE\Contact\API\UnivIS;
 use function RRZE\Contact\Config\getFields;
 use function RRZE\Contact\Config\getSocialMediaList;
+use RRZE\Contact\API\UnivIS;
+use RRZE\Contact\Data;
 
 defined('ABSPATH') || exit;
 
@@ -25,7 +24,6 @@ class Contact extends Metaboxes
     public $descNotFound = '';
     public $univisID = 0;
 
-
     public function __construct($pluginFile, $settings)
     {
         $this->pluginFile = $pluginFile;
@@ -34,20 +32,16 @@ class Contact extends Metaboxes
         $this->descNotFound = __('No value is stored for this in UnivIS.', 'rrze-contact');
     }
 
-
     public function onLoaded()
     {
-        add_filter('cmb2_meta_boxes', [$this, 'cmb2_contact_metaboxes']);
+        // add_filter('cmb2_meta_boxes', [$this, 'cmb2_contact_metaboxes']);
+        add_action('cmb2_admin_init', [$this, 'makeContactMetaboxes']);
     }
 
-    public static function test($val){
-        return "JUHU";
-    }
-
-
-    public function cmb2_contact_metaboxes($meta_boxes)
+    public function makeContactMetaboxes()
     {
 
+        // Meta-Box Contact
         $contactselect_connection = Data::get_contactdata(1);
         $default_rrze_contact_typ = Data::get_default_rrze_contact_typ();
 
@@ -55,25 +49,29 @@ class Contact extends Metaboxes
 
         $this->postMeta = get_post_meta($contactID);
 
-        $this->bUnivisSync = (!empty($this->postMeta[$this->prefix . 'univis_sync'][0]) ? $this->postMeta[$this->prefix . 'univis_sync'][0] : false); // get_post_meta() can return '' for this field but we need a real false to set 'disabled' 
+        $this->bUnivisSync = (!empty($this->postMeta[$this->prefix . 'univis_sync'][0]) ? $this->postMeta[$this->prefix . 'univis_sync'][0] : false); // get_post_meta() can return '' for this field but we need a real false to set 'disabled'
 
         $univisSyncTxt = '';
         $this->univisID = (!empty($this->postMeta[$this->prefix . 'univis_id'][0]) ? $this->postMeta[$this->prefix . 'univis_id'][0] : 0);
 
         if ($this->univisID) {
             $univis = new UnivIS();
+
+            $this->univisID = 40014582; // TEST
+
             $univisResponse = $univis->getPerson('id=' . $this->univisID);
+
+            // echo '<pre>';
+            // var_dump($univisResponse);
+            // exit;
 
             if ($univisResponse['valid']) {
                 $this->univisData = $univisResponse['content'][0];
-            }
-            else {
+            } else {
                 $univisSyncTxt = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
             }
         }
 
-        // set values depending on checkbox univis_sync
-        $aFields = [];
         $aFields = $this->makeCMB2fields(getFields('contact'));
 
         $aFields['honorificPrefix']['type'] = 'select';
@@ -85,7 +83,7 @@ class Contact extends Metaboxes
             'Prof. em.' => __('Professor (Emeritus)', 'rrze-contact'),
             'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-contact'),
             'PD' => __('Privatdozent', 'rrze-contact'),
-            'PD Dr.' => __('Privatdozent Doktor', 'rrze-contact')
+            'PD Dr.' => __('Privatdozent Doktor', 'rrze-contact'),
         ];
 
         $aFields['sortField'] = [
@@ -96,7 +94,7 @@ class Contact extends Metaboxes
             'attributes' => array(
                 'value' => $this->getVal('sortField'),
             ),
-            'show_on_cb' => 'callback_cmb2_show_on_institution'
+            'show_on_cb' => 'callback_cmb2_show_on_institution',
         ];
 
         $myUrl = get_permalink($contactID);
@@ -113,121 +111,117 @@ class Contact extends Metaboxes
             'type' => 'select',
             'id' => $this->prefix . 'link',
             'options' => $linkOptions,
-            'default' => $myUrl
+            'default' => $myUrl,
         ];
 
-        $meta_boxes['rrze_contact_info'] = [
+        $cmb = new_cmb2_box([
             'id' => 'rrze_contact_info',
             'title' => __('Contact\'s informations', 'rrze-contact'),
             'object_types' => ['contact'], // post type
             'context' => 'normal',
             'priority' => 'default',
             'fields' => $aFields,
-        ];
+        ]);
 
-        // Meta-Box Weitere Informationen - rrze_contact_adds
+        // Meta-Box Excerpt
         $defaultExcerpt = get_post_field('post_excerpt', $contactID);
 
-        $meta_boxes['rrze_contact_textinfos'] = [
+        $cmb = new_cmb2_box([
             'id' => 'rrze_contact_textinfos',
             'title' => __('Contact description in shortform', 'rrze-contact'),
-            'object_types' => array('contact'), // post type
+            'object_types' => ['contact'], // post type
             'context' => 'normal',
             'priority' => 'high',
             'fields' => [
-                    [
+                [
                     'name' => __('Excerpt', 'rrze-contact'),
                     'desc' => __('Kurzform und Zusammenfassung der Contactbeschreibung bei Nutzung des Attributs <code>show="description"</code>.', 'rrze-contact'),
                     'type' => 'textarea_small',
                     'id' => $this->prefix . 'description',
-                    'default' => $defaultExcerpt
-                    ],
+                    'default' => $defaultExcerpt,
+                ],
 
-                    [
+                [
                     'name' => __('Kurzbeschreibung (Sidebar und Kompakt)', 'rrze-contact'),
                     'desc' => __('Diese Kurzbeschreibung wird bei der Anzeige von <code>show="description"</code> in einer Sidebar (<code>format="sidebar"</code>) oder einer Liste (<code>format="kompakt"</code>) verwendet.', 'rrze-contact'),
                     'type' => 'textarea_small',
                     'id' => $this->prefix . 'small_description',
-                    'default' => $defaultExcerpt
-                    ],
-                ]
-            ];
+                    'default' => $defaultExcerpt,
+                ],
+            ],
+        ]);
 
-
+        // Meta-Box Locations
         $locationDefault = Data::get_standort_defaults($contactID);
         $locationSelect = Data::get_standortdata();
 
-
-        $meta_boxes['rrze_contact_adressdaten'] = array(
+        $cmb = new_cmb2_box([
             'id' => 'rrze_contact_adressdaten',
-            'title' => __('Postalische Adressdaten', 'rrze-contact'),
+            'title' => __('Locations', 'rrze-contact'),
             'object_types' => array('contact'), // post type
             'context' => 'normal',
             'priority' => 'default',
-            'fields' => array(
-                    array(
+            'fields' => [
+                [
                     'name' => __('Zugeordneter Standort', 'rrze-contact'),
-                    //'desc' => 'Der Standort, von dem die Daten angezeigt werden sollen.',
                     'type' => 'select',
                     'id' => $this->prefix . 'standort_id',
                     'options' => $locationSelect,
-                ),
-                    array(
+                ],
+                [
                     'name' => __('Standort-Daten für Adressanzeige nutzen', 'rrze-contact'),
                     'desc' => __('Die Adressdaten werden aus dem Standort bezogen; die folgenden optionalen Felder und Adressdaten aus UnivIS werden überschrieben.', 'rrze-contact'),
                     'type' => 'checkbox',
                     'id' => $this->prefix . 'standort_sync',
-                ),
-                    array(
-                    'name' => __('Straße und Hausnummer', 'rrze-contact'),
-                    'type' => 'text',
-                    'id' => $this->prefix . 'streetAddress',
-                    'after' => $locationDefault['streetAddress'],
-                    'attributes' => array(
-                        'placeholder' => (!empty($this->univisData['streetAddress']) ? $this->univisData['streetAddress'] : ''),
-                    ),
+                ],
+            ],
+        ]);
 
-                ),
-                    array(
-                    'name' => __('Postleitzahl', 'rrze-contact'),
-                    //'desc' => 'Wenn der Ort aus UnivIS übernommen werden soll bitte leer lassen!',
-                    'type' => 'text_small',
-                    'id' => $this->prefix . 'postalCode',
-                    'sanitization_cb' => 'validate_plz',
-                    'after' => $locationDefault['postalCode'],
-                    'attributes' => array(
-                        'placeholder' => (!empty($this->univisData['postalCode']) ? $this->univisData['postalCode'] : ''),
-                    ),
-                ),
-                    array(
-                    'name' => __('Ort', 'rrze-contact'),
-                    'type' => 'text',
-                    'id' => $this->prefix . 'addressLocality',
-                    'after' => $locationDefault['addressLocality'],
-                    'attributes' => array(
-                        'placeholder' => (!empty($this->univisData['addressLocality']) ? $this->univisData['addressLocality'] : ''),
-                    ),
-                ),
-                    array(
-                    'name' => __('Land', 'rrze-contact'),
-                    'type' => 'text',
-                    'id' => $this->prefix . 'addressCountry',
-                    'after' => $locationDefault['addressCountry'],
-                    'attributes' => array(
-                        'placeholder' => (!empty($this->univisData['addressCountry']) ? $this->univisData['addressCountry'] : ''),
-                    ),
-                ),
 
-            )
-        );
+        $iCnt = (!empty($this->univisData['locationsCount']) ? $this->univisData['locationsCount'] : 0);
+
+        $groupID = $cmb->add_field(
+            [
+            'id' => $this->prefix . 'locationsGroup',
+            'type' => 'group',
+            'options' => [
+                'group_title' => __('Location', 'rrze-contact') . ' {#}',
+                'add_button' => __('Add location', 'rrze-contact'),
+                'remove_button' => __('Delete location', 'rrze-contact'),
+            ],
+        ]);
+
+        // echo '<pre>';
+        // var_dump($this->makeCMB2fields(getFields('location'), 'locations', 0));
+        // exit;
+        // $aFields = [];
+        for ($i=0; $i < $iCnt; $i++){
+            $locationsID = $cmb->add_group_field($groupID, 
+                [
+                'id' => $this->prefix . 'location',
+                'type' => 'group',
+                'repeatable'  => false,
+                'options' => [
+                    // 'group_  title' => __('TEST Location', 'rrze-contact') . ' {#}',
+                ],
+            ]);
+
+            // echo $locationsID . ' == $locationsID <br>';
+
+            $aFields = $this->makeCMB2fields(getFields('location'), 'locations', $i);
+            foreach($aFields as $aVal){
+                $cmb->add_group_field($this->prefix . 'location', $aVal);
+            }
+        }
+
+        return;
 
 
         /*  "instagram"=> [
-         'title'  => 'Instagram',
-         'class' => 'instagram'
-         ],
+        'title'  => 'Instagram',
+        'class' => 'instagram'
+        ],
          */
-
 
         // echo 'hier';
         // var_dump($meta_boxes);
@@ -235,8 +229,6 @@ class Contact extends Metaboxes
 
         $somes = getSocialMediaList();
         $somefields = array();
-
-
 
         foreach ($somes as $key => $value) {
             $name = $somes[$key]['title'];
@@ -252,8 +244,6 @@ class Contact extends Metaboxes
 
             array_push($somefields, $thissome);
         }
-
-
 
         // Meta-Box Social Media - rrze_contact_social_media
         $meta_boxes['rrze_contact_social_media'] = array(
@@ -275,19 +265,19 @@ class Contact extends Metaboxes
             'priority' => 'default',
             'fields' => array(
 
-                    array(
+                array(
                     'name' => __('Sprechzeiten: Überschrift', 'rrze-contact'),
                     'desc' => __('Wird in Fettdruck über den Sprechzeiten ausgegeben.', 'rrze-contact'),
                     'type' => 'text',
-                    'id' => $this->prefix . 'hoursAvailable_text'
+                    'id' => $this->prefix . 'hoursAvailable_text',
                 ),
-                    array(
+                array(
                     'name' => __('Sprechzeiten: Allgemeines oder Anmerkungen', 'rrze-contact'),
                     'desc' => __('Zur Formatierung können HTML-Befehle verwendet werden (z.B. &lt;br&gt; für Zeilenumbruch). Wird vor den Sprechzeiten ausgegeben.', 'rrze-contact'),
                     'type' => 'textarea_small',
-                    'id' => $this->prefix . 'hoursAvailable'
+                    'id' => $this->prefix . 'hoursAvailable',
                 ),
-                    array(
+                array(
                     'id' => $this->prefix . 'hoursAvailable_group',
                     'type' => 'group',
                     // 'desc' => $univis_default['hoursAvailable_group'],
@@ -299,7 +289,7 @@ class Contact extends Metaboxes
                         //'sortable' => true,
                     ),
                     'fields' => array(
-                            array(
+                        array(
                             'name' => __('Wiederholung', 'rrze-contact'),
                             'id' => 'repeat',
                             'type' => 'radio_inline',
@@ -308,9 +298,9 @@ class Contact extends Metaboxes
                                 'd1' => __('täglich', 'rrze-contact'),
                                 'w1' => __('wöchentlich', 'rrze-contact'),
                                 'w2' => __('alle 2 Wochen', 'rrze-contact'),
-                            )
+                            ),
                         ),
-                            array(
+                        array(
                             'name' => __('am', 'rrze-contact'),
                             'id' => 'repeat_submode',
                             'type' => 'multicheck',
@@ -322,26 +312,26 @@ class Contact extends Metaboxes
                                 '5' => __('Freitag', 'rrze-contact'),
                                 '6' => __('Samstag', 'rrze-contact'),
                                 '7' => __('Sonntag', 'rrze-contact'),
-                            )
+                            ),
                         ),
-                            array(
+                        array(
                             'name' => __('von', 'rrze-contact'),
                             'id' => 'starttime',
                             'type' => 'text_time',
                             'time_format' => 'H:i',
                         ),
-                            array(
+                        array(
                             'name' => __('bis', 'rrze-contact'),
                             'id' => 'endtime',
                             'type' => 'text_time',
                             'time_format' => 'H:i',
                         ),
-                            array(
+                        array(
                             'name' => __('Raum', 'rrze-contact'),
                             'id' => 'office',
                             'type' => 'text_small',
                         ),
-                            array(
+                        array(
                             'name' => __('Bemerkung', 'rrze-contact'),
                             'id' => 'comment',
                             'type' => 'text',
@@ -350,9 +340,8 @@ class Contact extends Metaboxes
 
                 ),
 
-            )
+            ),
         );
-
 
         // Meta-Box Synchronisierung mit externen Daten - rrze_contact_sync ab hier
         $meta_boxes['rrze_contact_sync'] = array(
@@ -362,7 +351,7 @@ class Contact extends Metaboxes
             'context' => 'side',
             'priority' => 'high',
             'fields' => array(
-                    array(
+                array(
                     'name' => __('Typ des Eintrags', 'rrze-contact'),
                     'type' => 'select',
                     'options' => array(
@@ -373,29 +362,27 @@ class Contact extends Metaboxes
                         'pseudo' => __('Pseudonym', 'rrze-contact'),
                     ),
                     'id' => $this->prefix . 'typ',
-                    'default' => $default_rrze_contact_typ
+                    'default' => $default_rrze_contact_typ,
                 ),
-                    array(
+                array(
                     'name' => __('UnivIS-Id', 'rrze-contact'),
                     'desc' => 'UnivIS-Id des Contacts (<a href="/wp-admin/edit.php?post_type=contact&page=search-univis-id">UnivIS-Id suchen</a>)',
                     'type' => 'text_small',
                     'id' => $this->prefix . 'univis_id',
                     'sanitization_cb' => 'validate_univis_id',
-                    'show_on_cb' => 'callback_cmb2_show_on_contact'
+                    'show_on_cb' => 'callback_cmb2_show_on_contact',
                 ),
-                    array(
+                array(
                     'name' => __('UnivIS-Daten verwenden', 'rrze-contact'),
                     'desc' => __('Overwrite contact data with data from UnivIS.', 'rrze-contact'),
                     'type' => 'checkbox',
                     'id' => $this->prefix . 'univis_sync',
                     'after' => $univisSyncTxt,
-                    'show_on_cb' => 'callback_cmb2_show_on_contact'
+                    'show_on_cb' => 'callback_cmb2_show_on_contact',
                 ),
 
-            )
+            ),
         );
-
-
 
         // Meta-Box um eine Contactcontact oder -Einrichtung zuzuordnen
         $meta_boxes['rrze_contact_connection'] = array(
@@ -405,13 +392,13 @@ class Contact extends Metaboxes
             'context' => 'normal',
             'priority' => 'default',
             'fields' => array(
-                    array(
+                array(
                     'name' => __('Art der Verknüpfung', 'rrze-contact'),
                     'desc' => __('Der hier eingegebene Text wird vor der Ausgabe des verknüpften Contactes angezeigt (z.B. Vorzimmer, Contact über).', 'rrze-contact'),
                     'id' => $this->prefix . 'connection_text',
                     'type' => 'text',
                 ),
-                    array(
+                array(
                     'name' => __('Verknüpfte Contacte auswählen', 'rrze-contact'),
                     'desc' => '',
                     'id' => $this->prefix . 'connection_id',
@@ -419,7 +406,7 @@ class Contact extends Metaboxes
                     'options' => $contactselect_connection,
                     'repeatable' => true,
                 ),
-                    array(
+                array(
                     'name' => __('Angezeigte Daten der verknüpften Contacte', 'rrze-contact'),
                     'desc' => '',
                     'id' => $this->prefix . 'connection_options',
@@ -430,21 +417,17 @@ class Contact extends Metaboxes
                         'faxNumber' => __('Telefax', 'rrze-contact'),
                         'email' => __('E-Mail', 'rrze-contact'),
                         'hoursAvailable' => __('Sprechzeiten', 'rrze-contact'),
-                    )
+                    ),
                 ),
-                    array(
+                array(
                     'name' => __('Eigene Daten ausblenden', 'rrze-contact'),
                     'desc' => __('Ausschließlich die verknüpften Contacte werden in der Ausgabe angezeigt.', 'rrze-contact'),
                     'type' => 'checkbox',
                     'id' => $this->prefix . 'connection_only',
                     //'before' => $standort_sync,
                 ),
-            )
+            ),
         );
-
-
-
-
 
         return $meta_boxes;
     }
@@ -456,8 +439,7 @@ class Contact extends Metaboxes
         $typ = get_post_meta($field->object_id, 'rrze_contact_typ', true);
         if ($typ == 'pseudo' || $typ == 'einrichtung' || $default_rrze_contact_typ == 'einrichtung') {
             $contact = false;
-        }
-        else {
+        } else {
             $contact = true;
         }
         return $contact;
@@ -470,12 +452,10 @@ class Contact extends Metaboxes
         $typ = get_post_meta($field->object_id, 'rrze_contact_typ', true);
         if ($typ == 'pseudo' || $typ == 'einrichtung' || $default_rrze_contact_typ == 'einrichtung') {
             $einrichtung = true;
-        }
-        else {
+        } else {
             $einrichtung = false;
         }
         return $einrichtung;
     }
-
 
 }
