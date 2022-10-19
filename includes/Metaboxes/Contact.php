@@ -195,6 +195,8 @@ class Contact extends Metaboxes
         // var_dump($this->makeCMB2fields(getFields('location'), 'locations', 0));
         // exit;
         // $aFields = [];
+
+
         for ($i=0; $i < $iCnt; $i++){
             $locationsID = $cmb->add_group_field($groupID, 
                 [
@@ -207,6 +209,15 @@ class Contact extends Metaboxes
             ]);
 
             // echo $locationsID . ' == $locationsID <br>';
+
+
+            // custom field? 
+            // https://github.com/CMB2/CMB2-Snippet-Library/blob/master/custom-field-types/address-field-type/class-cmb2-render-address-field.php
+
+            // oder doch Carbon Fields zusätzlich? https://github.com/CMB2/CMB2/issues/565
+
+            // wahrscheinlich über einen Filter mit dem das Field-Set eingebunden wird: 
+            // https://github.com/CMB2/CMB2/wiki/Adding-your-own-field-types#example-4-multiple-inputs-one-field-lets-create-an-address-field
 
             $aFields = $this->makeCMB2fields(getFields('location'), 'locations', $i);
             foreach($aFields as $aVal){
