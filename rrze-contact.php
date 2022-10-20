@@ -4,7 +4,7 @@
  * Plugin Name:     RRZE Contact
  * Plugin URI:      https://github.com/RRZE-Webteam/rrze-contact
  * Description:     Einbindung von Daten aus Contact
- * Version:         0.0.47
+ * Version:         0.0.48
  * Author:          RRZE-Webteam
  * Author URI:      https://blogs.fau.de/webworking/
  * License:         GNU General Public License v3
@@ -140,6 +140,8 @@ function update()
     foreach ($postIDs as $postID) {
         set_post_type($postID, 'location');
     }
+
+    // 2DO: get old settings and use them for this plugin
 
     // deactivate FAU-Person
     if (is_plugin_active('fau-person/fau-person.php')) {

@@ -180,6 +180,18 @@ function getFields($group)
                 'label' => __('eMail', 'rrze-contact'),
             ],
             [
+                'name' => 'zoom',
+                'label' => __('Zoom', 'rrze-contact'),
+            ],
+            [
+                'name' => 'teams',
+                'label' => __('Teams', 'rrze-contact'),
+            ],
+            [
+                'name' => 'matrix',
+                'label' => __('Matrix', 'rrze-contact'),
+            ],
+            [
                 'name' => 'url',
                 'label' => __('Url', 'rrze-contact'),
             ],
