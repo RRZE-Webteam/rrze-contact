@@ -36,12 +36,18 @@ class Contact extends Metaboxes
     {
         // add_filter('cmb2_meta_boxes', [$this, 'cmb2_contact_metaboxes']);
         add_action('cmb2_admin_init', [$this, 'makeContactMetaboxes']);
-        add_filter('cmb2_render_address', [$this, 'cmb2_render_address_field_callback'], 10, 5 );
 
     }
 
     public function makeContactMetaboxes()
     {
+
+        // echo '<pre>';
+        // var_dump($_GET['post']);
+
+        // var_dump($postMeta);
+
+        // exit;
 
         // Meta-Box Contact
         $contactselect_connection = Data::get_contactdata(1);
@@ -160,7 +166,7 @@ class Contact extends Metaboxes
         $cmb = new_cmb2_box([
             'id' => 'rrze_contact_adressdaten',
             'title' => __('Locations', 'rrze-contact'),
-            'object_types' => array('contact'), // post type
+            'object_types' => ['contact'], // post type
             'context' => 'normal',
             'priority' => 'default',
             'fields' => [
@@ -179,16 +185,7 @@ class Contact extends Metaboxes
             ],
         ]);
 
-
-        $iCnt = (!empty($this->univisData['locationsCount']) ? $this->univisData['locationsCount'] : 0);
-
-
-        // echo '<pre>';
-        // var_dump($this->makeCMB2fields(getFields('location'), 'locations', 0));
-        // exit;
-        // $aFields = [];
-        $groupID = $cmb->add_field(
-            [
+        $groupID = $cmb->add_field([
             'id' => $this->prefix . 'locationsGroup',
             'type' => 'group',
             'repeatable'  => true,
@@ -197,140 +194,87 @@ class Contact extends Metaboxes
                 'add_button' => __('Add location', 'rrze-contact'),
                 'remove_button' => __('Delete location', 'rrze-contact'),
             ],
+            'fields' => $this->makeCMB2fields(getFields('location'), 'locations', 0)
+        ]);
+
+        //     // custom field? 
+        //     // https://github.com/CMB2/CMB2-Snippet-Library/blob/master/custom-field-types/address-field-type/class-cmb2-render-address-field.php
+
+        //     // oder doch Carbon Fields zusätzlich? Doch das wäre ein overkill https://github.com/CMB2/CMB2/issues/565
+
+        //     // wahrscheinlich über einen Filter mit dem das Field-Set eingebunden wird: 
+        //     // https://github.com/CMB2/CMB2/wiki/Adding-your-own-field-types#example-4-multiple-inputs-one-field-lets-create-an-address-field
+
+
+
+        // Meta-Box Social Media
+        $smFields = [];
+        $smList = getSocialMediaList();
+
+        foreach ($smList as $key => $value) {
+            $smFields[] = [
+                'name' => $smList[$key]['title'] . ' URL',
+                'id' =>  $this->prefix . $key . '_url',
+                'type' => 'text_url',
+                'protocols' => ['https'],
+            ];
+        }
+
+        $cmb = new_cmb2_box([
+            'id' => 'rrze_contact_social_media',
+            'title' => __('Social Media', 'rrze-contact'),
+            'object_types' => ['contact'], // post type
+            'context' => 'normal',
+            'priority' => 'default',
+            'fields' => $smFields,
         ]);
 
 
-        for ($i=0; $i < $iCnt; $i++){
-            $groupID = $cmb->add_field(
-                [
-                'id' => $this->prefix . 'locationsGroup' . $i,
-                'type' => 'group',
-                'repeatable'  => false,
-                'options' => [
-                    'group_title' => __('Location', 'rrze-contact') . ' {#}',
-                    'add_button' => __('Add location', 'rrze-contact'),
-                    'remove_button' => __('Delete location', 'rrze-contact'),
-                ],
-            ]);
-
-            $locationsID = $cmb->add_group_field($groupID, 
-                [
-                'id' => $this->prefix . 'location' . $i,
-                'type' => 'address',
-                'repeatable'  => false,
-                'options' => [
-                    // 'group_  title' => __('TEST Location', 'rrze-contact') . ' {#}',
-                ],
-            ]);
-
-            // echo $locationsID . ' == $locationsID <br>';
-
-
-            // custom field? 
-            // https://github.com/CMB2/CMB2-Snippet-Library/blob/master/custom-field-types/address-field-type/class-cmb2-render-address-field.php
-
-            // oder doch Carbon Fields zusätzlich? https://github.com/CMB2/CMB2/issues/565
-
-            // wahrscheinlich über einen Filter mit dem das Field-Set eingebunden wird: 
-            // https://github.com/CMB2/CMB2/wiki/Adding-your-own-field-types#example-4-multiple-inputs-one-field-lets-create-an-address-field
-
-            // $aFields = $this->makeCMB2fields(getFields('location'), 'locations', $i);
-            // foreach($aFields as $aVal){
-            //     $cmb->add_group_field($this->prefix . 'location', $aVal);
-            // }
-        }
-
-        return;
-
-
-        /*  "instagram"=> [
-        'title'  => 'Instagram',
-        'class' => 'instagram'
-        ],
-         */
-
-        // echo 'hier';
-        // var_dump($meta_boxes);
-        // exit;
-
-        $somes = getSocialMediaList();
-        $somefields = array();
-
-        foreach ($somes as $key => $value) {
-            $name = $somes[$key]['title'];
-            $desc = '';
-            if (isset($somes[$key]['desc'])) {
-                $desc = $somes[$key]['desc'];
-            }
-            $thissome['name'] = $name . ' URL';
-            $thissome['desc'] = $desc;
-            $thissome['type'] = 'text_url';
-            $thissome['id'] = $this->prefix . $key . '_url';
-            $thissome['protocols'] = array('https');
-
-            array_push($somefields, $thissome);
-        }
-
-        // Meta-Box Social Media - rrze_contact_social_media
-        $meta_boxes['rrze_contact_social_media'] = array(
-            'id' => 'rrze_contact_social_media',
-            'title' => __('Social Media', 'rrze-contact'),
-            'object_types' => array('contact'), // post type
-            'context' => 'normal',
-            'priority' => 'default',
-            'fields' => $somefields,
-
-        );
-
-        // Meta-Box Weitere Informationen - rrze_contact_adds
-        $meta_boxes['rrze_contact_adds'] = array(
+        // Meta-Box Cosultations
+        $cmb = new_cmb2_box([
             'id' => 'rrze_contact_adds',
-            'title' => __('Sprechzeiten', 'rrze-contact'),
-            'object_types' => array('contact'), // post type
+            'title' => __('Cosultations', 'rrze-contact'),
+            'object_types' => ['contact'], // post type
             'context' => 'normal',
             'priority' => 'default',
-            'fields' => array(
-
-                array(
-                    'name' => __('Sprechzeiten: Überschrift', 'rrze-contact'),
-                    'desc' => __('Wird in Fettdruck über den Sprechzeiten ausgegeben.', 'rrze-contact'),
+            'fields' => [
+                [
+                    'name' => __('Cosultations: headline', 'rrze-contact'),
+                    'desc' => __('Show as bold above the csultations', 'rrze-contact'),
                     'type' => 'text',
                     'id' => $this->prefix . 'hoursAvailable_text',
-                ),
-                array(
+                ],
+                [
                     'name' => __('Sprechzeiten: Allgemeines oder Anmerkungen', 'rrze-contact'),
                     'desc' => __('Zur Formatierung können HTML-Befehle verwendet werden (z.B. &lt;br&gt; für Zeilenumbruch). Wird vor den Sprechzeiten ausgegeben.', 'rrze-contact'),
                     'type' => 'textarea_small',
                     'id' => $this->prefix . 'hoursAvailable',
-                ),
-                array(
+                ],
+                [
                     'id' => $this->prefix . 'hoursAvailable_group',
                     'type' => 'group',
-                    // 'desc' => $univis_default['hoursAvailable_group'],
-                    //'desc' => __('Bitte geben Sie die Sprechzeiten an.', 'rrze-contact'),
-                    'options' => array(
+                    'options' => [
                         'group_title' => __('Sprechzeit {#}', 'rrze-contact'),
                         'add_button' => __('Weitere Sprechzeit einfügen', 'rrze-contact'),
                         'remove_button' => __('Sprechzeit löschen', 'rrze-contact'),
-                        //'sortable' => true,
-                    ),
-                    'fields' => array(
-                        array(
+                    ],
+                    'fields' => [
+                        [
                             'name' => __('Wiederholung', 'rrze-contact'),
                             'id' => 'repeat',
                             'type' => 'radio_inline',
-                            'options' => array(
+                            'options' => [
                                 '-' => __('Keine', 'rrze-contact'),
                                 'd1' => __('täglich', 'rrze-contact'),
                                 'w1' => __('wöchentlich', 'rrze-contact'),
                                 'w2' => __('alle 2 Wochen', 'rrze-contact'),
-                            ),
-                        ),
-                        array(
+                            ],
+                        ],
+                        [                            
                             'name' => __('am', 'rrze-contact'),
                             'id' => 'repeat_submode',
                             'type' => 'multicheck',
-                            'options' => array(
+                            'options' => [
                                 '1' => __('Montag', 'rrze-contact'),
                                 '2' => __('Dienstag', 'rrze-contact'),
                                 '3' => __('Mittwoch', 'rrze-contact'),
@@ -338,124 +282,119 @@ class Contact extends Metaboxes
                                 '5' => __('Freitag', 'rrze-contact'),
                                 '6' => __('Samstag', 'rrze-contact'),
                                 '7' => __('Sonntag', 'rrze-contact'),
-                            ),
-                        ),
-                        array(
+                            ],
+                        ],
+                        [                            
                             'name' => __('von', 'rrze-contact'),
                             'id' => 'starttime',
                             'type' => 'text_time',
                             'time_format' => 'H:i',
-                        ),
-                        array(
+                        ],
+                        [                            
                             'name' => __('bis', 'rrze-contact'),
                             'id' => 'endtime',
                             'type' => 'text_time',
                             'time_format' => 'H:i',
-                        ),
-                        array(
+                        ],
+                        [                            
                             'name' => __('Raum', 'rrze-contact'),
                             'id' => 'office',
                             'type' => 'text_small',
-                        ),
-                        array(
+                        ],
+                        [                            
                             'name' => __('Bemerkung', 'rrze-contact'),
                             'id' => 'comment',
                             'type' => 'text',
-                        ),
-                    ),
-
-                ),
-
-            ),
-        );
+                        ],
+                    ],
+                ],
+            ],
+        ]);
 
         // Meta-Box Synchronisierung mit externen Daten - rrze_contact_sync ab hier
-        $meta_boxes['rrze_contact_sync'] = array(
+        $cmb = new_cmb2_box([
             'id' => 'rrze_contact_sync',
             'title' => __('Metadaten zum Contact', 'rrze-contact'),
-            'object_types' => array('contact'), // post type
+            'object_types' => ['contact'], // post type
             'context' => 'side',
             'priority' => 'high',
-            'fields' => array(
-                array(
+            'fields' => [
+                [
                     'name' => __('Typ des Eintrags', 'rrze-contact'),
                     'type' => 'select',
-                    'options' => array(
+                    'options' => [
                         'realcontact' => __('Person (allgemein)', 'rrze-contact'),
                         'realmale' => __('Person (männlich)', 'rrze-contact'),
                         'realfemale' => __('Person (weiblich)', 'rrze-contact'),
                         'einrichtung' => __('Einrichtung', 'rrze-contact'),
                         'pseudo' => __('Pseudonym', 'rrze-contact'),
-                    ),
+                    ],
                     'id' => $this->prefix . 'typ',
                     'default' => $default_rrze_contact_typ,
-                ),
-                array(
+                ],
+                [
                     'name' => __('UnivIS-Id', 'rrze-contact'),
                     'desc' => 'UnivIS-Id des Contacts (<a href="/wp-admin/edit.php?post_type=contact&page=search-univis-id">UnivIS-Id suchen</a>)',
                     'type' => 'text_small',
                     'id' => $this->prefix . 'univis_id',
                     'sanitization_cb' => 'validate_univis_id',
                     'show_on_cb' => 'callback_cmb2_show_on_contact',
-                ),
-                array(
+                ],
+                [
                     'name' => __('UnivIS-Daten verwenden', 'rrze-contact'),
                     'desc' => __('Overwrite contact data with data from UnivIS.', 'rrze-contact'),
                     'type' => 'checkbox',
                     'id' => $this->prefix . 'univis_sync',
                     'after' => $univisSyncTxt,
                     'show_on_cb' => 'callback_cmb2_show_on_contact',
-                ),
-
-            ),
-        );
+                ],
+            ],
+        ]);
 
         // Meta-Box um eine Contactcontact oder -Einrichtung zuzuordnen
-        $meta_boxes['rrze_contact_connection'] = array(
+        $cmb = new_cmb2_box([
             'id' => 'rrze_contact_connection',
             'title' => __('Ansprechpartner / verknüpfte Contacte', 'rrze-contact'),
-            'object_types' => array('contact'), // post type
+            'object_types' => ['contact'], // post type
             'context' => 'normal',
             'priority' => 'default',
-            'fields' => array(
-                array(
+            'fields' => [
+                [
                     'name' => __('Art der Verknüpfung', 'rrze-contact'),
                     'desc' => __('Der hier eingegebene Text wird vor der Ausgabe des verknüpften Contactes angezeigt (z.B. Vorzimmer, Contact über).', 'rrze-contact'),
                     'id' => $this->prefix . 'connection_text',
                     'type' => 'text',
-                ),
-                array(
+                ],
+                [
                     'name' => __('Verknüpfte Contacte auswählen', 'rrze-contact'),
                     'desc' => '',
                     'id' => $this->prefix . 'connection_id',
                     'type' => 'select',
                     'options' => $contactselect_connection,
                     'repeatable' => true,
-                ),
-                array(
+                ],
+                [
                     'name' => __('Angezeigte Daten der verknüpften Contacte', 'rrze-contact'),
                     'desc' => '',
                     'id' => $this->prefix . 'connection_options',
                     'type' => 'multicheck',
-                    'options' => array(
+                    'options' => [
                         'contactPoint' => __('Adresse', 'rrze-contact'),
                         'telephone' => __('Telefon', 'rrze-contact'),
                         'faxNumber' => __('Telefax', 'rrze-contact'),
                         'email' => __('E-Mail', 'rrze-contact'),
                         'hoursAvailable' => __('Sprechzeiten', 'rrze-contact'),
-                    ),
-                ),
-                array(
+                    ],
+                ],
+                [
                     'name' => __('Eigene Daten ausblenden', 'rrze-contact'),
                     'desc' => __('Ausschließlich die verknüpften Contacte werden in der Ausgabe angezeigt.', 'rrze-contact'),
                     'type' => 'checkbox',
                     'id' => $this->prefix . 'connection_only',
                     //'before' => $standort_sync,
-                ),
-            ),
-        );
-
-        return $meta_boxes;
+                ],
+            ],
+        ]);
     }
 
     //Anzeigen des Feldes nur bei Personen
@@ -484,64 +423,4 @@ class Contact extends Metaboxes
         return $einrichtung;
     }
 
-    function cmb2_render_address_field_callback( $field, $value, $object_id, $object_type, $field_type ) {
-
-        // make sure we specify each part of the value we need.
-        $value = wp_parse_args( $value, array(
-            'address-1' => '',
-            'address-2' => '',
-            'city'      => '',
-            'state'     => '',
-            'zip'       => '',
-        ) );
-    
-        ?>
-        <div><p><label for="<?php echo $field_type->_id( '_address_1' ); ?>">Address 1</label></p>
-            <?php echo $field_type->input( array(
-                'name'  => $field_type->_name( '[address-1]' ),
-                'id'    => $field_type->_id( '_address_1' ),
-                'value' => $value['address-1'],
-                'desc'  => '',
-            ) ); ?>
-        </div>
-        <div><p><label for="<?php echo $field_type->_id( '_address_2' ); ?>'">Address 2</label></p>
-            <?php echo $field_type->input( array(
-                'name'  => $field_type->_name( '[address-2]' ),
-                'id'    => $field_type->_id( '_address_2' ),
-                'value' => $value['address-2'],
-                'desc'  => '',
-            ) ); ?>
-        </div>
-        <div class="alignleft"><p><label for="<?php echo $field_type->_id( '_city' ); ?>'">City</label></p>
-            <?php echo $field_type->input( array(
-                'class' => 'cmb_text_small',
-                'name'  => $field_type->_name( '[city]' ),
-                'id'    => $field_type->_id( '_city' ),
-                'value' => $value['city'],
-                'desc'  => '',
-            ) ); ?>
-        </div>
-        <div class="alignleft"><p><label for="<?php echo $field_type->_id( '_state' ); ?>'">State</label></p>
-            <?php echo $field_type->select( array(
-                'name'    => $field_type->_name( '[state]' ),
-                'id'      => $field_type->_id( '_state' ),
-                // 'options' => cmb2_get_state_options( $value['state'] ),
-                'desc'    => '',
-            ) ); ?>
-        </div>
-        <div class="alignleft"><p><label for="<?php echo $field_type->_id( '_zip' ); ?>'">Zip</label></p>
-            <?php echo $field_type->input( array(
-                'class' => 'cmb_text_small',
-                'name'  => $field_type->_name( '[zip]' ),
-                'id'    => $field_type->_id( '_zip' ),
-                'value' => $value['zip'],
-                'type'  => 'number',
-                'desc'  => '',
-            ) ); ?>
-        </div>
-        <br class="clear">
-        <?php
-        echo $field_type->_desc( true );
-    
-    }
 }

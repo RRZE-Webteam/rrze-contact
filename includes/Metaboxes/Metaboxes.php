@@ -69,7 +69,7 @@ class Metaboxes
         $aRet = [];
 
         foreach ($aFields as $details) {
-            $aRet[$details['name']. $nr] = [
+            $aRet[$details['name']] = [
                 'name' => $details['label'],
                 'type' => 'text',
                 'id' => $this->prefix . $details['name'],
