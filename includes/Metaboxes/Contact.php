@@ -81,8 +81,10 @@ class Contact extends Metaboxes
             }
         }
 
-        // $vcard = new Vcard();
-        // echo $vcard->showCard($this->univisData);
+        // $vcard = new Vcard($this->univisData);
+        // echo $vcard->showCard();
+        // $vcard->showCardQR();
+        // echo '<img src="' . $vcard->showCardQR() . '">';
         // exit;
 
         $aFields = $this->makeCMB2fields(getFields('contact'));

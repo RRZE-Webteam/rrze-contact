@@ -10,35 +10,12 @@ defined('ABSPATH') || exit;
  */
 class Vcard
 {
+    protected $vCard = '';
 
-    // private props = [
-    //     BEGIN:VCARD
-    //     VERSION:4.0
-    //     N:Mustermann;Erika;;Dr.;
-    //     FN:Dr. Erika Mustermann
-    //     ORG:Wikimedia
-    //     ROLE:Kommunikation
-    //     TITLE:Redaktion & Gestaltung
-    //     PHOTO;MEDIATYPE=image/jpeg:http://commons.wikimedia.org/wiki/File:Erika_Mustermann_2010.jpg
-    //     TEL;TYPE=work,voice;VALUE=uri:tel:+49-221-9999123
-    //     TEL;TYPE=home,voice;VALUE=uri:tel:+49-221-1234567
-    //     ADR;TYPE=home;LABEL="Heidestraße 17\n51147 Köln\nDeutschland":;;Heidestraße 17;Köln;;51147;Germany
-    //     EMAIL:erika@mustermann.de
-    //     REV:20140301T221110Z
-    //     END:VCARD
-    // ];
-    private $header = 'BEGIN:VCARD\nVERSION:4.0';
-    private $footer =  'END:VCARD';
 
-    public function __construct()
-    {
-    }
-
-    public function createCard(array $aPerson = []):string {
-
+    public function __construct(array $aPerson = []){
         $aCard = [];
-
-        $aCard[] = $this->header;
+        $aCard[] = 'BEGIN:VCARD\nVERSION:4.0';
         $aCard[] = 'N:' . (!empty($aPerson['familyName']) ? $aPerson['familyName'] : '') . ';' . (!empty($aPerson['firstName']) ? $aPerson['firstName'] : '') . ';;' . (!empty($aPerson['honorificPrefix']) ? $aPerson['honorificPrefix'] : '') . ';' . (!empty($aPerson['honorificSuffix']) ? $aPerson['honorificSuffix'] : '');
         $aCard[] = 'FN:' . (!empty($aPerson['honorificPrefix']) ? $aPerson['honorificPrefix'] . ' ' : '') . (!empty($aPerson['honorificSuffix']) ? '(' . $aPerson['honorificSuffix'] . ') ' : '') . (!empty($aPerson['firstName']) ? $aPerson['firstName'] . ' ' : '') . (!empty($aPerson['familyName']) ? $aPerson['familyName'] : '');
         if (!empty($aPerson['organization_de'])){
@@ -81,13 +58,21 @@ class Vcard
 
         $dt = new \DateTime();
         $aCard[] = 'REV:' . $dt->format('Ymd\THisZ');
-        $aCard[] = $this->footer;
+        $aCard[] = 'END:VCARD';
 
-        return implode('\r\n', $aCard);
+        $this->vCard = implode('\r\n', $aCard);
     }
 
-    public function showCard(array $aPerson = []):string{
-        return $this->createCard($aPerson);
+    public function showCard():string{
+        return $this->vCard;
+    }
+
+    public function showCardQR(){
+        if ((include_once 'phpqrcode/qrlib.php') == TRUE) {
+            // \QRcode::png($this->vCard); // this displays the image directly in the browser - I want data to be returned - 
+        }else{
+            return 'QR Lib is missing';
+        }
     }
 
     public function encodeCard(){
