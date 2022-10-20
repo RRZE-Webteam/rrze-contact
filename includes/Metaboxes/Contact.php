@@ -6,6 +6,7 @@ use function RRZE\Contact\Config\getFields;
 use function RRZE\Contact\Config\getSocialMediaList;
 use RRZE\Contact\API\UnivIS;
 use RRZE\Contact\Data;
+use RRZE\Contact\Vcard;
 
 defined('ABSPATH') || exit;
 
@@ -79,6 +80,10 @@ class Contact extends Metaboxes
                 $univisSyncTxt = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
             }
         }
+
+        // $vcard = new Vcard();
+        // echo $vcard->showCard($this->univisData);
+        // exit;
 
         $aFields = $this->makeCMB2fields(getFields('contact'));
 
