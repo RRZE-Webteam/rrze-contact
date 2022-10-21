@@ -194,12 +194,6 @@ class Contact extends Metaboxes
             ],
         ]);
 
-
-        // $newLocations = get_post_meta($postID, 'rrze_contact_locationsGroup');
-        // echo '<pre>';
-        // var_dump($newLocations);
-        // exit;
-
         if (!empty($this->univisData['locations'])){
             $aMeta = [];
             foreach($this->univisData['locations'] as $location){
@@ -212,14 +206,6 @@ class Contact extends Metaboxes
             update_post_meta($postID, 'rrze_contact_locationsGroup', $aMeta);
         }
 
-        // echo '<pre>';
-        // var_dump($this->makeCMB2fields(getFields('location'), 'locations', 0));
-        // exit;
-
-        // $test = get_post_meta($postID, 'rrze_contact_locationsGroup');
-        // $test[] = $test[0];
-
-
         $groupID = $cmb->add_field([
             'id' => $this->prefix . 'locationsGroup',
             'type' => 'group',
@@ -231,16 +217,6 @@ class Contact extends Metaboxes
             ],
             'fields' => $this->makeCMB2fields(getFields('location'), 'locations', 0),
         ]);
-
-        //     // custom field? 
-        //     // https://github.com/CMB2/CMB2-Snippet-Library/blob/master/custom-field-types/address-field-type/class-cmb2-render-address-field.php
-
-        //     // oder doch Carbon Fields zusätzlich? Doch das wäre ein overkill https://github.com/CMB2/CMB2/issues/565
-
-        //     // wahrscheinlich über einen Filter mit dem das Field-Set eingebunden wird: 
-        //     // https://github.com/CMB2/CMB2/wiki/Adding-your-own-field-types#example-4-multiple-inputs-one-field-lets-create-an-address-field
-
-
 
         // Meta-Box Social Media
         $smFields = [];
