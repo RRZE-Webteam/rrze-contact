@@ -31,6 +31,20 @@ class Contact extends Metaboxes
         $this->settings = $settings;
         $this->descFound = __('Value displayed from UnivIS:', 'rrze-contact') . ' ';
         $this->descNotFound = __('No value is stored for this in UnivIS.', 'rrze-contact');
+
+        // add_action('save_post_contact', [$this, 'saveMeta'], 10, 3);
+        // add_action('save_post', [$this, 'saveMeta'], 10, 3);
+        // add_filter('sanitize_post_meta_rrze_contact_firstName', [$this, 'test']);
+        // add_filter('update_post_metadata', [$this, 'dontSaveMeta'], 10, 5);
+
+    }
+
+
+    public function dontSaveMeta($check, $object_id, $meta_key, $meta_value, $prev_value){
+        if ($meta_key == 'rrze_contact_locationsGroup'){
+            return false;
+        }
+        return $check;
     }
 
     public function onLoaded()
@@ -42,21 +56,16 @@ class Contact extends Metaboxes
 
     public function makeContactMetaboxes()
     {
-
-        // echo '<pre>';
-        // var_dump($_GET['post']);
-
-        // var_dump($postMeta);
-
-        // exit;
-
         // Meta-Box Contact
         $contactselect_connection = Data::get_contactdata(1);
         $default_rrze_contact_typ = Data::get_default_rrze_contact_typ();
 
-        $contactID = intval(!empty($_GET['post']) ? $_GET['post'] : (!empty($_POST['post_ID']) ? $_POST['post_ID'] : 0));
+        $postID = intval(!empty($_GET['post']) ? $_GET['post'] : (!empty($_POST['post_ID']) ? $_POST['post_ID'] : 0));
+        $this->postMeta = get_post_meta($postID);
 
-        $this->postMeta = get_post_meta($contactID);
+        // echo '<pre>';
+        // var_dump($this->postMeta);
+        // exit;
 
         $this->bUnivisSync = (!empty($this->postMeta[$this->prefix . 'univis_sync'][0]) ? $this->postMeta[$this->prefix . 'univis_sync'][0] : false); // get_post_meta() can return '' for this field but we need a real false to set 'disabled'
 
@@ -89,30 +98,23 @@ class Contact extends Metaboxes
 
         $aFields = $this->makeCMB2fields(getFields('contact'));
 
-        $aFields['honorificPrefix']['type'] = 'select';
-        $aFields['honorificPrefix']['options'] = [
-            '' => __('No indication', 'rrze-contact'),
-            'Dr.' => __('Doktor', 'rrze-contact'),
-            'Prof.' => __('Professor', 'rrze-contact'),
-            'Prof. Dr.' => __('Professor Doktor', 'rrze-contact'),
-            'Prof. em.' => __('Professor (Emeritus)', 'rrze-contact'),
-            'Prof. Dr. em.' => __('Professor Doktor (Emeritus)', 'rrze-contact'),
-            'PD' => __('Privatdozent', 'rrze-contact'),
-            'PD Dr.' => __('Privatdozent Doktor', 'rrze-contact'),
-        ];
+        // $aFields['honorificPrefix']['type'] = 'select';
+        // $aFields['honorificPrefix']['default'] = $aFields['honorificPrefix']['attributes']['value'];
+        // $aFields['honorificPrefix']['options'] = $this->getHonorificPrefixOptions($aFields['honorificPrefix']['attributes']['value']);
+        // unset($aFields['honorificPrefix']['attributes']['value']);
 
         $aFields['sortField'] = [
             'name' => __('Sortierfeld', 'rrze-contact'),
             'description' => __('Wird für eine Sortierung verwendet, die sich weder nach Name, Titel der Contactseite oder Vorname richten soll. Geben SIe hier Buchstaben oder Zahlen ein, nach denen sortiert werden sollen. Zur Sortierunge der Einträge geben Sie im Shortcode das Attribut <code>sort="sortierfeld"</code> ein.', 'rrze-contact'),
             'type' => 'text_small',
             'id' => $this->prefix . 'sortField',
-            'attributes' => array(
-                'value' => $this->getVal('sortField'),
-            ),
+            // 'attributes' => array(
+            //     'value' => $this->getVal('sortField'),
+            // ),
             'show_on_cb' => 'callback_cmb2_show_on_institution',
         ];
 
-        $myUrl = get_permalink($contactID);
+        $myUrl = get_permalink($postID);
         $linkOptions = [$myUrl => __('Automatically generated contact page', 'rrze-contact')];
 
         $pages = get_pages();
@@ -139,7 +141,7 @@ class Contact extends Metaboxes
         ]);
 
         // Meta-Box Excerpt
-        $defaultExcerpt = get_post_field('post_excerpt', $contactID);
+        $defaultExcerpt = get_post_field('post_excerpt', $postID);
 
         $cmb = new_cmb2_box([
             'id' => 'rrze_contact_textinfos',
@@ -167,7 +169,7 @@ class Contact extends Metaboxes
         ]);
 
         // Meta-Box Locations
-        $locationDefault = Data::get_standort_defaults($contactID);
+        $locationDefault = Data::get_standort_defaults($postID);
         $locationSelect = Data::get_standortdata();
 
         $cmb = new_cmb2_box([
@@ -192,6 +194,32 @@ class Contact extends Metaboxes
             ],
         ]);
 
+
+        // $newLocations = get_post_meta($postID, 'rrze_contact_locationsGroup');
+        // echo '<pre>';
+        // var_dump($newLocations);
+        // exit;
+
+        if (!empty($this->univisData['locations'])){
+            $aMeta = [];
+            foreach($this->univisData['locations'] as $location){
+                $aTmp = [];
+                foreach($location as $fieldName => $val){
+                    $aTmp[$this->prefix . $fieldName] = $val;
+                }
+                $aMeta[] = $aTmp;
+            }
+            update_post_meta($postID, 'rrze_contact_locationsGroup', $aMeta);
+        }
+
+        // echo '<pre>';
+        // var_dump($this->makeCMB2fields(getFields('location'), 'locations', 0));
+        // exit;
+
+        // $test = get_post_meta($postID, 'rrze_contact_locationsGroup');
+        // $test[] = $test[0];
+
+
         $groupID = $cmb->add_field([
             'id' => $this->prefix . 'locationsGroup',
             'type' => 'group',
@@ -201,7 +229,7 @@ class Contact extends Metaboxes
                 'add_button' => __('Add location', 'rrze-contact'),
                 'remove_button' => __('Delete location', 'rrze-contact'),
             ],
-            'fields' => $this->makeCMB2fields(getFields('location'), 'locations', 0)
+            'fields' => $this->makeCMB2fields(getFields('location'), 'locations', 0),
         ]);
 
         //     // custom field? 
@@ -402,7 +430,28 @@ class Contact extends Metaboxes
                 ],
             ],
         ]);
+
+    
     }
+
+    public function getHonorificPrefixOptions($newVal){
+        $aOptions = [
+            '' => __('No indication', 'rrze-contact'),
+            'Dr.' => 'Dr.',
+            'Prof.' => 'Prof.',
+            'Prof. Dr.' => 'Prof. Dr.',
+            'Prof. em.' => 'Prof. em.',
+            'Prof. Dr. em.' => 'Prof. Dr. em.',
+            'PD' => 'PD',
+            'PD Dr.' => 'PD Dr.',
+        ];
+        if (!array_key_exists($newVal, $aOptions)){
+            $aOptions += [$newVal => $newVal];
+        }
+        ksort($aOptions);
+        return $aOptions;
+    }
+
 
     //Anzeigen des Feldes nur bei Personen
     function callback_cmb2_show_on_contact($field)
