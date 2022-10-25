@@ -6,7 +6,6 @@ use function RRZE\Contact\Config\getFields;
 use function RRZE\Contact\Config\getSocialMediaList;
 use RRZE\Contact\API\UnivIS;
 use RRZE\Contact\Data;
-use RRZE\Contact\Vcard;
 
 defined('ABSPATH') || exit;
 
@@ -19,6 +18,7 @@ class Contact extends Metaboxes
     protected $pluginFile;
     private $settings = '';
     public $bUnivisSync = false;
+    public $aDisabled = [];
     public $univisData = [];
     public $postMeta = [];
     public $descFound = '';
@@ -35,61 +35,56 @@ class Contact extends Metaboxes
         add_action('save_post', [$this, 'saveMeta'], 12, 3); // priority 10 would not work because post_meta is not stored yet. save_post_contact would not work because save_post is fired after save_post_contact
     }
 
-    public function saveMeta($post_ID, $post_after, $post_before){
-        if (get_post_type($post_ID) != 'contact'){
+    public function saveMeta($postID, $post_after, $post_before)
+    {
+        if (get_post_type($postID) != 'contact') {
             return;
         }
 
+        $bUnivisSync = get_post_meta($postID, $this->prefix . 'univis_sync', true);
+        $univisID = get_post_meta($postID, $this->prefix . 'univis_id', true);
 
-        // update_post_meta($post_ID, 'rrze_contact_familyName', 'Mustermann');
-
-        // return;
-
-
-        $this->postMeta = get_post_meta($post_ID);
-
-        // echo '<pre>';
-        // var_dump($this->postMeta);
-        // exit;
-
-        if (!empty($this->postMeta[$this->prefix . 'univis_id'][0])){
+        if (!empty($bUnivisSync) && !empty($univisID)) {
+            $aDisabled = [];
             $univis = new UnivIS();
-
-            $univisResponse = $univis->getPerson('id=' . $this->postMeta[$this->prefix . 'univis_id'][0]);
-            $univisResponse = $univis->getPerson('id=40014582'); // TEST
+            $univisResponse = $univis->getPerson('id=' . $univisID);
 
             if ($univisResponse['valid']) {
                 $this->univisData = $univisResponse['content'][0];
-
-                // echo '<pre>';
-                // var_dump($this->univisData);
-                // exit;
-
-                // overwrite postMeta or just add UnivIS data?
-                if (!empty($this->postMeta[$this->prefix . 'univis_sync'][0])){
-                    foreach($this->univisData as $field => $value){
-                        update_post_meta($post_ID, $this->prefix . $field, $value);
+                if (!empty($this->univisData)) {
+                    $aFields = getFields('contact');
+                    foreach ($aFields as $aDetails) {
+                        if (!empty($this->univisData[$aDetails['name']])) {
+                            $value = $this->univisData[$aDetails['name']];
+                            $aDisabled[] = $aDetails['name'];
+                            update_post_meta($post_ID, $this->prefix . $aDetails['name'], $value);
+                        }
                     }
-                }else{
-                    foreach($this->univisData as $field => $value){
-                        add_post_meta($post_ID, $this->prefix . $field, $value);
+
+                    $aFields = getFields('location');
+                    if (!empty($this->univisData['locations'])) {
+                        $aLocationsGroup = [];
+                        foreach ($this->univisData['locations'] as $nr => $location) {
+                            $tmp = [];
+                            foreach ($location as $field => $value) {
+                                $tmp[$this->prefix . $field] = $value;
+                            }
+                            $aLocationsGroup[$nr] = $tmp;
+                            $aDisabled[] = $this->prefix . 'locationsGroup[' . $nr . ']' . $this->prefix . $field;
+                        }
+                        update_post_meta($post_ID, $this->prefix . 'locationsGroup', $aLocationsGroup);
                     }
                 }
             }
+
+            if (!empty($this->postMeta[$this->prefix . 'univis_sync'][0])) {
+                update_post_meta($post_ID, $this->prefix . 'disabled', $aDisabled);
+            }
         }
-
-        // $this->postMeta = get_post_meta($post_ID);
-
-        // echo '<pre>';
-        // var_dump($this->postMeta);
-        // exit;
-
     }
-
 
     public function onLoaded()
     {
-        // add_filter('cmb2_meta_boxes', [$this, 'cmb2_contact_metaboxes']);
         add_action('cmb2_admin_init', [$this, 'makeContactMetaboxes']);
 
     }
@@ -101,34 +96,25 @@ class Contact extends Metaboxes
         $default_rrze_contact_typ = Data::get_default_rrze_contact_typ();
 
         $postID = intval(!empty($_GET['post']) ? $_GET['post'] : (!empty($_POST['post_ID']) ? $_POST['post_ID'] : 0));
-        // $this->postMeta = get_post_meta($postID);
 
-        // echo '<pre>';
-        // var_dump($this->postMeta);
-        // exit;
-
-        // $this->bUnivisSync = (!empty($this->postMeta[$this->prefix . 'univis_sync'][0]) ? $this->postMeta[$this->prefix . 'univis_sync'][0] : false); // get_post_meta() can return '' for this field but we need a real false to set 'disabled'
+        $this->bUnivisSync = get_post_meta($postID, $this->prefix . 'univis_sync', true);
+        $this->bUnivisSync = !empty($this->bUnivisSync);
+        $this->aDisabled = get_post_meta($postID, $this->prefix . 'disabled', true);
+        $this->aDisabled = (is_array($this->aDisabled) ? $this->aDisabled : []);
+        $this->univisID = get_post_meta($postID, $this->prefix . 'univis_id', true);
 
         $univisSyncTxt = '';
-        // $this->univisID = (!empty($this->postMeta[$this->prefix . 'univis_id'][0]) ? $this->postMeta[$this->prefix . 'univis_id'][0] : 0);
 
-        // if ($this->univisID) {
-        //     $univis = new UnivIS();
+        if ($this->univisID) {
+            $univis = new UnivIS();
+            $univisResponse = $univis->getPerson('id=' . $this->univisID);
 
-        //     $this->univisID = 40014582; // TEST
-
-        //     $univisResponse = $univis->getPerson('id=' . $this->univisID);
-
-        //     // echo '<pre>';
-        //     // var_dump($univisResponse);
-        //     // exit;
-
-        //     if ($univisResponse['valid']) {
-        //         $this->univisData = $univisResponse['content'][0];
-        //     } else {
-        //         $univisSyncTxt = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
-        //     }
-        // }
+            if ($univisResponse['valid']) {
+                $this->univisData = $univisResponse['content'][0];
+            } else {
+                $univisSyncTxt = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
+            }
+        }
 
         // $vcard = new Vcard($this->univisData);
         // echo $vcard->showCard();
@@ -139,8 +125,10 @@ class Contact extends Metaboxes
         $aFields = $this->makeCMB2fields(getFields('contact'));
 
         // $aFields['honorificPrefix']['type'] = 'select';
-        // $aFields['honorificPrefix']['default'] = $aFields['honorificPrefix']['attributes']['value'];
-        // $aFields['honorificPrefix']['options'] = $this->getHonorificPrefixOptions($aFields['honorificPrefix']['attributes']['value']);
+        // // $aFields['honorificPrefix']['default'] = $aFields['honorificPrefix']['attributes']['value'];
+        // $honoricPrefix = get_post_meta($postID, $this->prefix . 'honorificPrefix', true);
+        // $honoricPrefix = (empty($honoricPrefix) ? '' : $honoricPrefix);
+        // $aFields['honorificPrefix']['options'] = $this->getHonorificPrefixOptions($honoricPrefix);
         // unset($aFields['honorificPrefix']['attributes']['value']);
 
         $aFields['sortField'] = [
@@ -148,9 +136,6 @@ class Contact extends Metaboxes
             'description' => __('Wird für eine Sortierung verwendet, die sich weder nach Name, Titel der Contactseite oder Vorname richten soll. Geben SIe hier Buchstaben oder Zahlen ein, nach denen sortiert werden sollen. Zur Sortierunge der Einträge geben Sie im Shortcode das Attribut <code>sort="sortierfeld"</code> ein.', 'rrze-contact'),
             'type' => 'text_small',
             'id' => $this->prefix . 'sortField',
-            // 'attributes' => array(
-            //     'value' => $this->getVal('sortField'),
-            // ),
             'show_on_cb' => 'callback_cmb2_show_on_institution',
         ];
 
@@ -234,22 +219,10 @@ class Contact extends Metaboxes
             ],
         ]);
 
-        // if (!empty($this->univisData['locations'])){
-        //     $aMeta = [];
-        //     foreach($this->univisData['locations'] as $location){
-        //         $aTmp = [];
-        //         foreach($location as $fieldName => $val){
-        //             $aTmp[$this->prefix . $fieldName] = $val;
-        //         }
-        //         $aMeta[] = $aTmp;
-        //     }
-        //     update_post_meta($postID, 'rrze_contact_locationsGroup', $aMeta);
-        // }
-
         $groupID = $cmb->add_field([
             'id' => $this->prefix . 'locationsGroup',
             'type' => 'group',
-            'repeatable'  => true,
+            'repeatable' => true,
             'options' => [
                 'group_title' => __('Location', 'rrze-contact') . ' {#}',
                 'add_button' => __('Add location', 'rrze-contact'),
@@ -265,7 +238,7 @@ class Contact extends Metaboxes
         foreach ($smList as $key => $value) {
             $smFields[] = [
                 'name' => $smList[$key]['title'] . ' URL',
-                'id' =>  $this->prefix . $key . '_url',
+                'id' => $this->prefix . $key . '_url',
                 'type' => 'text_url',
                 'protocols' => ['https'],
             ];
@@ -279,7 +252,6 @@ class Contact extends Metaboxes
             'priority' => 'default',
             'fields' => $smFields,
         ]);
-
 
         // Meta-Box Cosultations
         $cmb = new_cmb2_box([
@@ -321,7 +293,7 @@ class Contact extends Metaboxes
                                 'w2' => __('alle 2 Wochen', 'rrze-contact'),
                             ],
                         ],
-                        [                            
+                        [
                             'name' => __('am', 'rrze-contact'),
                             'id' => 'repeat_submode',
                             'type' => 'multicheck',
@@ -335,24 +307,24 @@ class Contact extends Metaboxes
                                 '7' => __('Sonntag', 'rrze-contact'),
                             ],
                         ],
-                        [                            
+                        [
                             'name' => __('von', 'rrze-contact'),
                             'id' => 'starttime',
                             'type' => 'text_time',
                             'time_format' => 'H:i',
                         ],
-                        [                            
+                        [
                             'name' => __('bis', 'rrze-contact'),
                             'id' => 'endtime',
                             'type' => 'text_time',
                             'time_format' => 'H:i',
                         ],
-                        [                            
+                        [
                             'name' => __('Raum', 'rrze-contact'),
                             'id' => 'office',
                             'type' => 'text_small',
                         ],
-                        [                            
+                        [
                             'name' => __('Bemerkung', 'rrze-contact'),
                             'id' => 'comment',
                             'type' => 'text',
@@ -447,10 +419,10 @@ class Contact extends Metaboxes
             ],
         ]);
 
-    
     }
 
-    public function getHonorificPrefixOptions($newVal){
+    public function getHonorificPrefixOptions($newVal)
+    {
         $aOptions = [
             '' => __('No indication', 'rrze-contact'),
             'Dr.' => 'Dr.',
@@ -461,13 +433,12 @@ class Contact extends Metaboxes
             'PD' => 'PD',
             'PD Dr.' => 'PD Dr.',
         ];
-        if (!array_key_exists($newVal, $aOptions)){
+        if (!array_key_exists($newVal, $aOptions)) {
             $aOptions += [$newVal => $newVal];
         }
         ksort($aOptions);
         return $aOptions;
     }
-
 
     //Anzeigen des Feldes nur bei Personen
     function callback_cmb2_show_on_contact($field)

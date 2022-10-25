@@ -55,13 +55,9 @@ class Metaboxes
         }
     }
 
-    public function getDisabled($fieldname, $section = null, $nr = null)
+    public function getReadonly($fieldname)
     {
-        if ($section == null) {
-            return ($this->bUnivisSync && !empty($this->univisData[$fieldname]));
-        } else {
-            return ($this->bUnivisSync && !empty($this->univisData[$section][$nr][$fieldname]));
-        }
+        return ($this->bUnivisSync && in_array($fieldname, $this->aDisabled));
     }
 
     public function makeCMB2fields($aFields, $section = null, $nr = null)
@@ -76,8 +72,7 @@ class Metaboxes
                 'description' => $this->getDesc($details['name'], $section, $nr),
                 'show_on_cb' => 'callback_cmb2_show_on_contact',
                 // 'attributes' => [
-                //     'value' => $this->getVal($details['name'], $section, $nr),
-                //     'disabled' => $this->getDisabled($details['name'], $section, $nr),
+                //     'readonly' => $this->getReadonly($details['name']),
                 // ],
             ];
         }
