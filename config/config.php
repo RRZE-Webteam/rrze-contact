@@ -117,7 +117,7 @@ function getFields($group)
                 'label' => __('Degree (suffix)', 'rrze-contact'),
             ],
             [
-                'name' => 'jobTitle',
+                'name' => 'position',
                 'label' => __('Position/Function', 'rrze-contact'),
             ],
             [

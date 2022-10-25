@@ -31,34 +31,18 @@ class Templates
     {
         global $post;
         if ($post->post_type == 'contact') {
-            //if (is_single()) {
-            // checks if the file exists in the theme first,
-            // otherwise serve the file from the plugin
-            if ($theme_file = locate_template(array('single-contact.php'))) {
-                $template_path = $theme_file;
+            if (Helper::isFAUTheme()) {
+                $template_path = dirname($this->pluginFile) . '/templates/single-contact-fau-theme.php';
             } else {
-                if (Helper::isFAUTheme()) {
-                    $template_path = dirname($this->pluginFile) . '/templates/single-contact-fau-theme.php';
-                } else {
-                    $template_path = dirname($this->pluginFile) . '/templates/single-contact.php';
-                }
+                $template_path = dirname($this->pluginFile) . '/templates/single-contact.php';
             }
-            //}
         }
         if ($post->post_type == 'location') {
-            //if (is_single()) {
-            // checks if the file exists in the theme first,
-            // otherwise serve the file from the plugin
-            if ($theme_file = locate_template(array('single-location.php'))) {
-                $template_path = $theme_file;
+            if (Helper::isFAUTheme()) {
+                $template_path = dirname($this->pluginFile) . '/templates/single-location-fau-theme.php';
             } else {
-                if (Helper::isFAUTheme()) {
-                    $template_path = dirname($this->pluginFile) . '/templates/single-location-fau-theme.php';
-                } else {
-                    $template_path = dirname($this->pluginFile) . '/templates/single-location.php';
-                }
+                $template_path = dirname($this->pluginFile) . '/templates/single-location.php';
             }
-            //}
         }
         return $template_path;
     }
@@ -67,36 +51,18 @@ class Templates
     {
         global $post;
         if ($post->post_type == 'contact') {
-            //if (is_single()) {
-            // checks if the file exists in the theme first,
-            // otherwise serve the file from the plugin
-            if ($theme_file = locate_template(array('archive-contact.php'))) {
-                $template_path = $theme_file;
+            if (Helper::isFAUTheme()) {
+                $template_path = dirname($this->pluginFile) . '/templates/archive-contact-fau-theme.php';
             } else {
-
-                if (Helper::isFAUTheme()) {
-                    $template_path = dirname($this->pluginFile) . '/templates//archive-contact-fau-theme.php';
-                } else {
-                    $template_path = dirname($this->pluginFile) . '/templates//archive-contact.php';
-                }
-
+                $template_path = dirname($this->pluginFile) . '/templates/archive-contact.php';
             }
-            //}
         }
         if ($post->post_type == 'location') {
-            //if (is_single()) {
-            // checks if the file exists in the theme first,
-            // otherwise serve the file from the plugin
-            if ($theme_file = locate_template(array('archive-location.php'))) {
-                $template_path = $theme_file;
+            if (Helper::isFAUTheme()) {
+                $template_path = dirname($this->pluginFile) . '/templates/archive-location-fau-theme.php';
             } else {
-                if (Helper::isFAUTheme()) {
-                    $template_path = dirname($this->pluginFile) . '/templates//archive-location-fau-theme.php';
-                } else {
-                    $template_path = dirname($this->pluginFile) . '/templates//archive-location.php';
-                }
+                $template_path = dirname($this->pluginFile) . '/templates/archive-location.php';
             }
-            //}
         }
         return $template_path;
     }

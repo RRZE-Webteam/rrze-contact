@@ -32,20 +32,60 @@ class Contact extends Metaboxes
         $this->descFound = __('Value displayed from UnivIS:', 'rrze-contact') . ' ';
         $this->descNotFound = __('No value is stored for this in UnivIS.', 'rrze-contact');
 
-        // add_action('save_post_contact', [$this, 'saveMeta'], 10, 3);
-        // add_action('save_post', [$this, 'saveMeta'], 10, 3);
-        // add_filter('sanitize_post_meta_rrze_contact_firstName', [$this, 'test']);
-        // add_filter('update_post_metadata', [$this, 'dontSaveMeta'], 10, 5);
-
+        add_action('save_post', [$this, 'saveMeta'], 12, 3); // priority 10 would not work because post_meta is not stored yet. save_post_contact would not work because save_post is fired after save_post_contact
     }
 
-
-    public function dontSaveMeta($check, $object_id, $meta_key, $meta_value, $prev_value){
-        if ($meta_key == 'rrze_contact_locationsGroup'){
-            return false;
+    public function saveMeta($post_ID, $post_after, $post_before){
+        if (get_post_type($post_ID) != 'contact'){
+            return;
         }
-        return $check;
+
+
+        // update_post_meta($post_ID, 'rrze_contact_familyName', 'Mustermann');
+
+        // return;
+
+
+        $this->postMeta = get_post_meta($post_ID);
+
+        // echo '<pre>';
+        // var_dump($this->postMeta);
+        // exit;
+
+        if (!empty($this->postMeta[$this->prefix . 'univis_id'][0])){
+            $univis = new UnivIS();
+
+            $univisResponse = $univis->getPerson('id=' . $this->postMeta[$this->prefix . 'univis_id'][0]);
+            $univisResponse = $univis->getPerson('id=40014582'); // TEST
+
+            if ($univisResponse['valid']) {
+                $this->univisData = $univisResponse['content'][0];
+
+                // echo '<pre>';
+                // var_dump($this->univisData);
+                // exit;
+
+                // overwrite postMeta or just add UnivIS data?
+                if (!empty($this->postMeta[$this->prefix . 'univis_sync'][0])){
+                    foreach($this->univisData as $field => $value){
+                        update_post_meta($post_ID, $this->prefix . $field, $value);
+                    }
+                }else{
+                    foreach($this->univisData as $field => $value){
+                        add_post_meta($post_ID, $this->prefix . $field, $value);
+                    }
+                }
+            }
+        }
+
+        // $this->postMeta = get_post_meta($post_ID);
+
+        // echo '<pre>';
+        // var_dump($this->postMeta);
+        // exit;
+
     }
+
 
     public function onLoaded()
     {
@@ -61,34 +101,34 @@ class Contact extends Metaboxes
         $default_rrze_contact_typ = Data::get_default_rrze_contact_typ();
 
         $postID = intval(!empty($_GET['post']) ? $_GET['post'] : (!empty($_POST['post_ID']) ? $_POST['post_ID'] : 0));
-        $this->postMeta = get_post_meta($postID);
+        // $this->postMeta = get_post_meta($postID);
 
         // echo '<pre>';
         // var_dump($this->postMeta);
         // exit;
 
-        $this->bUnivisSync = (!empty($this->postMeta[$this->prefix . 'univis_sync'][0]) ? $this->postMeta[$this->prefix . 'univis_sync'][0] : false); // get_post_meta() can return '' for this field but we need a real false to set 'disabled'
+        // $this->bUnivisSync = (!empty($this->postMeta[$this->prefix . 'univis_sync'][0]) ? $this->postMeta[$this->prefix . 'univis_sync'][0] : false); // get_post_meta() can return '' for this field but we need a real false to set 'disabled'
 
         $univisSyncTxt = '';
-        $this->univisID = (!empty($this->postMeta[$this->prefix . 'univis_id'][0]) ? $this->postMeta[$this->prefix . 'univis_id'][0] : 0);
+        // $this->univisID = (!empty($this->postMeta[$this->prefix . 'univis_id'][0]) ? $this->postMeta[$this->prefix . 'univis_id'][0] : 0);
 
-        if ($this->univisID) {
-            $univis = new UnivIS();
+        // if ($this->univisID) {
+        //     $univis = new UnivIS();
 
-            $this->univisID = 40014582; // TEST
+        //     $this->univisID = 40014582; // TEST
 
-            $univisResponse = $univis->getPerson('id=' . $this->univisID);
+        //     $univisResponse = $univis->getPerson('id=' . $this->univisID);
 
-            // echo '<pre>';
-            // var_dump($univisResponse);
-            // exit;
+        //     // echo '<pre>';
+        //     // var_dump($univisResponse);
+        //     // exit;
 
-            if ($univisResponse['valid']) {
-                $this->univisData = $univisResponse['content'][0];
-            } else {
-                $univisSyncTxt = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
-            }
-        }
+        //     if ($univisResponse['valid']) {
+        //         $this->univisData = $univisResponse['content'][0];
+        //     } else {
+        //         $univisSyncTxt = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
+        //     }
+        // }
 
         // $vcard = new Vcard($this->univisData);
         // echo $vcard->showCard();
@@ -194,17 +234,17 @@ class Contact extends Metaboxes
             ],
         ]);
 
-        if (!empty($this->univisData['locations'])){
-            $aMeta = [];
-            foreach($this->univisData['locations'] as $location){
-                $aTmp = [];
-                foreach($location as $fieldName => $val){
-                    $aTmp[$this->prefix . $fieldName] = $val;
-                }
-                $aMeta[] = $aTmp;
-            }
-            update_post_meta($postID, 'rrze_contact_locationsGroup', $aMeta);
-        }
+        // if (!empty($this->univisData['locations'])){
+        //     $aMeta = [];
+        //     foreach($this->univisData['locations'] as $location){
+        //         $aTmp = [];
+        //         foreach($location as $fieldName => $val){
+        //             $aTmp[$this->prefix . $fieldName] = $val;
+        //         }
+        //         $aMeta[] = $aTmp;
+        //     }
+        //     update_post_meta($postID, 'rrze_contact_locationsGroup', $aMeta);
+        // }
 
         $groupID = $cmb->add_field([
             'id' => $this->prefix . 'locationsGroup',
