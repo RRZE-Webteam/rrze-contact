@@ -50,7 +50,7 @@ class Metaboxes
     {
         preg_match('/^' . $this->prefix . '(.*)Group_(\d)_' . $this->prefix . '(.*)/', $field_args["id"], $matches);
 
-        if (!empty($matches[0])){
+        if (!empty($matches[1])){
             $univisField = (!empty($this->univisData[$matches[1]][$matches[2]][$matches[3]]) ? $this->univisData[$matches[1]][$matches[2]][$matches[3]] : null);
         }else{
             $field = substr($field_args["id"], strlen($this->prefix));

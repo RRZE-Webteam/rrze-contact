@@ -129,8 +129,7 @@ function getFields($group)
                 'label' => __('Department', 'rrze-contact'),
             ],
         ],
-
-        'location' => [
+        'locations' => [
             [
                 'name' => 'street',
                 'label' => __('Street', 'rrze-contact'),
@@ -174,6 +173,28 @@ function getFields($group)
             [
                 'name' => 'pgp',
                 'label' => __('PGP', 'rrze-contact'),
+            ],            
+        ],
+        'consultations' => [
+            [
+                'name' => 'starttime',
+                'label' => __('Starttime', 'rrze-contact'),
+            ],
+            [
+                'name' => 'endtime',
+                'label' => __('Endtime', 'rrze-contact'),
+            ],
+            [
+                'name' => 'repeat',
+                'label' => __('Repeat', 'rrze-contact'),
+            ],
+            [
+                'name' => 'room',
+                'label' => __('Room', 'rrze-contact'),
+            ],
+            [
+                'name' => 'comment',
+                'label' => __('Comment', 'rrze-contact'),
             ],
         ],
     ];

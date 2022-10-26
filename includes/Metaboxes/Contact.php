@@ -51,6 +51,11 @@ class Contact extends Metaboxes
 
             if ($univisResponse['valid']) {
                 $this->univisData = $univisResponse['content'][0];
+
+                // echo '<pre>';
+                // var_dump($this->univisData);
+                // exit;
+
                 if (!empty($this->univisData)) {
                     $aFields = getFields('contact');
                     foreach ($aFields as $aDetails) {
@@ -61,18 +66,21 @@ class Contact extends Metaboxes
                         }
                     }
 
-                    $aFields = getFields('location');
-                    if (!empty($this->univisData['locations'])) {
-                        $aLocationsGroup = [];
-                        foreach ($this->univisData['locations'] as $nr => $location) {
-                            $tmp = [];
-                            foreach ($location as $field => $value) {
-                                $tmp[$this->prefix . $field] = $value;
-                                $aDisabled[] = $this->prefix . 'locationsGroup_' . $nr . '_' . $this->prefix . $field;
+                    $aGroups = ['locations', 'consultations'];
+                    foreach ($aGroups as $group) {
+                        $aFields = getFields($group);
+                        if (!empty($this->univisData[$group])) {
+                            $aLocationsGroup = [];
+                            foreach ($this->univisData[$group] as $nr => $location) {
+                                $tmp = [];
+                                foreach ($location as $field => $value) {
+                                    $tmp[$this->prefix . $field] = $value;
+                                    $aDisabled[] = $this->prefix . $group . 'Group_' . $nr . '_' . $this->prefix . $field;
+                                }
+                                $aLocationsGroup[$nr] = $tmp;
                             }
-                            $aLocationsGroup[$nr] = $tmp;
+                            update_post_meta($postID, $this->prefix . $group . 'Group', $aLocationsGroup);
                         }
-                        update_post_meta($postID, $this->prefix . 'locationsGroup', $aLocationsGroup);
                     }
                 }
             }
@@ -119,9 +127,9 @@ class Contact extends Metaboxes
         $aFields = $this->makeCMB2fields(getFields('contact'));
 
         // W3C does not support "readonly" for select
-        if ($this->bUnivisSync){
+        if ($this->bUnivisSync) {
             $aFields['honorificPrefix']['type'] = 'text';
-        }else{
+        } else {
             $aFields['honorificPrefix']['type'] = 'select';
             $honoricPrefix = get_post_meta($postID, $this->prefix . 'honorificPrefix', true);
             $honoricPrefix = (empty($honoricPrefix) ? '' : $honoricPrefix);
@@ -231,7 +239,7 @@ class Contact extends Metaboxes
                 'add_button' => __('Add location', 'rrze-contact'),
                 'remove_button' => __('Delete location', 'rrze-contact'),
             ],
-            'fields' => $this->makeCMB2fields(getFields('location')),
+            'fields' => $this->makeCMB2fields(getFields('locations')),
         ]);
 
         // Meta-Box Social Media
@@ -258,8 +266,8 @@ class Contact extends Metaboxes
 
         // Meta-Box Cosultations
         $cmb = new_cmb2_box([
-            'id' => 'rrze_contact_adds',
-            'title' => __('Cosultations', 'rrze-contact'),
+            'id' => 'rrze_contact_consultations',
+            'title' => __('Consultations', 'rrze-contact'),
             'object_types' => ['contact'], // post type
             'context' => 'normal',
             'priority' => 'default',
@@ -276,66 +284,81 @@ class Contact extends Metaboxes
                     'type' => 'textarea_small',
                     'id' => $this->prefix . 'hoursAvailable',
                 ],
-                [
-                    'id' => $this->prefix . 'hoursAvailable_group',
-                    'type' => 'group',
-                    'options' => [
-                        'group_title' => __('Sprechzeit {#}', 'rrze-contact'),
-                        'add_button' => __('Weitere Sprechzeit einfügen', 'rrze-contact'),
-                        'remove_button' => __('Sprechzeit löschen', 'rrze-contact'),
-                    ],
-                    'fields' => [
-                        [
-                            'name' => __('Wiederholung', 'rrze-contact'),
-                            'id' => 'repeat',
-                            'type' => 'radio_inline',
-                            'options' => [
-                                '-' => __('Keine', 'rrze-contact'),
-                                'd1' => __('täglich', 'rrze-contact'),
-                                'w1' => __('wöchentlich', 'rrze-contact'),
-                                'w2' => __('alle 2 Wochen', 'rrze-contact'),
-                            ],
-                        ],
-                        [
-                            'name' => __('am', 'rrze-contact'),
-                            'id' => 'repeat_submode',
-                            'type' => 'multicheck',
-                            'options' => [
-                                '1' => __('Montag', 'rrze-contact'),
-                                '2' => __('Dienstag', 'rrze-contact'),
-                                '3' => __('Mittwoch', 'rrze-contact'),
-                                '4' => __('Donnerstag', 'rrze-contact'),
-                                '5' => __('Freitag', 'rrze-contact'),
-                                '6' => __('Samstag', 'rrze-contact'),
-                                '7' => __('Sonntag', 'rrze-contact'),
-                            ],
-                        ],
-                        [
-                            'name' => __('von', 'rrze-contact'),
-                            'id' => 'starttime',
-                            'type' => 'text_time',
-                            'time_format' => 'H:i',
-                        ],
-                        [
-                            'name' => __('bis', 'rrze-contact'),
-                            'id' => 'endtime',
-                            'type' => 'text_time',
-                            'time_format' => 'H:i',
-                        ],
-                        [
-                            'name' => __('Raum', 'rrze-contact'),
-                            'id' => 'office',
-                            'type' => 'text_small',
-                        ],
-                        [
-                            'name' => __('Bemerkung', 'rrze-contact'),
-                            'id' => 'comment',
-                            'type' => 'text',
-                        ],
-                    ],
-                ],
             ],
         ]);
+
+        $groupID = $cmb->add_field([
+            'id' => $this->prefix . 'consultationsGroup',
+            'type' => 'group',
+            'repeatable' => !$this->bUnivisSync,
+            'options' => [
+                'group_title' => __('Consultation', 'rrze-contact') . ' {#}',
+                'add_button' => __('Add consultation', 'rrze-contact'),
+                'remove_button' => __('Delete consultation', 'rrze-contact'),
+            ],
+            'fields' => $this->makeCMB2fields(getFields('consultations')),
+        ]);
+
+        //         [
+        //             'id' => $this->prefix . 'hoursAvailable_group',
+        //             'type' => 'group',
+        //             'options' => [
+        //                 'group_title' => __('Sprechzeit {#}', 'rrze-contact'),
+        //                 'add_button' => __('Weitere Sprechzeit einfügen', 'rrze-contact'),
+        //                 'remove_button' => __('Sprechzeit löschen', 'rrze-contact'),
+        //             ],
+        //             'fields' => [
+        //                 [
+        //                     'name' => __('Wiederholung', 'rrze-contact'),
+        //                     'id' => 'repeat',
+        //                     'type' => 'radio_inline',
+        //                     'options' => [
+        //                         '-' => __('Keine', 'rrze-contact'),
+        //                         'd1' => __('täglich', 'rrze-contact'),
+        //                         'w1' => __('wöchentlich', 'rrze-contact'),
+        //                         'w2' => __('alle 2 Wochen', 'rrze-contact'),
+        //                     ],
+        //                 ],
+        //                 [
+        //                     'name' => __('am', 'rrze-contact'),
+        //                     'id' => 'repeat_submode',
+        //                     'type' => 'multicheck',
+        //                     'options' => [
+        //                         '1' => __('Montag', 'rrze-contact'),
+        //                         '2' => __('Dienstag', 'rrze-contact'),
+        //                         '3' => __('Mittwoch', 'rrze-contact'),
+        //                         '4' => __('Donnerstag', 'rrze-contact'),
+        //                         '5' => __('Freitag', 'rrze-contact'),
+        //                         '6' => __('Samstag', 'rrze-contact'),
+        //                         '7' => __('Sonntag', 'rrze-contact'),
+        //                     ],
+        //                 ],
+        //                 [
+        //                     'name' => __('von', 'rrze-contact'),
+        //                     'id' => 'starttime',
+        //                     'type' => 'text_time',
+        //                     'time_format' => 'H:i',
+        //                 ],
+        //                 [
+        //                     'name' => __('bis', 'rrze-contact'),
+        //                     'id' => 'endtime',
+        //                     'type' => 'text_time',
+        //                     'time_format' => 'H:i',
+        //                 ],
+        //                 [
+        //                     'name' => __('Raum', 'rrze-contact'),
+        //                     'id' => 'office',
+        //                     'type' => 'text_small',
+        //                 ],
+        //                 [
+        //                     'name' => __('Bemerkung', 'rrze-contact'),
+        //                     'id' => 'comment',
+        //                     'type' => 'text',
+        //                 ],
+        //             ],
+        //         ],
+        //     ],
+        // ]);
 
         // Meta-Box Synchronisierung mit externen Daten - rrze_contact_sync ab hier
         $cmb = new_cmb2_box([

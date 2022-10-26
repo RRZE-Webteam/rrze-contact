@@ -24,6 +24,10 @@ class UnivIS extends API
         $apiResponse = file_get_contents($this->api . $sParam);
         $apiResponse = json_decode($apiResponse, true);
 
+        // echo '<pre>';
+        // var_dump($apiResponse);
+        // exit;
+
         if (empty($apiResponse['Person'])) {
             $aRet = [
                 'valid' => false,
@@ -108,12 +112,6 @@ class UnivIS extends API
                     'repeat' => 'repeat',
                     'room' => 'office',
                     'comment' => 'comment',
-                    'phone' => 'tel',
-                    'mobile' => 'mobile',
-                    'fax' => 'fax',
-                    'email' => 'email',
-                    'pgp' => 'pgp',
-                    'url' => 'url',
                 ],
             ],
         ];
