@@ -41,13 +41,19 @@ class Contact extends Metaboxes
             return;
         }
 
-        $bUnivisSync = get_post_meta($postID, $this->prefix . 'univis_sync', true);
-        $univisID = get_post_meta($postID, $this->prefix . 'univis_id', true);
+        $this->bUnivisSync = get_post_meta($postID, $this->prefix . 'univis_sync', true);
+        $this->univisID = get_post_meta($postID, $this->prefix . 'univis_id', true);
 
-        if (!empty($bUnivisSync) && !empty($univisID)) {
+        // echo '<pre>';
+        // var_dump($this->bUnivisSync);
+        // var_dump($this->univisID);
+        // exit;
+        
+
+        if (!empty($this->bUnivisSync) && !empty($this->univisID)) {
             $aDisabled = [];
             $univis = new UnivIS();
-            $univisResponse = $univis->getPerson('id=' . $univisID);
+            $univisResponse = $univis->getPerson('id=' . $this->univisID);
 
             if ($univisResponse['valid']) {
                 $this->univisData = $univisResponse['content'][0];
@@ -57,7 +63,7 @@ class Contact extends Metaboxes
                         if (!empty($this->univisData[$aDetails['name']])) {
                             $value = $this->univisData[$aDetails['name']];
                             $aDisabled[] = $aDetails['name'];
-                            update_post_meta($post_ID, $this->prefix . $aDetails['name'], $value);
+                            update_post_meta($postID, $this->prefix . $aDetails['name'], $value);
                         }
                     }
 
@@ -68,19 +74,20 @@ class Contact extends Metaboxes
                             $tmp = [];
                             foreach ($location as $field => $value) {
                                 $tmp[$this->prefix . $field] = $value;
+                                $aDisabled[] = $this->prefix . 'locationsGroup_' . $nr . '_' . $this->prefix . $field;
                             }
                             $aLocationsGroup[$nr] = $tmp;
-                            $aDisabled[] = $this->prefix . 'locationsGroup[' . $nr . ']' . $this->prefix . $field;
                         }
-                        update_post_meta($post_ID, $this->prefix . 'locationsGroup', $aLocationsGroup);
+                        update_post_meta($postID, $this->prefix . 'locationsGroup', $aLocationsGroup);
                     }
                 }
             }
 
-            if (!empty($this->postMeta[$this->prefix . 'univis_sync'][0])) {
-                update_post_meta($post_ID, $this->prefix . 'disabled', $aDisabled);
+            if (!empty($this->bUnivisSync)) {
+                update_post_meta($postID, $this->prefix . 'disabled', $aDisabled);
             }
         }
+
     }
 
     public function onLoaded()
@@ -100,8 +107,12 @@ class Contact extends Metaboxes
         $this->bUnivisSync = get_post_meta($postID, $this->prefix . 'univis_sync', true);
         $this->bUnivisSync = !empty($this->bUnivisSync);
         $this->aDisabled = get_post_meta($postID, $this->prefix . 'disabled', true);
-        $this->aDisabled = (is_array($this->aDisabled) ? $this->aDisabled : []);
         $this->univisID = get_post_meta($postID, $this->prefix . 'univis_id', true);
+
+
+// echo '<pre>';
+// var_dump($this->aDisabled);
+// exit;
 
         $univisSyncTxt = '';
 
@@ -124,12 +135,11 @@ class Contact extends Metaboxes
 
         $aFields = $this->makeCMB2fields(getFields('contact'));
 
-        // $aFields['honorificPrefix']['type'] = 'select';
-        // // $aFields['honorificPrefix']['default'] = $aFields['honorificPrefix']['attributes']['value'];
-        // $honoricPrefix = get_post_meta($postID, $this->prefix . 'honorificPrefix', true);
-        // $honoricPrefix = (empty($honoricPrefix) ? '' : $honoricPrefix);
-        // $aFields['honorificPrefix']['options'] = $this->getHonorificPrefixOptions($honoricPrefix);
-        // unset($aFields['honorificPrefix']['attributes']['value']);
+        // W3C does not support "readonly" for select
+        $aFields['honorificPrefix']['type'] = 'select';
+        $honoricPrefix = get_post_meta($postID, $this->prefix . 'honorificPrefix', true);
+        $honoricPrefix = (empty($honoricPrefix) ? '' : $honoricPrefix);
+        $aFields['honorificPrefix']['options'] = $this->getHonorificPrefixOptions($honoricPrefix);
 
         $aFields['sortField'] = [
             'name' => __('Sortierfeld', 'rrze-contact'),
@@ -222,7 +232,7 @@ class Contact extends Metaboxes
         $groupID = $cmb->add_field([
             'id' => $this->prefix . 'locationsGroup',
             'type' => 'group',
-            'repeatable' => true,
+            'repeatable' => !$this->bUnivisSync,
             'options' => [
                 'group_title' => __('Location', 'rrze-contact') . ' {#}',
                 'add_button' => __('Add location', 'rrze-contact'),
