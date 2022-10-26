@@ -44,12 +44,6 @@ class Contact extends Metaboxes
         $this->bUnivisSync = get_post_meta($postID, $this->prefix . 'univis_sync', true);
         $this->univisID = get_post_meta($postID, $this->prefix . 'univis_id', true);
 
-        // echo '<pre>';
-        // var_dump($this->bUnivisSync);
-        // var_dump($this->univisID);
-        // exit;
-        
-
         if (!empty($this->bUnivisSync) && !empty($this->univisID)) {
             $aDisabled = [];
             $univis = new UnivIS();
@@ -109,11 +103,6 @@ class Contact extends Metaboxes
         $this->aDisabled = get_post_meta($postID, $this->prefix . 'disabled', true);
         $this->univisID = get_post_meta($postID, $this->prefix . 'univis_id', true);
 
-
-// echo '<pre>';
-// var_dump($this->aDisabled);
-// exit;
-
         $univisSyncTxt = '';
 
         if ($this->univisID) {
@@ -127,19 +116,17 @@ class Contact extends Metaboxes
             }
         }
 
-        // $vcard = new Vcard($this->univisData);
-        // echo $vcard->showCard();
-        // $vcard->showCardQR();
-        // echo '<img src="' . $vcard->showCardQR() . '">';
-        // exit;
-
         $aFields = $this->makeCMB2fields(getFields('contact'));
 
         // W3C does not support "readonly" for select
-        $aFields['honorificPrefix']['type'] = 'select';
-        $honoricPrefix = get_post_meta($postID, $this->prefix . 'honorificPrefix', true);
-        $honoricPrefix = (empty($honoricPrefix) ? '' : $honoricPrefix);
-        $aFields['honorificPrefix']['options'] = $this->getHonorificPrefixOptions($honoricPrefix);
+        if ($this->bUnivisSync){
+            $aFields['honorificPrefix']['type'] = 'text';
+        }else{
+            $aFields['honorificPrefix']['type'] = 'select';
+            $honoricPrefix = get_post_meta($postID, $this->prefix . 'honorificPrefix', true);
+            $honoricPrefix = (empty($honoricPrefix) ? '' : $honoricPrefix);
+            $aFields['honorificPrefix']['options'] = $this->getHonorificPrefixOptions($honoricPrefix);
+        }
 
         $aFields['sortField'] = [
             'name' => __('Sortierfeld', 'rrze-contact'),
@@ -165,6 +152,12 @@ class Contact extends Metaboxes
             'options' => $linkOptions,
             'default' => $myUrl,
         ];
+
+        // $vcard = new Vcard($this->univisData);
+        // echo $vcard->showCard();
+        // $vcard->showCardQR();
+        // echo '<img src="' . $vcard->showCardQR() . '">';
+        // exit;
 
         $cmb = new_cmb2_box([
             'id' => 'rrze_contact_info',
@@ -208,7 +201,7 @@ class Contact extends Metaboxes
         $locationSelect = Data::get_standortdata();
 
         $cmb = new_cmb2_box([
-            'id' => 'rrze_contact_adressdaten',
+            'id' => 'rrze_contact_locations',
             'title' => __('Locations', 'rrze-contact'),
             'object_types' => ['contact'], // post type
             'context' => 'normal',
@@ -238,7 +231,7 @@ class Contact extends Metaboxes
                 'add_button' => __('Add location', 'rrze-contact'),
                 'remove_button' => __('Delete location', 'rrze-contact'),
             ],
-            'fields' => $this->makeCMB2fields(getFields('location'), 'locations', 0),
+            'fields' => $this->makeCMB2fields(getFields('location')),
         ]);
 
         // Meta-Box Social Media

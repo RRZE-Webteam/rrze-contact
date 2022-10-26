@@ -121,37 +121,13 @@ function getFields($group)
                 'label' => __('Position/Function', 'rrze-contact'),
             ],
             [
-                'name' => 'worksFor',
+                'name' => 'organization',
                 'label' => __('Organization', 'rrze-contact'),
             ],
-            // [
-            //     'name' => 'workLocation',
-            //     'label' => __('Room', 'rrze-contact'),
-            // ],
-            // [
-            //     'name' => 'phone',
-            //     'label' => __('Phone', 'rrze-contact'),
-            // ],
-            // [
-            //     'name' => 'fax',
-            //     'label' => __('Fax', 'rrze-contact'),
-            // ],
-            // [
-            //     'name' => 'mobile',
-            //     'label' => __('Mobile', 'rrze-contact'),
-            // ],
-            // [
-            //     'name' => 'email',
-            //     'label' => __('eMail', 'rrze-contact'),
-            // ],
-            // [
-            //     'name' => 'url',
-            //     'label' => __('Website', 'rrze-contact'),
-            // ],
-            // [
-            //     'name' => 'department',
-            //     'label' => __('Department', 'rrze-contact'),
-            // ],
+            [
+                'name' => 'department',
+                'label' => __('Department', 'rrze-contact'),
+            ],
         ],
 
         'location' => [
@@ -194,6 +170,10 @@ function getFields($group)
             [
                 'name' => 'url',
                 'label' => __('Url', 'rrze-contact'),
+            ],
+            [
+                'name' => 'pgp',
+                'label' => __('PGP', 'rrze-contact'),
             ],
         ],
     ];

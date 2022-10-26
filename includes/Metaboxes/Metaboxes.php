@@ -13,7 +13,7 @@ class Metaboxes
 {
     protected $pluginFile;
     private $settings = '';
-    public $prefix = 'rrze_contact_';
+    public $prefix = '_rrze_contact_'; // starts with an underscore to hide fields from custom fields list 
 
     public function __construct($pluginFile, $settings)
     {
@@ -46,13 +46,17 @@ class Metaboxes
         }
     }
 
-    public function getDesc($fieldname, $section = null, $nr = null)
+    public function getDesc($field_args, $field)
     {
-        if ($section == null) {
-            return (!empty($this->univisData[$fieldname]) ? $this->descFound . $this->univisData[$fieldname] : ($this->univisID ? $this->descNotFound : ''));
-        } else {
-            return (!empty($this->univisData[$section][$nr][$fieldname]) ? $this->descFound . $this->univisData[$section][$nr][$fieldname] : ($this->univisID ? $this->descNotFound : ''));
+        preg_match('/^' . $this->prefix . '(.*)Group_(\d)_' . $this->prefix . '(.*)/', $field_args["id"], $matches);
+
+        if (!empty($matches[0])){
+            $univisField = (!empty($this->univisData[$matches[1]][$matches[2]][$matches[3]]) ? $this->univisData[$matches[1]][$matches[2]][$matches[3]] : null);
+        }else{
+            $field = substr($field_args["id"], strlen($this->prefix));
+            $univisField = (!empty($this->univisData[$field]) ? $this->univisData[$field] : null);
         }
+        return '<br><span class="cmb2-metabox-description">' . (!empty($univisField) ? $this->descFound . $univisField : ($this->univisID ? $this->descNotFound : '')) . '</span>';
     }
 
     public function getReadonly($fieldname)
@@ -60,7 +64,7 @@ class Metaboxes
         return ($this->bUnivisSync && in_array($fieldname, $this->aDisabled));
     }
 
-    public function makeCMB2fields($aFields, $section = null, $nr = null)
+    public function makeCMB2fields($aFields)
     {
         $aRet = [];
 
@@ -69,8 +73,8 @@ class Metaboxes
                 'name' => $details['label'],
                 'type' => 'text',
                 'id' => $this->prefix . $details['name'],
-                'description' => $this->getDesc($details['name'], $section, $nr),
                 'show_on_cb' => 'callback_cmb2_show_on_contact',
+                'after_field' => [$this, 'getDesc'],
                 'attributes' => [
                     'readonly' => $this->getReadonly($details['name']),
                 ],

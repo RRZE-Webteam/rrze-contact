@@ -155,6 +155,12 @@ class UnivIS extends API
                     $tmp[$field] = $person[$univisField];
                 }
             }
+            if (!empty($tmp['organization_de']['organization'])){
+                $tmp['organization'] = $tmp['organization_de']['organization'];
+            }
+            if (!empty($tmp['organization_de']['department'])){
+                $tmp['department'] = $tmp['organization_de']['department'];
+            }
             $ret[] = $tmp;
         }
         return $ret;
@@ -162,13 +168,7 @@ class UnivIS extends API
 
     public function getPerson($sParam = null)
     {
-        // $sParam = 'id=40014582'; // TEST
-
         $apiResponse = $this->getResponse($sParam);
-
-        // echo '<pre>';
-        // var_dump($apiResponse);
-        // exit;
 
         if ($apiResponse['valid']) {
             return [
