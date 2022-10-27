@@ -3,10 +3,10 @@
 namespace RRZE\Contact\Metaboxes;
 
 use function RRZE\Contact\Config\getFields;
-use function RRZE\Contact\Config\getSocialMediaList;
 use RRZE\Contact\API\UnivIS;
 use RRZE\Contact\Data;
 use RRZE\Contact\Functions;
+use RRZE\Contact\Sanitize;
 
 defined('ABSPATH') || exit;
 
@@ -90,7 +90,6 @@ class Contact extends Metaboxes
                 update_post_meta($postID, $this->prefix . 'disabled', $aDisabled);
             }
         }
-
     }
 
     public function onLoaded()
@@ -120,6 +119,12 @@ class Contact extends Metaboxes
         // echo '<pre>';
         // var_dump($aRet);
         // exit;
+
+        // $test = get_post_meta($postID);
+        // echo '<pre>';
+        // var_dump($test['_rrze_contact_consultationsGroup']);
+        // exit;
+        
 
 
         if ($this->univisID) {

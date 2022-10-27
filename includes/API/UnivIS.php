@@ -5,6 +5,7 @@ namespace RRZE\Contact\API;
 defined('ABSPATH') || exit;
 
 use RRZE\Contact\Functions;
+use RRZE\Contact\Sanitize;
 
 class UnivIS extends API
 {
@@ -44,28 +45,6 @@ class UnivIS extends API
         return $aRet;
     }
 
-    private function sanitizeData($data)
-    {
-        $aPhoneTypes = ['phone', 'fax', 'mobile'];
-
-        foreach ($data as $nr => $person) {
-            if (!empty($person['locations'])) {
-                foreach ($person['locations'] as $lnr => $location) {
-                    foreach ($aPhoneTypes as $phoneType) {
-                        if (!empty($location[$phoneType])) {
-                            $data[$nr]['locations'][$lnr][$phoneType] = Functions::formatPhone($data[$nr]['locations'][$lnr][$phoneType]);
-                        }
-
-                    }
-                    if (!empty($data[$nr]['locations'][$lnr]['email'])) {
-                        $data[$nr]['locations'][$lnr]['email'] = sanitize_email($data[$nr]['locations'][$lnr]['email']);
-                    }
-                }
-            }
-        }
-
-        return $data;
-    }
 
     private function mapData($data)
     {
@@ -174,14 +153,14 @@ class UnivIS extends API
     {
         $apiResponse = $this->getResponse($sParam);
 
-        echo '<pre>';
-        var_dump($apiResponse);
-        exit;
+        // echo '<pre>';
+        // var_dump($apiResponse);
+        // exit;
 
         if ($apiResponse['valid']) {
             return [
                 'valid' => true,
-                'content' => $this->sanitizeData($this->mapData($apiResponse['content'])),
+                'content' => Sanitize::all($this->mapData($apiResponse['content'])),
             ];
         } else {
             return $apiResponse;

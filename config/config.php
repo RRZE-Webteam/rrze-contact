@@ -156,6 +156,7 @@ function getFields($group)
                 'name' => 'phone',
                 'label' => __('Phone', 'rrze-contact'),
                 'type' => 'text',
+                'sanitization_cb' => 'Sanitize::phone',
             ],
             [
                 'name' => 'fax',
@@ -215,7 +216,7 @@ function getFields($group)
                 'type' => 'radio_inline',
                 'options' => [
                     '' => __('None', 'rrze-contact'),
-                    // 'd1' => __('Daily', 'rrze-contact'),
+                    'd1' => __('Daily', 'rrze-contact'),
                     'w1' => __('Weekly', 'rrze-contact'),
                     'w2' => __('Every second week', 'rrze-contact'),
                     'w3' => __('Every third week', 'rrze-contact'),

@@ -8,6 +8,7 @@ use RRZE\Contact\Metaboxes\Contact;
 use RRZE\Contact\Metaboxes\Location;
 use RRZE\Contact\Metaboxes\Pages;
 use RRZE\Contact\Metaboxes\Posts;
+use RRZE\Contact\Sanitize;
 
 class Metaboxes
 {
@@ -56,7 +57,7 @@ class Metaboxes
             $field = substr($field_args["id"], strlen($this->prefix));
             $univisField = (!empty($this->univisData[$field]) ? $this->univisData[$field] : null);
         }
-        return '<br><span class="cmb2-metabox-description">' . (!empty($univisField) ? $this->descFound . $univisField : ($this->univisID ? $this->descNotFound : '')) . '</span>';
+        return '<br><span class="cmb2-metabox-description">' . (!empty($univisField) ? $this->descFound . (is_array($univisField) ? implode(',', $univisField) : $univisField) : ($this->univisID ? $this->descNotFound : '')) . '</span>';
     }
 
     public function getReadonly($fieldname)
@@ -82,6 +83,9 @@ class Metaboxes
             if (!empty($details['options'])){
                 $aRet[$details['name']]['options'] = $details['options'];
             }
+            if (!empty($details['sanitization_cb'])){
+                $aRet[$details['name']]['sanitization_cb'] = $details['sanitization_cb'];
+            }            
         }
         return $aRet;
     }

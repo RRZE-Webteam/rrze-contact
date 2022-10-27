@@ -5,6 +5,7 @@ namespace RRZE\Contact\API;
 defined('ABSPATH') || exit;
 
 use RRZE\Contact\Functions;
+use RRZE\Contact\Sanitize;
 
 class API
 {
