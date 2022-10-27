@@ -113,20 +113,6 @@ class Contact extends Metaboxes
 
         $univisSyncTxt = '';
 
-
-        // $test = 'w2 4,5';
-        // $aRet = Functions::getRepeat($test);
-        // echo '<pre>';
-        // var_dump($aRet);
-        // exit;
-
-        // $test = get_post_meta($postID);
-        // echo '<pre>';
-        // var_dump($test['_rrze_contact_consultationsGroup']);
-        // exit;
-        
-
-
         if ($this->univisID) {
             $univis = new UnivIS();
             $univisResponse = $univis->getPerson('id=' . $this->univisID);

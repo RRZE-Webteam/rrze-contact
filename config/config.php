@@ -95,6 +95,10 @@ function getSections()
     ];
 }
 
+function sanitizeTest(){
+    return 'TEST2';
+}
+
 function getFields($group)
 {
     $aFields =
