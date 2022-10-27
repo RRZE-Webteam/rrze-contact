@@ -4,7 +4,7 @@
  * Plugin Name:     RRZE Contact
  * Plugin URI:      https://github.com/RRZE-Webteam/rrze-contact
  * Description:     Einbindung von Daten aus Contact
- * Version:         0.0.56
+ * Version:         0.0.57
  * Author:          RRZE-Webteam
  * Author URI:      https://blogs.fau.de/webworking/
  * License:         GNU General Public License v3
@@ -105,7 +105,7 @@ function add_endpoint()
 function showFAUPersonNotice()
 {
     echo '<div class="notice notice-info is-dismissible">
-          <p>' . __('Plugin FAU-Person has automatically been deactivated. Please use RRZE-Contact instead. All old shortcodes will work. There is no update to be done.', 'rrze-contact') . '</p>
+          <p>' . __('Plugin rrze-contact has automatically been deactivated. Please use RRZE-Contact instead. All old shortcodes will work. There is no update to be done.', 'rrze-contact') . '</p>
           </div>';
 }
 
@@ -143,9 +143,9 @@ function update()
 
     // 2DO: get old settings and use them for this plugin
 
-    // deactivate FAU-Person
-    if (is_plugin_active('fau-person/fau-person.php')) {
-        deactivate_plugins('fau-person/fau-person.php');
+    // deactivate rrze-contact
+    if (is_plugin_active('rrze-contact/rrze-contact.php')) {
+        deactivate_plugins('rrze-contact/rrze-contact.php');
         add_action('admin_notices', 'RRZE\Contact\showFAUPersonNotice');
     }
 

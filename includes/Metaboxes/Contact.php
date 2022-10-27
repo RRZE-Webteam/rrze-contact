@@ -6,6 +6,7 @@ use function RRZE\Contact\Config\getFields;
 use function RRZE\Contact\Config\getSocialMediaList;
 use RRZE\Contact\API\UnivIS;
 use RRZE\Contact\Data;
+use RRZE\Contact\Functions;
 
 defined('ABSPATH') || exit;
 
@@ -113,6 +114,14 @@ class Contact extends Metaboxes
 
         $univisSyncTxt = '';
 
+
+        // $test = 'w2 4,5';
+        // $aRet = Functions::getRepeat($test);
+        // echo '<pre>';
+        // var_dump($aRet);
+        // exit;
+
+
         if ($this->univisID) {
             $univis = new UnivIS();
             $univisResponse = $univis->getPerson('id=' . $this->univisID);
@@ -125,12 +134,10 @@ class Contact extends Metaboxes
         }
 
         $aFields = $this->makeCMB2fields(getFields('contact'));
-
-        // W3C does not support "readonly" for select
+        
         if ($this->bUnivisSync) {
-            $aFields['honorificPrefix']['type'] = 'text';
+            $aFields['honorificPrefix']['type'] = 'text'; // Because W3C does not support "readonly" for select type is set to text
         } else {
-            $aFields['honorificPrefix']['type'] = 'select';
             $honoricPrefix = get_post_meta($postID, $this->prefix . 'honorificPrefix', true);
             $honoricPrefix = (empty($honoricPrefix) ? '' : $honoricPrefix);
             $aFields['honorificPrefix']['options'] = $this->getHonorificPrefixOptions($honoricPrefix);
@@ -243,25 +250,23 @@ class Contact extends Metaboxes
         ]);
 
         // Meta-Box Social Media
-        $smFields = [];
-        $smList = getSocialMediaList();
 
-        foreach ($smList as $key => $value) {
-            $smFields[] = [
-                'name' => $smList[$key]['title'] . ' URL',
-                'id' => $this->prefix . $key . '_url',
-                'type' => 'text_url',
-                'protocols' => ['https'],
-            ];
-        }
+        // foreach ($smList as $key => $value) {
+        //     $smFields[] = [
+        //         'name' => $smList[$key]['title'] . ' URL',
+        //         'id' => $this->prefix . $key . '_url',
+        //         'type' => 'text_url',
+        //         'protocols' => ['https'],
+        //     ];
+        // }
 
         $cmb = new_cmb2_box([
-            'id' => 'rrze_contact_social_media',
+            'id' => 'rrze_contact_socialmedia',
             'title' => __('Social Media', 'rrze-contact'),
             'object_types' => ['contact'], // post type
             'context' => 'normal',
             'priority' => 'default',
-            'fields' => $smFields,
+            'fields' => $this->makeCMB2fields(getFields('socialmedia')),
         ]);
 
         // Meta-Box Cosultations

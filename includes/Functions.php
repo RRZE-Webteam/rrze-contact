@@ -38,7 +38,7 @@ class Functions
             if (!preg_match('/\+49 [1-9][0-9]{1,4} [1-9][0-9]+/', $phone)) {
                 $phone_data = preg_replace('/\D/', '', $phone);
                 $vorwahl_erl = '+49 9131 85-';
-                $vorwahl_erl_p1_p6 = '+49 9131 81146-'; // see: https://github.com/RRZE-Webteam/fau-person/issues/353
+                $vorwahl_erl_p1_p6 = '+49 9131 81146-'; // see: https://github.com/RRZE-Webteam/rrze-contact/issues/353
                 $vorwahl_nbg = '+49 911 5302-';
 
                 switch (strlen($phone_data)) {
@@ -83,7 +83,7 @@ class Functions
                             break;
                         }
 
-                        // see: https://github.com/RRZE-Webteam/fau-person/issues/353
+                        // see: https://github.com/RRZE-Webteam/rrze-contact/issues/353
                         if (strpos($phone_data, '913181146') !== false) {
                             $durchwahl = explode('913181146', $phone_data);
                             $phone = $vorwahl_erl_p1_p6 . $durchwahl[1];
@@ -132,6 +132,58 @@ class Functions
         $txt = nl2br($txt);
         $txt = make_clickable($txt);
         return $txt;
+    }
+
+/* repeat mode is encoded in a string
+ * syntax: <modechar><numbers><space><args>
+ * mode  description
+ * d     daily
+ * w     weekly
+ * m     monthly
+ * y     yearly
+ * b     block
+ * numbers: number of skips between repeats
+ * example:  "d2":      every second day
+ * weekly and monthly have additional arguments:
+ * weekly: argument is comma-separated list of weekdays where event is repeated
+ * example:  "w3 1,2":  every third week on Monday and Tuesday
+ * also possible: „we“ and „wo"
+ * e = even calender week
+ * o = odd calender week
+ * monthly: argument has syntax "<submodechar><numbers>"
+ * submode description
+ * d       monthly by date
+ * w       monthly by week
+ * numbers: monthly by date: number of day (1-31)
+ * monthly by week: number of week (1-5,e,o))
+ * special case: 5 = last week of month
+ * examples:  "m1 d23": on the 23rd day of every month
+ * "m2 w5":  in the last week of every second month
+ * Laut UnivIS-Live-Daten werden für die Sprechzeiten aber nur wöchentlich an verschiedenen Tagen, 2-wöchentlich und täglich verwendet. Sollte noch was anderes benötigt werden, muss nachprogrammiert werden.
+ */
+
+// w2 4,5
+// d3
+
+    public static function getRepeat($rawData)
+    {
+        $aRet = [
+            'repeat' => '',
+            'repeatDays' => '',
+        ];
+        $aParts = explode(' ', $rawData);
+        foreach ($aParts as $part) {
+            preg_match('/([dmw]{1}\d{1})/', $part, $matches);
+            if (!empty($matches[1])) {
+                $aRet['repeat'] = $matches[1];
+            } elseif (!strstr($part, 'm') && !strstr($part, 'w')) {
+                $aDays = explode(',', $part);
+                foreach($aDays as $day){
+                    $aRet['repeatDays'][] = (string) intval($day);
+                }
+            }
+        }
+        return $aRet;
     }
 
     public static function log(string $method, string $logType = 'error', string $msg = '')
@@ -401,7 +453,7 @@ class Functions
     public static function searchMultiArrayByKey($needle, &$haystack)
     {
         foreach ($haystack as $key => $value) {
-            if ($key == $needle){
+            if ($key == $needle) {
                 return $value;
             }
             if (is_array($value)) {

@@ -103,98 +103,231 @@ function getFields($group)
             [
                 'name' => 'honorificPrefix',
                 'label' => __('Title (prefix)', 'rrze-contact'),
+                'type' => 'select',
             ],
             [
                 'name' => 'firstName',
                 'label' => __('First name', 'rrze-contact'),
+                'type' => 'text',
             ],
             [
                 'name' => 'familyName',
                 'label' => __('Family name', 'rrze-contact'),
+                'type' => 'text',
             ],
             [
                 'name' => 'honorificSuffix',
                 'label' => __('Degree (suffix)', 'rrze-contact'),
+                'type' => 'text',
             ],
             [
                 'name' => 'position',
                 'label' => __('Position/Function', 'rrze-contact'),
+                'type' => 'text',
             ],
             [
                 'name' => 'organization',
                 'label' => __('Organization', 'rrze-contact'),
+                'type' => 'text',
             ],
             [
                 'name' => 'department',
                 'label' => __('Department', 'rrze-contact'),
+                'type' => 'text',
             ],
         ],
         'locations' => [
             [
                 'name' => 'street',
                 'label' => __('Street', 'rrze-contact'),
+                'type' => 'text',
             ],
             [
                 'name' => 'city',
                 'label' => __('City', 'rrze-contact'),
+                'type' => 'text',
             ],
             [
                 'name' => 'room',
                 'label' => __('Office', 'rrze-contact'),
+                'type' => 'text_small',
             ],
             [
                 'name' => 'phone',
                 'label' => __('Phone', 'rrze-contact'),
+                'type' => 'text',
             ],
             [
                 'name' => 'fax',
                 'label' => __('Fax', 'rrze-contact'),
+                'type' => 'text',
             ],
             [
                 'name' => 'email',
                 'label' => __('eMail', 'rrze-contact'),
+                'type' => 'text_email',
             ],
             [
                 'name' => 'zoom',
                 'label' => __('Zoom', 'rrze-contact'),
+                'type' => 'text_url',
             ],
             [
                 'name' => 'teams',
                 'label' => __('Teams', 'rrze-contact'),
+                'type' => 'text_url',
             ],
             [
                 'name' => 'matrix',
                 'label' => __('Matrix', 'rrze-contact'),
+                'type' => 'text_url',
             ],
             [
                 'name' => 'url',
                 'label' => __('Url', 'rrze-contact'),
+                'type' => 'text_url',
             ],
             [
                 'name' => 'pgp',
                 'label' => __('PGP', 'rrze-contact'),
-            ],            
+                'type' => 'text',
+            ],
         ],
         'consultations' => [
             [
                 'name' => 'starttime',
                 'label' => __('Starttime', 'rrze-contact'),
+                'type' => 'text_time',
             ],
             [
                 'name' => 'endtime',
                 'label' => __('Endtime', 'rrze-contact'),
+                'type' => 'text_time',
             ],
             [
                 'name' => 'repeat',
                 'label' => __('Repeat', 'rrze-contact'),
+                'type' => 'radio_inline',
+            ],
+            [
+                'name' => 'repeat',
+                'label' => __('Repeat', 'rrze-contact'),
+                'type' => 'radio_inline',
+                'options' => [
+                    '' => __('None', 'rrze-contact'),
+                    // 'd1' => __('Daily', 'rrze-contact'),
+                    'w1' => __('Weekly', 'rrze-contact'),
+                    'w2' => __('Every second week', 'rrze-contact'),
+                    'w3' => __('Every third week', 'rrze-contact'),
+                    // 'm1' => __('Monthly', 'rrze-contact'),
+                    // 'm2' => __('Every second month', 'rrze-contact'),
+                    // 'm3' => __('Every third month', 'rrze-contact'),
+                ]
+            ],
+            [
+                'name' => 'repeatDays',
+                'label' => __('Days', 'rrze-contact'),
+                'type' => 'multicheck',
+                'options' => [
+                    '1' => __('Monday', 'rrze-contact'),
+                    '2' => __('Tuesday', 'rrze-contact'),
+                    '3' => __('Wednesday', 'rrze-contact'),
+                    '4' => __('Thursday', 'rrze-contact'),
+                    '5' => __('Friday', 'rrze-contact'),
+                    '6' => __('Saturday', 'rrze-contact'),
+                    '7' => __('Sunday', 'rrze-contact'),
+                ],
             ],
             [
                 'name' => 'room',
                 'label' => __('Room', 'rrze-contact'),
+                'type' => 'text_small',
             ],
             [
                 'name' => 'comment',
                 'label' => __('Comment', 'rrze-contact'),
+                'type' => 'textarea_small',
+            ],
+        ],
+        'socialmedia' => [
+            [
+                'name' => 'twitter',
+                'label' => 'Twitter',
+                'type' => 'text_url',
+                'class' => 'twitter',
+            ],
+            [
+                'name' => 'facebook',
+                'label' => 'Facebook',
+                'type' => 'text_url',
+                'class' => 'facebook',
+            ],
+            [
+                'name' => 'linkedin',
+                'label' => 'LinkedIn',
+                'type' => 'text_url',
+                'class' => 'linkedin',
+            ],
+            [
+                'name' => 'xing',
+                'label' => 'Xing',
+                'type' => 'text_url',
+                'class' => 'xing',
+            ],
+            [
+                'name' => 'instagram',
+                'label' => 'Instagram',
+                'type' => 'text_url',
+                'class' => 'instagram',
+            ],
+            [
+                'name' => 'youtube',
+                'label' => 'Youtube',
+                'type' => 'text_url',
+                'class' => 'youtube',
+            ],
+            [
+                'name' => 'github',
+                'label' => 'GitHub',
+                'type' => 'text_url',
+                'class' => 'github',
+            ],
+            [
+                'name' => 'publons',
+                'label' => 'Publons',
+                'type' => 'text',
+                'class' => 'publons',
+            ],
+            [
+                'name' => 'scopus',
+                'label' => 'Scopus',
+                'type' => 'text_url',
+                'class' => 'scopus',
+            ],
+            [
+                'name' => 'googlescholar',
+                'label' => 'Google Scholar',
+                'type' => 'text_url',
+                'class' => 'googlescholar',
+            ],
+            [
+                'name' => 'orcid',
+                'label' => 'ORCID',
+                'type' => 'text_url',
+                'class' => 'orcid',
+            ],
+            [
+                'name' => 'researchgate',
+                'label' => 'Research Gate',
+                'type' => 'text_url',
+                'class' => 'researchgate',
+            ],
+
+            [
+                'name' => 'tiktok',
+                'label' => 'TikTok',
+                'type' => 'text_url',
+                'class' => 'tiktok',
             ],
         ],
     ];
@@ -906,66 +1039,4 @@ function get_all_image_sizes()
     }
 
     return $image_sizes;
-}
-
-function getSocialMediaList()
-{
-    $SocialMedia = array(
-        "twitter" => [
-            'title' => 'Twitter',
-            'class' => 'twitter',
-        ],
-        "facebook" => [
-            'title' => 'Facebook',
-            'class' => 'facebook',
-        ],
-        "linkedin" => [
-            'title' => 'LinkedIn',
-            'class' => 'linkedin',
-        ],
-        "instagram" => [
-            'title' => 'Instagram',
-            'class' => 'instagram',
-        ],
-        "xing" => [
-            'title' => 'Xing',
-            'class' => 'xing',
-        ],
-        "youtube" => [
-            'title' => 'YouTube',
-            'class' => 'youtube',
-        ],
-        "github" => [
-            'title' => 'GitHub',
-            'class' => 'github',
-        ],
-        "publons" => [
-            'title' => 'Publons',
-            'class' => 'publons',
-        ],
-        "scopus" => [
-            'title' => 'Scopus',
-            'class' => 'scopus',
-        ],
-        "googlescholar" => [
-            'title' => 'Google Scholar',
-            'class' => 'google-scholar',
-        ],
-        "orcid" => [
-            'title' => 'ORCID',
-            'class' => 'orcid',
-        ],
-        "researchgate" => [
-            'title' => 'Research Gate',
-            'class' => 'researchgate',
-        ],
-        "tiktok" => [
-            'title' => 'TikTok',
-            'class' => 'tiktok',
-        ],
-    );
-
-    // für ergänzende Optionen aus anderen Plugins
-    $SocialMedia = apply_filters('rrze_contact_socialmedialist', $SocialMedia);
-    return $SocialMedia; // Standard-Array für zukünftige Optionen
 }

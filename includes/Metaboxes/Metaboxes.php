@@ -71,7 +71,7 @@ class Metaboxes
         foreach ($aFields as $details) {
             $aRet[$details['name']] = [
                 'name' => $details['label'],
-                'type' => 'text',
+                'type' => $details['type'],
                 'id' => $this->prefix . $details['name'],
                 'show_on_cb' => 'callback_cmb2_show_on_contact',
                 'after_field' => [$this, 'getDesc'],
@@ -79,6 +79,9 @@ class Metaboxes
                     'readonly' => $this->getReadonly($details['name']),
                 ],
             ];
+            if (!empty($details['options'])){
+                $aRet[$details['name']]['options'] = $details['options'];
+            }
         }
         return $aRet;
     }

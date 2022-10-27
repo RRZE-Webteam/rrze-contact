@@ -131,6 +131,11 @@ class UnivIS extends API
                                         if (!empty($person[$univisSubfield][$nr][$univisSubSubfield])) {
                                             $tmpDetails[$subfield] = $person[$univisSubfield][$nr][$univisSubSubfield];
                                         }
+                                        if ($subfield == 'repeat'){
+                                            $aRepeat = Functions::getRepeat($tmpDetails['repeat']);
+                                            $tmpDetails['repeat'] = $aRepeat['repeat'];
+                                            $tmpDetails['repeatDays'] = $aRepeat['repeatDays'];
+                                        }
                                     }
                                     $tmp[$field][] = $tmpDetails;
                                     $i++;
@@ -159,6 +164,7 @@ class UnivIS extends API
             if (!empty($tmp['organization_de']['department'])){
                 $tmp['department'] = $tmp['organization_de']['department'];
             }
+            
             $ret[] = $tmp;
         }
         return $ret;
@@ -167,6 +173,10 @@ class UnivIS extends API
     public function getPerson($sParam = null)
     {
         $apiResponse = $this->getResponse($sParam);
+
+        echo '<pre>';
+        var_dump($apiResponse);
+        exit;
 
         if ($apiResponse['valid']) {
             return [
@@ -179,3 +189,5 @@ class UnivIS extends API
     }
 
 }
+
+
