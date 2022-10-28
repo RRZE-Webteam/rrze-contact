@@ -88,6 +88,9 @@ class Metaboxes
             if (!empty($details['sanitization_cb'])){
                 $aRet[$details['name']]['sanitization_cb'] = $details['sanitization_cb'];
             }            
+            if (!empty($details['protocols'])){
+                $aRet[$details['name']]['protocols'] = $details['protocols'];
+            }            
         }
 
         return $aRet;
