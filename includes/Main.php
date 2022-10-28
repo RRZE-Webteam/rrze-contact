@@ -40,8 +40,6 @@ class Main
         $functions = new Functions($this->pluginFile);
         $functions->onLoaded();
 
-        $sanitize = new Sanitize($this->pluginFile);
-
         $settings = new Settings($this->pluginFile);
         $settings->onLoaded();
         $this->settings = $settings;

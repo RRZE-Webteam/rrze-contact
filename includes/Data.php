@@ -2,11 +2,7 @@
 
 namespace RRZE\Contact;
 
-// use RRZE\OldLib\UnivIS\Data as UnivIS_Data;
-// use RRZE\OldLib\DIP\Data as DIP_Data;
-// use RRZE\OldLib\UnivIS\Config;
-// use RRZE\OldLib\UnivIS\Sanitizer;
-use function RRZE\Contact\Config\getSocialMediaList;
+use function RRZE\Contact\Config\getFields;
 use RRZE\Contact\API\UnivIS;
 
 
@@ -1260,7 +1256,7 @@ class Data
 	 * Sonderbehandlung für Gruppenfilter, bei denen sonst Infos wegfallen
 	 */
         if ((isset($filter['socialmedia'])) && ($filter['socialmedia'])) {
-            $list = getSocialMediaList();
+            $list = getFields('socialmedia');
             foreach ($list as $key => $value) {
                 $datakey = $key . "_url";
                 if (isset($input[$datakey])) {
@@ -1643,13 +1639,13 @@ class Data
                     $phone_number = sync_univis($id, $contact_location, $key, $value, $defaults);
                     switch (get_post_meta($id, 'rrze_contact_telephone_select', true)) {
                         case 'erl':
-                            $value = Functions::formatPhone($phone_number, 'erl');
+                            $value = Sanitize::phone($phone_number, 'erl');
                             break;
                         case 'nbg':
-                            $value = Functions::formatPhone($phone_number, 'nbg');
+                            $value = Sanitize::phone($phone_number, 'nbg');
                             break;
                         default:
-                            $value = Functions::formatPhone($phone_number, 'standard');
+                            $value = Sanitize::phone($phone_number, 'standard');
                             break;
                     }
                 } else {
@@ -1660,7 +1656,7 @@ class Data
                     $value =  '<p class="cmb2-metabox-description">' . __('In UnivIS ist hierfür kein Wert hinterlegt.', 'rrze-contact') . '</p>';
                 } else {
                     if ($key == 'telephone' || $key == 'faxNumber' || $key == 'mobilePhone') {
-                        $phone_number = Functions::formatPhone(get_post_meta($id, 'rrze_contact_' . $key, true));
+                        $phone_number = Sanitize::phone(get_post_meta($id, 'rrze_contact_' . $key, true));
                     } else {
                         $value = get_post_meta($id, 'rrze_contact_' . $key, true);
                     }
@@ -1748,7 +1744,7 @@ class Data
             $fields[$key] = $value;
         }
 
-        $SocialMedia = Schema::get_SocialMediaList();
+        $SocialMedia = getFields('socialmedia');
         foreach ($SocialMedia as $key => $value) {
             $datakey = $key . "_url";
             $value = get_post_meta($id, 'rrze_contact_' . $datakey, true);

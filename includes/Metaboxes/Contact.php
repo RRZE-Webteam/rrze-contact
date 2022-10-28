@@ -32,7 +32,6 @@ class Contact extends Metaboxes
         $this->settings = $settings;
         $this->descFound = __('Value displayed from UnivIS:', 'rrze-contact') . ' ';
         $this->descNotFound = __('No value is stored for this in UnivIS.', 'rrze-contact');
-
         add_action('save_post', [$this, 'saveMeta'], 12, 3); // priority 10 would not work because post_meta is not stored yet. save_post_contact would not work because save_post is fired after save_post_contact
     }
 
@@ -52,10 +51,6 @@ class Contact extends Metaboxes
 
             if ($univisResponse['valid']) {
                 $this->univisData = $univisResponse['content'][0];
-
-                // echo '<pre>';
-                // var_dump($this->univisData);
-                // exit;
 
                 if (!empty($this->univisData)) {
                     $aFields = getFields('contact');
@@ -119,6 +114,11 @@ class Contact extends Metaboxes
 
             if ($univisResponse['valid']) {
                 $this->univisData = $univisResponse['content'][0];
+
+                // echo '<pre>';
+                // var_dump($this->univisData);
+                // exit;
+
             } else {
                 $univisSyncTxt = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
             }

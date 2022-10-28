@@ -13,6 +13,7 @@ defined('ABSPATH') || exit;
 define('UNIVIS_URL', 'http://univis.uni-erlangen.de/prg');
 define('DIP_URL', 'https://api.fau.de/pub/v1/mschema/contacts');
 
+
 function getOptionName()
 {
     return 'rrze-contact';
@@ -95,15 +96,21 @@ function getSections()
     ];
 }
 
-function sanitizeTest(){
-    return 'TEST2';
-}
-
 function getFields($group)
 {
     $aFields =
         [
         'contact' => [
+            [
+                'name' => 'univisID',
+                'label' => __('UnivIS ID', 'rrze-contact'),
+                'type' => 'hidden',
+            ],
+            [
+                'name' => 'IDM',
+                'label' => __('IDM', 'rrze-contact'),
+                'type' => 'hidden',
+            ],
             [
                 'name' => 'honorificPrefix',
                 'label' => __('Title (prefix)', 'rrze-contact'),
@@ -156,16 +163,17 @@ function getFields($group)
                 'label' => __('Office', 'rrze-contact'),
                 'type' => 'text_small',
             ],
-            [
+            'phone' => [
                 'name' => 'phone',
                 'label' => __('Phone', 'rrze-contact'),
                 'type' => 'text',
-                'sanitization_cb' => 'Sanitize::phone',
+                'sanitization_cb' => 'RRZE\Contact\Sanitize\phone',
             ],
             [
                 'name' => 'fax',
                 'label' => __('Fax', 'rrze-contact'),
                 'type' => 'text',
+                'sanitization_cb' => 'RRZE\Contact\Sanitize\phone',
             ],
             [
                 'name' => 'email',
@@ -252,6 +260,7 @@ function getFields($group)
                 'name' => 'comment',
                 'label' => __('Comment', 'rrze-contact'),
                 'type' => 'textarea_small',
+                'sanitization_cb' => 'RRZE\Contact\Sanitize\markdown',
             ],
         ],
         'socialmedia' => [

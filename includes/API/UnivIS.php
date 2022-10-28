@@ -5,7 +5,7 @@ namespace RRZE\Contact\API;
 defined('ABSPATH') || exit;
 
 use RRZE\Contact\Functions;
-use RRZE\Contact\Sanitize;
+use function RRZE\Contact\Sanitize\sanitizeAll;
 
 class UnivIS extends API
 {
@@ -24,10 +24,6 @@ class UnivIS extends API
 
         $apiResponse = file_get_contents($this->api . $sParam);
         $apiResponse = json_decode($apiResponse, true);
-
-        // echo '<pre>';
-        // var_dump($apiResponse);
-        // exit;
 
         if (empty($apiResponse['Person'])) {
             $aRet = [
@@ -153,14 +149,10 @@ class UnivIS extends API
     {
         $apiResponse = $this->getResponse($sParam);
 
-        // echo '<pre>';
-        // var_dump($apiResponse);
-        // exit;
-
         if ($apiResponse['valid']) {
             return [
                 'valid' => true,
-                'content' => Sanitize::all($this->mapData($apiResponse['content'])),
+                'content' => sanitizeAll($this->mapData($apiResponse['content'])),
             ];
         } else {
             return $apiResponse;

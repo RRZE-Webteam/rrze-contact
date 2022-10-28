@@ -25,6 +25,8 @@ class Metaboxes
     public function onLoaded()
     {
         require_once plugin_dir_path($this->pluginFile) . 'vendor/cmb2/init.php';
+        require_once plugin_dir_path($this->pluginFile) . '/includes/Sanitize.php';
+
         $contactmb = new Contact($this->pluginFile, $this->settings);
         $contactmb->onLoaded();
 
@@ -87,6 +89,7 @@ class Metaboxes
                 $aRet[$details['name']]['sanitization_cb'] = $details['sanitization_cb'];
             }            
         }
+
         return $aRet;
     }
 }
