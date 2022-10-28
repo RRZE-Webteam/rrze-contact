@@ -96,7 +96,7 @@ function getSections()
     ];
 }
 
-function getFields($group)
+function getFields($group = NULL)
 {
     $aFields =
         [

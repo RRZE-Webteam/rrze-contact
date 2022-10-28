@@ -4,7 +4,8 @@ namespace RRZE\Contact\Sanitize;
 
 defined('ABSPATH') || exit;
 
-// require_once plugin_dir_path(__FILE__) . '../vendor/cmb2/init.php';
+use function RRZE\Contact\Config\getFields;
+
 
 function markdown($txt)
 {
@@ -29,6 +30,10 @@ function markdown($txt)
 
 function phone($phone, $field_args = null, $field = null)
 {
+
+    return 'JUHU HAT GEKLAPPT';
+
+
     $phone = filter_var($phone, FILTER_SANITIZE_NUMBER_INT);
 
     if ((strpos($phone, '+49 9131 85-') !== 0) && (strpos($phone, '+49 911 5302-') !== 0)) {
@@ -104,33 +109,30 @@ function phone($phone, $field_args = null, $field = null)
     return $phone;
 }
 
-function sanitizeAll($data)
-{
+function getSanitizers(){
+    $aRet = [];
+    $aFields = getFields();
 
-    // $locationFields = getFields('locations');
-
-    $aPhoneTypes = ['phone', 'fax', 'mobile'];
-
-    foreach ($data as $nr => $person) {
-        if (!empty($person['locations'])) {
-            foreach ($person['locations'] as $lnr => $location) {
-                // foreach($location as $fieldname => $value){
-                //     if (!empty($locationFields[$fieldname]['sanitization_cb'])){
-                //         $data[$nr]['locations'][$lnr][$fieldname] = call_user_func($locationFields[$fieldname]['sanitization_cb'])
-                //     }
-                // }
-                foreach ($aPhoneTypes as $phoneType) {
-                    if (!empty($location[$phoneType])) {
-                        $data[$nr]['locations'][$lnr][$phoneType] = phone($data[$nr]['locations'][$lnr][$phoneType]);
-                    }
-
-                }
-                if (!empty($data[$nr]['locations'][$lnr]['email'])) {
-                    $data[$nr]['locations'][$lnr]['email'] = sanitize_email($data[$nr]['locations'][$lnr]['email']);
-                }
+    foreach($aFields as $section => $aSecFields){
+        foreach($aSecFields as $aDetails){
+            if (!empty($aDetails['sanitization_cb'])){
+                $aRet[$aDetails['name']] = $aDetails['sanitization_cb']; 
             }
         }
     }
 
+    return $aRet;
+}
+
+function sanitize(&$item, $key, $sanitizeMap){
+    if (!empty($sanitizeMap[$key])){
+        $item = call_user_func($sanitizeMap[$key], $item); 
+    }
+}
+
+function sanitizeAll($data)
+{
+    $sanitizeMap = getSanitizers();
+    array_walk_recursive($data, __NAMESPACE__ . '\sanitize', $sanitizeMap);
     return $data;
 }
