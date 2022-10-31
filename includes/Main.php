@@ -6,9 +6,9 @@ defined('ABSPATH') || exit;
 
 use function RRZE\Contact\Config\getConstants;
 use RRZE\Contact\Settings;
+use RRZE\Contact\Sanitize;
 use RRZE\Contact\Taxonomy\Taxonomy;
 use RRZE\Contact\Templates;
-// use RRZE\Contact\Metaboxes\Metaboxes;
 use RRZE\Contact\Metaboxes\Metaboxes;
 use RRZE\Contact\Shortcode\Shortcode;
 
@@ -25,7 +25,6 @@ class Main
     protected $widget;
     private $settings = '';
 
-
     public function __construct($pluginFile)
     {
         $this->pluginFile = $pluginFile;
@@ -37,12 +36,17 @@ class Main
         add_action('wp_enqueue_scripts', [$this, 'registerPluginStyles']);
         add_action('admin_enqueue_scripts', [$this, 'enqueueAdminScripts']);
 
+
         $functions = new Functions($this->pluginFile);
         $functions->onLoaded();
 
         $settings = new Settings($this->pluginFile);
         $settings->onLoaded();
         $this->settings = $settings;
+
+        $this->define_image_sizes();
+
+        $sanitize = new Sanitize();
 
         $taxonomy = new Taxonomy($settings);
         $taxonomy->onLoaded();
@@ -97,4 +101,22 @@ class Main
         echo '<br>' . ($update?'is an update' : 'is not an update');
         exit;
     }
+
+    public function define_image_sizes()
+    {
+
+        // echo '<pre>';
+        // var_dump($this->settings);
+        // exit;
+
+        /* Thumb for contact-type; small for sidebar - Name: contact-thumb */
+        add_image_size('contact-thumb-v3', $this->settings->constants['images']['default_contact_thumb_width'], $this->settings->constants['images']['default_contact_thumb_height'], $this->settings->constants['images']['default_contact_thumb_crop']); // 60, 80, true
+
+
+        /* Thumb for contact-type; big for content - Name: contact-thumb-page */
+        add_image_size('contact-thumb-page-v3', $this->settings->constants['images']['default_contact_thumb_page_width'], $this->settings->constants['images']['default_contact_thumb_page_height'], $this->settings->constants['images']['default_contact_thumb_page_crop']); // 200,300,true
+
+    }
+
+
 }

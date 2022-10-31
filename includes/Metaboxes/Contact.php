@@ -374,7 +374,7 @@ class Contact extends Metaboxes
                         'einrichtung' => __('Einrichtung', 'rrze-contact'),
                         'pseudo' => __('Pseudonym', 'rrze-contact'),
                     ],
-                    'id' => $this->prefix . 'typ',
+                    'id' => $this->prefix . 'type',
                     'default' => $default_rrze_contact_typ,
                 ],
                 [

@@ -2,9 +2,6 @@
 
 namespace RRZE\Contact\Taxonomy;
 
-use RRZE\Contact\Data;
-use RRZE\Contact\Schema;
-use RRZE\OldLib\UnivIS\Config;
 // use function RRZE\Contact\Config\get_RRZE\Contact_capabilities;
 
 defined('ABSPATH') || exit;
@@ -17,12 +14,11 @@ class Contact extends Taxonomy
 
     protected $postType = 'contact';
     protected $taxonomy = 'contact_category';
-	private $settings = '';
-
+    private $settings = '';
 
     public function __construct($settings)
     {
-		$this->settings = $settings;
+        $this->settings = $settings;
     }
 
     public function onLoaded()
@@ -44,15 +40,15 @@ class Contact extends Taxonomy
         add_filter('wp_unique_post_slug_is_bad_hierarchical_slug', [$this, 'archiveSlugIsBadHierarchicalSlug'], 10, 4);
         add_filter('wp_unique_post_slug_is_bad_hierarchical_slug', [$this, 'archiveSlugIsBadFlatSlug'], 10, 3);
     }
-    
+
     public function register()
     {
         $archive_slug = (!empty($this->settings->options['constants_has_archive_page']) ? $this->settings->options['constants_has_archive_page'] : $this->postType);
-		$archive_slug = ($archive_slug == 1 ? $this->postType : $archive_slug);
+        $archive_slug = ($archive_slug == 1 ? $this->postType : $archive_slug);
 
-		$has_archive_page = (!empty($this->settings->options['constants_has_archive_page']) && ($this->settings->options['constants_has_archive_page'] == $this->postType) ? true : false);
-		$archive_page = get_page_by_path($archive_slug, OBJECT, 'page');
-		$archive_title = (!empty($archive_page) ? $archive_page->post_title : __('Contacts', 'rrze-contact'));
+        $has_archive_page = (!empty($this->settings->options['constants_has_archive_page']) && ($this->settings->options['constants_has_archive_page'] == $this->postType) ? true : false);
+        $archive_page = get_page_by_path($archive_slug, OBJECT, 'page');
+        $archive_title = (!empty($archive_page) ? $archive_page->post_title : __('Contacts', 'rrze-contact'));
 
         $aParams = [
             'postType' => $this->postType,
@@ -61,10 +57,10 @@ class Contact extends Taxonomy
             'plural_name' => __('Contacts', 'rrze-contact'),
             'supports' => ['title', 'editor', 'author', 'thumbnail', 'revisions'],
             'has_archive_page' => $has_archive_page,
-		    'archive_title' => $archive_title,
+            'archive_title' => $archive_title,
             'show_in_menu' => true,
             'menu_name' => __('Contacts', 'rrze-contact'),
-			'menu_icon' => 'dashicons-id-alt',
+            'menu_icon' => 'dashicons-id-alt',
         ];
 
         parent::registerCPT($aParams);
@@ -161,29 +157,29 @@ class Contact extends Taxonomy
         return $cols;
     }
 
-    public function custom_columns($column, $post_id)
+    public function custom_columns($column, $postID)
     {
-        $univis_id = get_post_meta($post_id, 'rrze_contact_univis_id', true);
-        $dip_id = get_post_meta($post_id, 'rrze_contact_dip_id', true);
-        $data = Data::get_fields($post_id, $univis_id, 0);
+        $univis_id = get_post_meta($postID, 'rrze_contact_univis_id', true);
+        $dip_id = get_post_meta($postID, 'rrze_contact_dip_id', true);
 
         switch ($column) {
-            case 'thumb':
-                $thumb = Data::create_contact_image($post_id, 'contact-thumb-v3', '', true, false, '', false);
-                echo $thumb;
+            case 'ID':
+                echo $postID;
                 break;
-
+            case 'thumb':
+                echo self::getContactImage($postID);
+                break;
             case 'fullname':
-
-                $fullname = Schema::create_Name($data, '', '', 'span', false);
+                // $fullname = Schema::create_Name($data, '', '', 'span', false);
+                $fullname = '2DO';
                 if (empty(trim($fullname))) {
-                    $fullname = get_the_title($post_id);
+                    $fullname = get_the_title($postID);
                 }
                 echo $fullname;
                 break;
             case 'contact':
                 // echo $data['email'];
-                echo Schema::create_contactpointlist($data, 'ul', '', '', 'li');
+                // echo Schema::create_contactpointlist($data, 'ul', '', '', 'li');
 
                 break;
             case 'source':
@@ -195,10 +191,6 @@ class Contact extends Taxonomy
                     echo __('Local', 'rrze-contact');
                 }
                 break;
-            case 'ID':
-                echo $post_id;
-                break;
-
         }
     }
 
@@ -262,31 +254,79 @@ class Contact extends Taxonomy
         }
     }
 
-    private function archiveSlugIsBadHierarchicalSlug( $isBadSlug, $slug, $post_type, $post_parent ) {
-        if ($post_type == 'contact'){
+    private function archiveSlugIsBadHierarchicalSlug($isBadSlug, $slug, $post_type, $post_parent)
+    {
+        if ($post_type == 'contact') {
             return false;
         }
         $CPTdata = get_post_type_object('contact');
         $archiveSlug = $CPTdata->rewrite['slug'];
 
-        if ( !$post_parent && $slug == $archiveSlug ){
+        if (!$post_parent && $slug == $archiveSlug) {
             return true;
         }
         return $isBadSlug;
     }
 
-    private function archiveSlugIsBadFlatSlug( $isBadSlug, $slug, $post_type) {
-        if ($post_type == 'contact'){
+    private function archiveSlugIsBadFlatSlug($isBadSlug, $slug, $post_type)
+    {
+        if ($post_type == 'contact') {
             return false;
         }
         $CPTdata = get_post_type_object('contact');
         $archiveSlug = $CPTdata->rewrite['slug'];
 
-        if ($slug == $archiveSlug ){
+        if ($slug == $archiveSlug) {
             return true;
         }
         return $isBadSlug;
     }
 
+    private function getContactImage($postID)
+    {
+        $img = [];
+        $alt = esc_attr(get_the_title($postID));
+
+        if (has_post_thumbnail($postID)) {
+            $size = 'contact-thumb-page-v3';
+            $imgID = get_post_thumbnail_id($postID);
+            $imga = wp_get_attachment_image_src($imgID, $size);
+
+            if (is_array($imga)) {
+                $img['src'] = $imga[0];
+                $img['width'] = $imga[1];
+                $img['height'] = $imga[2];
+                $img['srcset'] = wp_get_attachment_image_srcset($imgID, $size);
+                $img['sizes'] = wp_get_attachment_image_sizes($imgID, $size);
+            }else{
+                $img['src'] = plugin_dir_url(__DIR__) . '../' . 'images/placeholder-unisex.png';
+                $img['width'] = '120';
+                $img['height'] = '160';    
+            }
+        } else {
+            $type = get_post_meta($this->prefix . 'type');
+            $src = '';
+
+            switch ($type) {
+                case 'realmale':
+                    $src = 'images/placeholder-man.png';
+                    break;
+                case 'realfemale':
+                    $src = 'images/placeholder-woman.png';
+                    break;
+                case 'einrichtung':
+                    $src = 'images/placeholder-organization.png';
+                    break;
+                default:
+                    $src = 'images/placeholder-unisex.png';
+            }
+
+            $img['src'] = plugin_dir_url(__DIR__) . '../' . $src;
+            $img['width'] = '120';
+            $img['height'] = '160';
+        }
+
+        return "<img src='{$img['src']}' height='{$img['height']}' width='{$img['width']}' alt='$alt'" . (!empty($img['srcset']) ? " srcset='{$img['srcset']}' " : '') . (!empty($img['sizes']) ? " sizes='{$img['sizes']}' " : '') . '>';
+    }
 
 }

@@ -13,6 +13,8 @@ use RRZE\Contact\Taxonomy\Location;
 class Taxonomy
 {
     private $settings = '';
+    public $prefix = '_rrze_contact_'; // starts with an underscore to hide fields from custom fields list 
+
 
 
     public function __construct($settings)

@@ -8,7 +8,7 @@ use RRZE\Contact\Metaboxes\Contact;
 use RRZE\Contact\Metaboxes\Location;
 use RRZE\Contact\Metaboxes\Pages;
 use RRZE\Contact\Metaboxes\Posts;
-use RRZE\Contact\Sanitize;
+// use RRZE\Contact\Sanitize;
 
 class Metaboxes
 {

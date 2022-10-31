@@ -21,39 +21,35 @@ function getOptionName()
 
 function getConstants()
 {
-    $options = [
+    $options = array(
+        'UnivIS_Transient' => 'sui_1k4fu7056Kl12a5',
+        'images' => [
+            /* Thumb for person-type; small for sidebar - Name: person-thumb */
+            'default_person_thumb_width' => 120,
+            'default_person_thumb_height' => 160,
+            'default_person_thumb_crop' => true,
+
+            /* Thumb for person-type; small for content - Name: person-thumb-page */
+            'default_person_thumb_page_width' => 240,
+            'default_person_thumb_page_height' => 320,
+            'default_person_thumb_page_crop' => true,
+        ],
+        'has_archive_page' => true,
         'fauthemes' => [
             'FAU-Einrichtungen',
-            'FAU-Einrichtungen-BETA',
-            'FAU-Medfak',
-            'FAU-RWFak',
             'FAU-Philfak',
-            'FAU-Techfak',
             'FAU-Natfak',
-            'FAU-Blog',
+            'FAU-RWFak',
+            'FAU-Medfak',
+            'FAU-Techfak',
             'FAU-Jobs',
         ],
-        'rrzethemes' => [
-            'RRZE 2019',
-        ],
-        'langcodes' => [
-            'de' => __('German', 'rrze-contact'),
-            'en' => __('English', 'rrze-contact'),
-            'es' => __('Spanish', 'rrze-contact'),
-            'fr' => __('French', 'rrze-contact'),
-            'ru' => __('Russian', 'rrze-contact'),
-            'zh' => __('Chinese', 'rrze-contact'),
-        ],
-        'colors' => [
-            'med',
-            'nat',
-            'rw',
-            'phil',
-            'tk',
-        ],
-    ];
+        'admin_posts_per_page' => 25,
 
-    return $options;
+    );
+    // für ergänzende Optionen aus anderen Plugins
+    $options = apply_filters('fau_person_constants', $options);
+    return $options; // Standard-Array für zukünftige Optionen
 }
 
 /**
@@ -167,13 +163,13 @@ function getFields($group = NULL)
                 'name' => 'phone',
                 'label' => __('Phone', 'rrze-contact'),
                 'type' => 'text',
-                'sanitization_cb' => 'RRZE\Contact\Sanitize\phone',
+                // 'sanitization_cb' => 'RRZE\Contact\Sanitize\phone',
             ],
             [
                 'name' => 'fax',
                 'label' => __('Fax', 'rrze-contact'),
                 'type' => 'text',
-                'sanitization_cb' => 'RRZE\Contact\Sanitize\phone',
+                // 'sanitization_cb' => 'RRZE\Contact\Sanitize\phone',
             ],
             [
                 'name' => 'email',
@@ -260,7 +256,7 @@ function getFields($group = NULL)
                 'name' => 'comment',
                 'label' => __('Comment', 'rrze-contact'),
                 'type' => 'textarea_small',
-                'sanitization_cb' => 'RRZE\Contact\Sanitize\markdown',
+                // 'sanitization_cb' => 'RRZE\Contact\Sanitize\markdown',
             ],
         ],
         'socialmedia' => [
