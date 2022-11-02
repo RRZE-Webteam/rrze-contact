@@ -3,7 +3,7 @@
 Kontakte und Visitenkarten-Plugin für FAU Webauftritte  
 Es bezieht die Daten von DIP und UnivIS
 
-(Dieses Plugin wird rrze-contact ablösen)
+(Dieses Plugin wird FAU-Person ablösen)
 
 ## Download 
 
