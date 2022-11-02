@@ -14,7 +14,6 @@ class Metaboxes
 {
     protected $pluginFile;
     private $settings = '';
-    public $prefix = '_rrze_contact_'; // starts with an underscore to hide fields from custom fields list 
 
     public function __construct($pluginFile, $settings)
     {
@@ -43,20 +42,20 @@ class Metaboxes
     public function getVal($fieldname, $section = null, $nr = null)
     {
         if ($section == null) {
-            return ($this->bUnivisSync && !empty($this->univisData[$fieldname]) ? $this->univisData[$fieldname] : (!empty($this->postMeta[$this->prefix . $fieldname][0]) ? $this->postMeta[$this->prefix . $fieldname][0] : (!empty($this->univisData[$fieldname]) ? $this->univisData[$fieldname] : '')));
+            return ($this->bUnivisSync && !empty($this->univisData[$fieldname]) ? $this->univisData[$fieldname] : (!empty($this->postMeta[RRZE_CONTACT_PREFIX . $fieldname][0]) ? $this->postMeta[RRZE_CONTACT_PREFIX . $fieldname][0] : (!empty($this->univisData[$fieldname]) ? $this->univisData[$fieldname] : '')));
         } else {
-            return ($this->bUnivisSync && !empty($this->univisData[$section][$nr][$fieldname]) ? $this->univisData[$section][$nr][$fieldname] : (!empty($this->postMeta[$this->prefix . $fieldname][0]) ? $this->postMeta[$this->prefix . $fieldname . $nr][0] : (!empty($this->univisData[$section][$nr][$fieldname]) ? $this->univisData[$section][$nr][$fieldname] : '')));
+            return ($this->bUnivisSync && !empty($this->univisData[$section][$nr][$fieldname]) ? $this->univisData[$section][$nr][$fieldname] : (!empty($this->postMeta[RRZE_CONTACT_PREFIX . $fieldname][0]) ? $this->postMeta[RRZE_CONTACT_PREFIX . $fieldname . $nr][0] : (!empty($this->univisData[$section][$nr][$fieldname]) ? $this->univisData[$section][$nr][$fieldname] : '')));
         }
     }
 
     public function getDesc($field_args, $field)
     {
-        preg_match('/^' . $this->prefix . '(.*)Group_(\d)_' . $this->prefix . '(.*)/', $field_args["id"], $matches);
+        preg_match('/^' . RRZE_CONTACT_PREFIX . '(.*)Group_(\d)_' . RRZE_CONTACT_PREFIX . '(.*)/', $field_args["id"], $matches);
 
         if (!empty($matches[1])){
             $univisField = (!empty($this->univisData[$matches[1]][$matches[2]][$matches[3]]) ? $this->univisData[$matches[1]][$matches[2]][$matches[3]] : null);
         }else{
-            $field = substr($field_args["id"], strlen($this->prefix));
+            $field = substr($field_args["id"], strlen(RRZE_CONTACT_PREFIX));
             $univisField = (!empty($this->univisData[$field]) ? $this->univisData[$field] : null);
         }
         return '<br><span class="cmb2-metabox-description">' . (!empty($univisField) ? $this->descFound . (is_array($univisField) ? implode(',', $univisField) : $univisField) : ($this->univisID ? $this->descNotFound : '')) . '</span>';
@@ -64,6 +63,9 @@ class Metaboxes
 
     public function getReadonly($fieldname)
     {
+        // echo '<pre>';
+        // var_dump($this->aDisabled);
+        // exit;
         return ($this->bUnivisSync && in_array($fieldname, $this->aDisabled));
     }
 
@@ -75,7 +77,7 @@ class Metaboxes
             $aRet[$details['name']] = [
                 'name' => $details['label'],
                 'type' => $details['type'],
-                'id' => $this->prefix . $details['name'],
+                'id' => RRZE_CONTACT_PREFIX . $details['name'],
                 'show_on_cb' => 'callback_cmb2_show_on_contact',
                 'after_field' => [$this, 'getDesc'],
                 'attributes' => [

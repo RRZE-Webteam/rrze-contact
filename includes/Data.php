@@ -5,9 +5,7 @@ namespace RRZE\Contact;
 use function RRZE\Contact\Config\getFields;
 use RRZE\Contact\API\UnivIS;
 
-
 defined('ABSPATH') || exit;
-
 
 class Data
 {
@@ -36,72 +34,12 @@ class Data
         return $viewopt;
     }
 
-    // Get full list of all contacts as array
-    // $filtertype defaults empty = all contacts
-    // $filtertype values: realcontact, realmale, realfemale, einrichtung
-
-    // public static function get_contact_list($filtertype = '')
-    // {
-    //     $args = array(
-    //         'post_type' => 'contact',
-    //         'numberposts' => -1,
-    //         'meta_key' => 'rrze_contact_typ',
-    //     );
-    //     $contactlist = get_posts($args);
-
-    //     if ($contactlist) {
-    //         foreach ($contactlist as $key => $value) {
-    //             $contactlist[$key] = (array) $contactlist[$key];
-    //             $name = $contactlist[$key]['post_title'];
-
-    //             $thistype = get_post_meta($contactlist[$key]['ID'], 'rrze_contact_typ', true);
-    //             if (!empty($filtertype)) {
-    //                 if ($thistype != $filtertype) {
-    //                     continue;
-    //                 }
-    //             }
-    //             switch ($thistype) {
-    //                 case 'realcontact':
-    //                 case 'realmale':
-    //                 case 'realfemale':
-    //                     if (get_post_meta($contactlist[$key]['ID'], 'rrze_contact_familyName', true)) {
-    //                         $lastname = get_post_meta($contactlist[$key]['ID'], 'rrze_contact_familyName', true);
-    //                         if (get_post_meta($contactlist[$key]['ID'], 'rrze_contact_firstName', true)) {
-    //                             $name = $lastname . ', ' . get_post_meta($contactlist[$key]['ID'], 'rrze_contact_firstName', true);
-    //                         } elseif (ltrim(strpos($name, $lastname))) {
-    //                             $name = $lastname . ', ' . ltrim(str_replace($lastname, '', $name));
-    //                         } else {
-    //                             $name = $lastname;
-    //                         }
-    //                     } else {
-    //                         if (ltrim(strpos($name, ' '))) {
-    //                             $lastname = ltrim(strrchr($name, ' '));
-    //                             $firstName = ltrim(str_replace($lastname, '', $name));
-    //                             $name = $lastname . ', ' . $firstName;
-    //                         }
-    //                     }
-    //                     break;
-    //                 default:
-    //                     break;
-    //             }
-    //             $temp[$contactlist[$key]['ID']] = $name;
-    //         }
-    //         natcasesort($temp);
-
-    //         foreach ($temp as $key => $value) {
-    //             $contactselect[$key] = $value;
-    //         }
-    //     }
-    //     return $contactselect;
-    // }
-
-
     public static function get_contactdata($connection = 0)
     {
         $args = array(
             'post_type' => 'contact',
             'numberposts' => -1,
-            'meta_key' => 'rrze_contact_typ'
+            'meta_key' => 'rrze_contact_typ',
         );
 
         $contactlist = get_posts($args);
@@ -152,12 +90,11 @@ class Data
         return $contactselect;
     }
 
-
     public static function get_standortdata()
     {
         $args = array(
             'post_type' => 'location',
-            'numberposts' => -1
+            'numberposts' => -1,
         );
 
         $standortlist = get_posts($args);
@@ -183,7 +120,6 @@ class Data
         }
         return $default_rrze_contact_typ;
     }
-
 
     //gibt die Werte des Standorts an, für Standort-Synchronisation $edfaults=1
     public static function get_fields_standort($id, $standort_id, $defaults)
@@ -257,10 +193,10 @@ class Data
         return $res;
     }
 
-    // $id = ID des Personeneintrags, 
-    // $standort_id = ID des Standorteintrags, 
-    // $rrze_contact_var = Bezeichnung des Feldes im Personenplugin, 
-    // $defaults = Default-Wert 1 für Ausgabe der hinterlegten Werte im Personeneingabeformular    
+    // $id = ID des Personeneintrags,
+    // $standort_id = ID des Standorteintrags,
+    // $rrze_contact_var = Bezeichnung des Feldes im Personenplugin,
+    // $defaults = Default-Wert 1 für Ausgabe der hinterlegten Werte im Personeneingabeformular
     public static function sync_standort($id, $standort_id, $rrze_contact_var, $defaults)
     {
         $value = get_post_meta($standort_id, 'rrze_contact_' . $rrze_contact_var, true);
@@ -280,7 +216,6 @@ class Data
         }
         return $val;
     }
-
 
     public static function get_standort_defaults($id = 0)
     {
@@ -319,7 +254,7 @@ class Data
                         } elseif (($sorttype == 'familyName') || ($sorttype == 'nachname') || ($sorttype == 'name')) {
                             $sortname = $fields['familyName'] . " - " . $fields['firstName'];
                         } elseif ($sorttype == 'title') {
-                            $sortname =  $fields['contact_title'];
+                            $sortname = $fields['contact_title'];
                         } elseif ($sorttype == 'sortierfeld') {
                             if (!empty($fields['sortField'])) {
                                 $sortname = $fields['sortField'];
@@ -327,7 +262,7 @@ class Data
                                 $sortname = "Z " . $fields['contact_title'];
                             }
                         } else {
-                            $sortname =  $fields['contact_title'];
+                            $sortname = $fields['contact_title'];
                         }
 
                         break;
@@ -339,7 +274,7 @@ class Data
                                 $sortname = "Z " . $fields['contact_title'];
                             }
                         } else {
-                            $sortname =  $fields['contact_title'];
+                            $sortname = $fields['contact_title'];
                         }
 
                         break;
@@ -364,7 +299,6 @@ class Data
         }
     }
 
-
     public static function create_contact_image($id = 0, $size = 'contact-thumb-page-v3', $class = '', $defaultimage = false, $showlink = false, $linkttitle = '', $showcaption = true, $linktarget = '')
     {
         if ($id == 0) {
@@ -385,12 +319,11 @@ class Data
             }
         }
 
-
         if (has_post_thumbnail($id)) {
             $image_id = get_post_thumbnail_id($id);
             $imga = wp_get_attachment_image_src($image_id, $size);
             if (is_array($imga)) {
-                $imgsrcset =  wp_get_attachment_image_srcset($image_id, $size);
+                $imgsrcset = wp_get_attachment_image_srcset($image_id, $size);
                 $imgsrcsizes = wp_get_attachment_image_sizes($image_id, $size);
                 $imagedata['src'] = $imga[0];
                 $imagedata['width'] = $imga[1];
@@ -428,27 +361,6 @@ class Data
         return $res;
     }
 
-    public static function get_description($id = 0, $format = 'page', $fields = array())
-    {
-        if ($id = 0) {
-            return;
-        }
-        if (($format == 'sidebar') || ($format == 'kompakt')) {
-            if ((isset($fields)) && isset($fields['small_description']) && (!empty($fields['small_description']))) {
-                return $fields['small_description'];
-            }
-        }
-        if ((isset($fields)) && isset($fields['description']) && (!empty($fields['description']))) {
-            return $fields['description'];
-        }
-
-        // Fallback
-        if ((isset($fields)) && isset($fields['post_excerpt']) && (!empty($fields['post_excerpt']))) {
-            return $fields['post_excerpt'];
-        }
-
-        return;
-    }
     public static function get_morelink_url($data, $args)
     {
         $url = '';
@@ -482,28 +394,110 @@ class Data
         return $url;
     }
 
-    public static function rrze_contact_markup($id, $display = array(), $arguments = array())
+
+
+
+    // BK
+    private static function getDescription(&$post, &$format){
+        if (($format == 'sidebar') || ($format == 'kompakt')) {
+            if (!empty($post['small_description'])) {
+                return $post['small_description'];
+            }
+        }
+        if (!empty($post['description'])) {
+            return $post['description'];
+        }
+    
+        // Fallback
+        if (!empty($post['post_excerpt'])) {
+            return $post['post_excerpt'];
+        }else{
+            return '';
+        }
+    }
+
+    // BK
+    public static function getContactData($postID, $format = 'page')
     {
-        if ($id == 0) {
+        $aRet = [];
+
+        $post = get_post($postID, ARRAY_N);
+        $postMeta = get_post_meta($postID);
+
+        $desc = self::getDescription($post, $format);
+        if (!empty($desc)) {
+            $aRet['description'] = $desc;
+        }
+
+        if (!empty($post['post_content'])) {
+            $aRet['post_content'] = $post['post_content'];
+        }
+
+        $aRet['permalink'] = get_permalink($postID);
+
+        $aFields = getFields('contact');
+        foreach ($aFields as $aDetails) {
+            if (!empty($postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0])) {
+                $aRet[$aDetails['name']] = $postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0];
+            }
+        }
+
+        $aGroups = ['locations', 'consultations'];
+        foreach ($aGroups as $group) {
+            if (!empty($postMeta[RRZE_CONTACT_PREFIX . $group . 'Group'])) {
+                $aLocations = unserialize($postMeta[RRZE_CONTACT_PREFIX . $group . 'Group'][0]);
+                foreach ($aLocations as $location) {
+                    $aTmp = [];
+                    foreach ($location as $field => $value) {
+                        $fieldName = substr($field, strlen(RRZE_CONTACT_PREFIX));
+                        $aTmp[$fieldName] = $value;
+                    }
+                    $aRet[$group][] = $aTmp;
+                }
+            }
+        }
+
+        if (!empty($postMeta[RRZE_CONTACT_PREFIX . 'consultation_headline'][0])) {
+            $aRet['consultation_headline'] = $postMeta[RRZE_CONTACT_PREFIX . 'consultation_headline'][0];
+        }
+
+        if (!empty($postMeta[RRZE_CONTACT_PREFIX . 'consultation_notice'][0])) {
+            $aRet['consultation_notice'] = $postMeta[RRZE_CONTACT_PREFIX . 'consultation_notice'][0];
+        }
+
+        $aFields = getFields('socialmedia');
+        foreach ($aFields as $aDetails) {
+            if (!empty($postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0])) {
+                $aRet[$aDetails['name']] = $postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0];
+            }
+        }
+
+        return $aRet;
+    }
+
+    public static function rrze_contact_markup($postID, $display = array(), $arguments = array())
+    {
+        if ($postID == 0) {
             return;
         }
 
-        $fields = self::get_contact_data($id);
+
+        // BK 2DO : getContactData() display-fields übergeben
+        $fields = self::getContactData($postID);
+
+
         $viewopts = self::get_viewsettings();
 
         $content = '';
-        wp_enqueue_style('rrze-contact');
+        // wp_enqueue_style('rrze-contact');
 
-        $fields['description'] = self::get_description($id, $arguments['format'], $fields);
+        // $fields['description'] = self::get_description($id, $arguments['format'], $fields);
         $fields['morelink'] = self::get_morelink_url($fields, $viewopts);
 
         $data = self::filter_fields($fields, $display);
 
-
-
         $fullname = Schema::create_Name($data, 'name', '', 'a', false, $viewopts);
-        $hoursavailable_output  = Schema::create_ContactPoint($data);
-
+        $hoursavailable_output = Schema::create_ContactPoint($data);
 
         $class = 'rrze-contact';
         if (isset($viewopts['view_thumb_size'])) {
@@ -531,8 +525,6 @@ class Data
 
         $content .= '<div class="' . $class . '" itemscope itemtype="http://schema.org/Person">' . "\n";
 
-
-
         $content .= '<div class="row">';
 
         if (isset($display['bild']) && (!empty($display['bild']))) {
@@ -550,13 +542,9 @@ class Data
             $hstart = 2;
         }
 
-
         $content .= '<h' . $hstart . '>';
         $content .= $fullname;
         $content .= '</h' . $hstart . '>';
-
-
-
 
         $datacontent = '';
         if (isset($viewopts['view_some_position']) && $viewopts['view_some_position'] == 'nach-name') {
@@ -581,7 +569,6 @@ class Data
         }
         $datacontent .= Schema::create_Organization($orgadata, 'p', 'worksFor', '', false, false, false);
 
-
         if ((!isset($data['connection_only']))
             || ((isset($data['connection_only']) && $data['connection_only'] == false))
         ) {
@@ -596,7 +583,6 @@ class Data
             $datacontent .= Schema::create_SocialMedialist($data);
         }
 
-
         if ((!empty($data['connection_text']) || !empty($data['connection_options']) || !empty($data['connections'])) && isset($display['ansprechpartner']) && $display['ansprechpartner'] == true) {
             $datacontent .= self::rrze_contact_connection($data['connection_text'], $data['connection_options'], $data['connections'], $hstart);
         }
@@ -606,14 +592,12 @@ class Data
             $content .= '</div>';
         }
 
-
-
         $morecontent = '';
         if (isset($display['sprechzeiten']) && $display['sprechzeiten'] == true) {
             if ((!isset($data['connection_only']))
                 || ((isset($data['connection_only']) && $data['connection_only'] == false))
             ) {
-                $morecontent .=   Schema::create_ContactPoint($data);
+                $morecontent .= Schema::create_ContactPoint($data);
             }
         }
 
@@ -628,21 +612,22 @@ class Data
         }
 
         if (!empty($morecontent)) {
-            $content .= '</div><div class="contact-default-more">';   // ende div class compactindex
+            $content .= '</div><div class="contact-default-more">'; // ende div class compactindex
             $content .= $morecontent;
         }
 
-        $content .= '</div>';   // row 
+        $content .= '</div>'; // row
 
         $content .= '</div>';
         $content .= '</div>';
         return $content;
     }
 
+    
+
     public static function rrze_contact_page($id, $display = array(), $arguments = array(), $is_shortcode = false)
     {
         $fields = self::get_contact_data($id);
-
 
         wp_enqueue_style('rrze-contact');
         $viewopts = self::get_viewsettings();
@@ -652,7 +637,6 @@ class Data
         $fields['morelink'] = self::get_morelink_url($fields, $viewopts);
         $data = self::filter_fields($fields, $display);
 
-
         if ((isset($arguments['hstart'])) && (!empty($arguments['hstart']))) {
             $hstart = intval($arguments['hstart']);
         } else {
@@ -661,7 +645,6 @@ class Data
         if (($hstart < 1) || ($hstart > 6)) {
             $hstart = 2;
         }
-
 
         $class = 'rrze-contact page';
         if ((isset($arguments['class'])) && (!empty($arguments['class']))) {
@@ -695,9 +678,7 @@ class Data
             $data['workLocation'] = $viewopts['view_raum_prefix'] . ' ' . $data['workLocation'];
         }
 
-
         $content = '<div class="' . $class . '" itemscope itemtype="http://schema.org/Person">';
-
 
         // if ( $is_shortcode) {
         $data['morelink'] = '';
@@ -724,7 +705,6 @@ class Data
         }
         $content .= Schema::create_Organization($orgadata, 'p', 'worksFor', '', false, false, false);
 
-
         if ((!isset($data['connection_only'])) ||
             ((isset($data['connection_only']) && $data['connection_only'] == false))
         ) {
@@ -742,9 +722,8 @@ class Data
         if ((!isset($data['connection_only'])) ||
             ((isset($data['connection_only']) && $data['connection_only'] == false))
         ) {
-            $content .=   Schema::create_ContactPoint($data, 'div', 'contactPoint', '', 'h3');
+            $content .= Schema::create_ContactPoint($data, 'div', 'contactPoint', '', 'h3');
         }
-
 
         $content .= '</div>';
         $content .= '</div>';
@@ -799,7 +778,7 @@ class Data
         }
         $content .= '<tr class="contact-info" itemscope itemtype="http://schema.org/Person">';
         $content .= '<td>' . Schema::create_Name($data, 'name', '', 'a', false, $viewopts) . '</td>';
-        $content .=  Schema::create_contactpointlist($data, '', '', '', 'td', $viewopts, true, false);
+        $content .= Schema::create_contactpointlist($data, '', '', '', 'td', $viewopts, true, false);
 
         $showorg = false;
         $orgadata = [];
@@ -815,11 +794,11 @@ class Data
                 $orgadata['department'] = $data['department'];
             }
         }
-        if ($showorg){
+        if ($showorg) {
             $org = Schema::create_Organization($orgadata, 'td', 'worksFor', '', false, false, false);
-            if (!empty($org)){
+            if (!empty($org)) {
                 $content .= $org;
-            }else{
+            } else {
                 $content .= "<td>&nbsp;</td>";
             }
         }
@@ -831,13 +810,12 @@ class Data
             if ((!isset($data['connection_only'])) ||
                 ((isset($data['connection_only']) && $data['connection_only'] == false))
             ) {
-                $content .= '<td>' .  Schema::create_ContactPoint($data) . '</td>';
+                $content .= '<td>' . Schema::create_ContactPoint($data) . '</td>';
             }
         }
         if (isset($display['socialmedia']) && $display['socialmedia']) {
             $content .= "<td>" . Schema::create_SocialMedialist($data) . '</td>';
         }
-
 
         $content .= '</tr>';
 
@@ -870,14 +848,13 @@ class Data
             }
         }
 
-
         $content .= '<div class="' . $class . '" itemscope itemtype="http://schema.org/Person">';
 
         if ((isset($display['bild'])) && (!empty($display['bild']))) {
             $thisurl = '';
             if (isset($viewopts['view_card_linkimage']) && $viewopts['view_card_linkimage'] == true) {
                 if (isset($data['morelink'])) {
-                    $thisurl  = $data['morelink'];
+                    $thisurl = $data['morelink'];
                 }
             }
             if ($thisurl) {
@@ -902,8 +879,6 @@ class Data
         $content .= $fullname;
         $content .= '</h' . $hstart . '>';
 
-
-
         if (isset($data['jobTitle']) && (!empty($data['jobTitle']))) {
             $content .= '<span class="contact-info-position" itemprop="jobTitle">' . $data['jobTitle'] . '</span><br>';
         }
@@ -912,12 +887,11 @@ class Data
             $viewopts['view_telefonlink'] = true;
         }
 
-        $content .=  Schema::create_contactpointlist($data, 'ul', '', 'contactpoints', 'li', $viewopts);
+        $content .= Schema::create_contactpointlist($data, 'ul', '', 'contactpoints', 'li', $viewopts);
 
         if (isset($display['socialmedia']) && $display['socialmedia']) {
-            $content .=  Schema::create_SocialMedialist($data);
+            $content .= Schema::create_SocialMedialist($data);
         }
-
 
         $content .= '</div>';
 
@@ -932,7 +906,6 @@ class Data
         $fields = self::get_contact_data($id);
         $viewopts = self::get_viewsettings();
 
-
         $content = '';
         wp_enqueue_style('rrze-contact');
 
@@ -941,13 +914,11 @@ class Data
 
         $data = self::filter_fields($fields, $display);
 
-
         if ((isset($viewopts['view_raum_prefix'])) && (!empty(trim($viewopts['view_raum_prefix'])))
             && (isset($data['workLocation']) && (!empty($data['workLocation'])))
         ) {
             $data['workLocation'] = $viewopts['view_raum_prefix'] . ' ' . $data['workLocation'];
         }
-
 
         if ($display['format'] == 'liste') {
             $content .= '<li itemscope itemtype="http://schema.org/Person">';
@@ -956,7 +927,6 @@ class Data
             $content .= '<span itemscope itemtype="http://schema.org/Person">';
             $content .= Schema::create_Name($data, 'name', '', 'a', true, $viewopts);
         }
-
 
         $cp = '';
         if ((!isset($data['connection_only'])) ||
@@ -989,8 +959,6 @@ class Data
         return $content;
     }
 
-
-
     public static function rrze_contact_sidebar($id, $display = array(), $arguments = array())
     {
         if ($id == 0) {
@@ -999,7 +967,6 @@ class Data
         $fields = self::get_contact_data($id);
         $viewopts = self::get_viewsettings();
 
-
         $content = '';
         wp_enqueue_style('rrze-contact');
 
@@ -1007,8 +974,6 @@ class Data
         $fields['morelink'] = self::get_morelink_url($fields, $viewopts);
 
         $data = self::filter_fields($fields, $display);
-
-
 
         if (isset($arguments['hstart'])) {
             $hstart = intval($arguments['hstart']);
@@ -1020,8 +985,6 @@ class Data
         }
 
         $fullname = Schema::create_Name($data, 'name', '', 'a', false, $viewopts);
-
-
 
         $class = 'rrze-contact contact sidebar';
         if (isset($viewopts['view_thumb_size'])) {
@@ -1073,7 +1036,6 @@ class Data
             $content .= Schema::create_SocialMedialist($data);
         }
 
-
         if (isset($data['jobTitle']) && (!empty($data['jobTitle']))) {
             $content .= '<span class="contact-info-position" itemprop="jobTitle">' . $data['jobTitle'] . '</span><br>';
         }
@@ -1085,7 +1047,6 @@ class Data
             $orgadata['department'] = $data['department'];
         }
         $content .= Schema::create_Organization($orgadata, 'p', 'worksFor', '', false, false, false);
-
 
         if ((!isset($data['connection_only'])) ||
             ((isset($data['connection_only']) && $data['connection_only'] == false))
@@ -1104,11 +1065,10 @@ class Data
                 ((isset($data['connection_only']) && $data['connection_only'] == false))
             ) {
                 $sprechzeitentitletag = 'h' . ($hstart + 1);
-                $content .=   Schema::create_ContactPoint($data, 'div', 'contactPoint', '', $sprechzeitentitletag);
+                $content .= Schema::create_ContactPoint($data, 'div', 'contactPoint', '', $sprechzeitentitletag);
             }
         }
         $content .= '</div>';
-
 
         if (!empty($data['description']) && isset($display['description'])) {
             $content .= '<div class="contact-info-description"><span class="screen-reader-text">' . __('Beschreibung', 'rrze-contact') . ': </span><span itemprop="description">' . $data['description'] . '</span></div>' . "\n";
@@ -1117,8 +1077,6 @@ class Data
         if ((!empty($data['connection_text']) || !empty($data['connection_options']) || !empty($data['connections'])) && isset($display['ansprechpartner']) && $display['ansprechpartner'] == true) {
             $content .= self::rrze_contact_connection($data['connection_text'], $data['connection_options'], $data['connections'], $hstart);
         }
-
-
 
         $content .= '</div><!-- /sidebar -->';
         $content .= '</div><!-- /row -->';
@@ -1133,8 +1091,6 @@ class Data
         $content = '';
         $contactlist = '';
         $viewopts = self::get_viewsettings();
-
-
 
         foreach ($connections as $key => $value) {
             extract($connections[$key]);
@@ -1229,7 +1185,6 @@ class Data
             return $input;
         }
 
-
         foreach ($input as $key => $value) {
             if (isset($filter[$key])) {
                 if ($filter[$key] == true) {
@@ -1241,8 +1196,8 @@ class Data
         }
 
         /*
-	 * Felder, die nicht gelöscht werden sollen, wieder einfügen
-	 */
+         * Felder, die nicht gelöscht werden sollen, wieder einfügen
+         */
         $dontfilter = "content, morelink, permalink, connection_only, hoursAvailable_group, contact_title";
         $stay = explode(',', $dontfilter);
         foreach ($stay as $value) {
@@ -1253,8 +1208,8 @@ class Data
         }
 
         /*
-	 * Sonderbehandlung für Gruppenfilter, bei denen sonst Infos wegfallen
-	 */
+         * Sonderbehandlung für Gruppenfilter, bei denen sonst Infos wegfallen
+         */
         if ((isset($filter['socialmedia'])) && ($filter['socialmedia'])) {
             $list = getFields('socialmedia');
             foreach ($list as $key => $value) {
@@ -1287,8 +1242,6 @@ class Data
             }
         }
 
-
-
         if (((isset($filter['ansprechpartner'])) && ($filter['ansprechpartner'])) || ((isset($input['connection_only']) && $input['connection_only'] == false))) {
             $adressfields = "connections, connection_text, connection_options";
 
@@ -1304,8 +1257,6 @@ class Data
         return $res;
     }
 
-
-
     public static function create_fau_standort($id, $showfields, $titletag = 'h2')
     {
         if (!isset($id)) {
@@ -1315,7 +1266,7 @@ class Data
         if (!is_array($showfields)) {
             return;
         }
-        $fields = self::get_fields($id, get_post_meta($id, 'rrze_contact_univis_id', true), 0);
+        $fields = self::get_fields($id, get_post_meta($id, 'rrze_contact_univisID', true), 0);
         $permalink = get_permalink($id);
 
         if (isset($showfields['kurzbeschreibung']) && ($showfields['kurzbeschreibung'])) {
@@ -1350,9 +1301,8 @@ class Data
         }
 
         if (!empty($schema)) {
-            $content .=  $schema;
+            $content .= $schema;
         }
-
 
         if (isset($showfields['bild']) && ($showfields['bild']) && has_post_thumbnail($id)) {
             $content .= Data::create_contact_image($id, 'full', "standort-image", false, false, '');
@@ -1377,7 +1327,7 @@ class Data
         if (!is_array($showfields)) {
             return;
         }
-        $fields = self::get_fields($id, get_post_meta($id, 'rrze_contact_univis_id', true), 0);
+        $fields = self::get_fields($id, get_post_meta($id, 'rrze_contact_univisID', true), 0);
         $permalink = get_permalink($id);
 
         if (isset($showfields['kurzbeschreibung']) && ($showfields['kurzbeschreibung'])) {
@@ -1416,9 +1366,8 @@ class Data
         }
 
         if (!empty($schema)) {
-            $content .=  $schema;
+            $content .= $schema;
         }
-
 
         if (isset($showfields['bild']) && ($showfields['bild']) && has_post_thumbnail($id)) {
             $content .= Data::create_contact_image($id, 'full', "standort-image", false, false, '');
@@ -1433,8 +1382,6 @@ class Data
         return $content;
     }
 
-
-
     // Get Data Cache
     private static function get_data_cache()
     {
@@ -1444,7 +1391,7 @@ class Data
         return;
     }
 
-    // Set Data Cache 
+    // Set Data Cache
     private static function set_data_cache($id, $data)
     {
         if ((isset($id)) && (isset($data))) {
@@ -1465,8 +1412,8 @@ class Data
             if ((isset($cacheddata)) && (isset($cacheddata[$id]))) {
                 return $cacheddata[$id];
             }
-            $univis_id = get_post_meta($id, 'rrze_contact_univis_id', true);
-            $data = self::get_fields($id, $univis_id, 0);
+            $univisID = get_post_meta($id, 'rrze_contact_univisID', true);
+            $data = self::get_fields($id, $univisID, 0);
             $thispost = get_post($id);
             $postContent = $thispost->post_content;
             if (isset($postContent)) {
@@ -1487,39 +1434,39 @@ class Data
         return;
     }
 
-    //gibt die Werte der Person an, Inhalte abhängig von UnivIS, 
-    //Übergabewerte: ID der Person, UnivIS-ID der Person, 
-    //Default-Wert 1 für Ausgabe der hinterlegten Werte im Personeneingabeformular, 
+    //gibt die Werte der Person an, Inhalte abhängig von UnivIS,
+    //Übergabewerte: ID der Person, UnivIS-ID der Person,
+    //Default-Wert 1 für Ausgabe der hinterlegten Werte im Personeneingabeformular,
     //$ignore_connection=1 wenn die verknüpften Kontakte einer Person ignoriert werden sollen (z.B. wenn die Person selbst schon eine verknüpfte Kontaktcontact ist)
-    public static function get_fields($id, $univis_id, $defaults, $ignore_connection = 0, $setfields = false)
+    public static function get_fields($id, $univisID, $defaults, $ignore_connection = 0, $setfields = false)
     {
-        $univis_sync = 0;
+        $univisSync = 0;
         $contact = array();
-        if ($univis_id) {
+        if ($univisID) {
             $univis = new UnivIS();
-            $contact = $univis->getPerson('id=' . $univis_id);
-            $univis_sync = 1;
+            $contact = $univis->getPerson('id=' . $univisID);
+            $univisSync = 1;
         }
         $fields = array();
         // Ab hier Definition aller Feldzuordnungen, $key ist Name der Metaboxen, $value ist Name in UnivIS
         $fields_univis = array(
-            'department'    => 'orgname',
-            'honorificPrefix'    => 'title',
-            'honorificSuffix'    => 'atitle',
-            'firstName'        => 'firstName',
-            'familyName'    => 'lastname',
-            'jobTitle'        => 'work',
+            'department' => 'orgname',
+            'honorificPrefix' => 'title',
+            'honorificSuffix' => 'atitle',
+            'firstName' => 'firstName',
+            'familyName' => 'lastname',
+            'jobTitle' => 'work',
         );
         $fields_univis_location = array(
-            'telephone'        => 'tel',
-            'mobilePhone'   => 'mobile',
-            'pgp'        => 'pgp',
-            'faxNumber'        => 'fax',
-            'email'        => 'email',
-            'url'        => 'url',
+            'telephone' => 'tel',
+            'mobilePhone' => 'mobile',
+            'pgp' => 'pgp',
+            'faxNumber' => 'fax',
+            'email' => 'email',
+            'url' => 'url',
             'streetAddress' => 'street',
             'addressLocality' => 'ort',
-            'workLocation'  => 'office',
+            'workLocation' => 'office',
         );
         $fields_univis_officehours = array(
             'hoursAvailable_group' => 'officehours',
@@ -1528,28 +1475,28 @@ class Data
         $subfields_univis_officehours = array(
             /* von der UnivIS-Doku:
              * repeat mode is encoded in a string
-             * syntax: <modechar><numbers><space><args>                  
-             * mode  description                  
-             * d     daily                  
+             * syntax: <modechar><numbers><space><args>
+             * mode  description
+             * d     daily
              * w     weekly
-             * m     monthly                  
-             * y     yearly                 
+             * m     monthly
+             * y     yearly
              * b     block
              * numbers: number of skips between repeats
              * example:  "d2":      every second day
-             * weekly and monthly have additional arguments:  
-             * weekly: argument is comma-separated list of weekdays where event is repeated                  
-             * example:  "w3 1,2":  every third week on Monday and Tuesday                  
+             * weekly and monthly have additional arguments:
+             * weekly: argument is comma-separated list of weekdays where event is repeated
+             * example:  "w3 1,2":  every third week on Monday and Tuesday
              * also possible: „we“ and „wo"
-             * e = even calender week                  
-             * o = odd calender week                  
-             * monthly: argument has syntax "<submodechar><numbers>"                 
-             * submode description                  
-             * d       monthly by date                  
-             * w       monthly by week                  
-             * numbers: monthly by date: number of day (1-31)                  
-             * monthly by week: number of week (1-5,e,o))                  
-             * special case: 5 = last week of month                
+             * e = even calender week
+             * o = odd calender week
+             * monthly: argument has syntax "<submodechar><numbers>"
+             * submode description
+             * d       monthly by date
+             * w       monthly by week
+             * numbers: monthly by date: number of day (1-31)
+             * monthly by week: number of week (1-5,e,o))
+             * special case: 5 = last week of month
              * examples:  "m1 d23": on the 23rd day of every month
              * "m2 w5":  in the last week of every second month
              * Laut UnivIS-Live-Daten werden für die Sprechzeiten aber nur wöchentlich an verschiedenen Tagen, 2-wöchentlich und täglich verwendet. Sollte noch was anderes benötigt werden, muss nachprogrammiert werden.
@@ -1567,8 +1514,8 @@ class Data
         );
 
         /*
-	 * Felder, die nur aus FAU Person kommen und nicht aus UnivIS:
-	 */
+         * Felder, die nur aus FAU Person kommen und nicht aus UnivIS:
+         */
         $fields_faucontact = array(
             'contactPoint' => '',
             'typ' => '',
@@ -1578,15 +1525,13 @@ class Data
             'hoursAvailable_text' => '',
             'hoursAvailable' => '',
             'description' => '',
-            'small_description' => ''
+            'small_description' => '',
         );
-
-
 
         $fields_exception = array(
             'postalCode' => '',
         );
-        $fields_connection = array(             // hier alle Felder ergänzen, die für die Anzeige der verknüpften Kontakte benötigt werden
+        $fields_connection = array( // hier alle Felder ergänzen, die für die Anzeige der verknüpften Kontakte benötigt werden
             'connection_text' => '',
             'connection_only' => '',
             'connection_options' => array(),
@@ -1610,7 +1555,7 @@ class Data
             'connection_link' => 'link',
         );
         foreach ($fields_univis as $key => $value) {
-            if ($univis_sync && array_key_exists($value, $contact)) {
+            if ($univisSync && array_key_exists($value, $contact)) {
                 if ($value == 'orgname') {
                     $language = get_locale();
                     if (strpos($language, 'en_') === 0 && array_key_exists('orgname_en', $contact)) {
@@ -1633,7 +1578,7 @@ class Data
             $fields[$key] = $value;
         }
         foreach ($fields_univis_location as $key => $value) {
-            if ($univis_sync && array_key_exists('locations', $contact) && array_key_exists('location', $contact['locations'][0])) {
+            if ($univisSync && array_key_exists('locations', $contact) && array_key_exists('location', $contact['locations'][0])) {
                 $contact_location = $contact['locations'][0]['location'][0];
                 if (($key == 'telephone' || $key == 'faxNumber' || $key == 'mobilePhone') && !$defaults) {
                     $phone_number = sync_univis($id, $contact_location, $key, $value, $defaults);
@@ -1653,7 +1598,7 @@ class Data
                 }
             } else {
                 if ($defaults) {
-                    $value =  '<p class="cmb2-metabox-description">' . __('In UnivIS ist hierfür kein Wert hinterlegt.', 'rrze-contact') . '</p>';
+                    $value = '<p class="cmb2-metabox-description">' . __('In UnivIS ist hierfür kein Wert hinterlegt.', 'rrze-contact') . '</p>';
                 } else {
                     if ($key == 'telephone' || $key == 'faxNumber' || $key == 'mobilePhone') {
                         $phone_number = Sanitize::phone(get_post_meta($id, 'rrze_contact_' . $key, true));
@@ -1667,8 +1612,8 @@ class Data
         }
 
         foreach ($fields_univis_officehours as $key => $value) {
-            // ist eine UnivIS-ID vorhanden?      
-            switch ($univis_sync) {
+            // ist eine UnivIS-ID vorhanden?
+            switch ($univisSync) {
                 case true:
                     if (array_key_exists('officehours', $contact) && array_key_exists('officehour', $contact['officehours'][0])) { // sind in UnivIS überhaupt Sprechzeiten hinterlegt?
                         if (get_post_meta($id, 'rrze_contact_univis_sync', true) || $defaults) { // ist der Haken zur Synchronisation da bzw. werden die UnivIS-Werte für das Backend abgefragt
@@ -1686,7 +1631,7 @@ class Data
                             }
                             if ($defaults) {
                                 $value = implode(',', $officehours);
-                                $officehours =  '<p class="cmb2-metabox-description">' . __('Aus UnivIS angezeigter Wert:', 'rrze-contact') . ' <code>' . $value . '</code></p>';
+                                $officehours = '<p class="cmb2-metabox-description">' . __('Aus UnivIS angezeigter Wert:', 'rrze-contact') . ' <code>' . $value . '</code></p>';
                             }
                             break;
                         }
@@ -1695,7 +1640,7 @@ class Data
                         $officehours = '<p class="cmb2-metabox-description">' . __('In UnivIS ist hierfür kein Wert hinterlegt.', 'rrze-contact') . '</p>';
                         break;
                     }
-                default:  // keine UnivIS-ID da bzw. kein Haken bei Datenanzeige aus UnivIS => die Feldinhalte werden ausgegeben
+                default: // keine UnivIS-ID da bzw. kein Haken bei Datenanzeige aus UnivIS => die Feldinhalte werden ausgegeben
                     $contact_officehours = get_post_meta($id, 'rrze_contact_hoursAvailable_group', true);
                     $officehours = array();
                     if (!empty($contact_officehours)) {
@@ -1751,8 +1696,6 @@ class Data
             $fields[$datakey] = $value;
         }
 
-
-
         foreach ($fields_exception as $key => $value) {
             if ($key == 'postalCode') {
                 if (get_post_meta($id, 'rrze_contact_univis_sync', true) && array_key_exists('locations', $contact) && array_key_exists('location', $contact['locations'][0]) && array_key_exists('ort', $contact['locations'][0]['location'][0])) {
@@ -1763,12 +1706,14 @@ class Data
             }
             $fields[$key] = $value;
         }
-        if (!$ignore_connection)
+        if (!$ignore_connection) {
             $connections = get_post_meta($id, 'rrze_contact_connection_id', true);
+        }
+
         if (!empty($connections)) {
             $connection = array();
             foreach ($connections as $ckey => $cvalue) {
-                $connection_fields[$ckey] = self::get_fields($cvalue, get_post_meta($cvalue, 'rrze_contact_univis_id', true), 0, 1);
+                $connection_fields[$ckey] = self::get_fields($cvalue, get_post_meta($cvalue, 'rrze_contact_univisID', true), 0, 1);
                 $connection_fields[$ckey]['nr'] = $cvalue;
             }
             foreach ($connection_fields as $key => $value) {
@@ -1791,8 +1736,6 @@ class Data
         }
         return $fields;
     }
-
-
 
     public static function get_default_display($format = '')
     {
@@ -1848,8 +1791,7 @@ class Data
         return $display;
     }
 
-
-    public static function get_display_field($format = '', $show = '',  $hide = '')
+    public static function get_display_field($format = '', $show = '', $hide = '')
     {
         $display = self::get_default_display($format);
         $showfields = self::parse_liste($display, true);
@@ -1867,8 +1809,6 @@ class Data
         }
         return $showfields;
     }
-
-
 
     public static function map_old_keys($liste)
     {

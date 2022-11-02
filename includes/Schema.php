@@ -1,7 +1,7 @@
 <?php
 
 namespace RRZE\Contact;
-use function RRZE\Contact\Config\getSocialMediaList;
+use function RRZE\Contact\Config\getFields;
 
 defined('ABSPATH') || exit;
 
@@ -14,7 +14,7 @@ class Schema
 
 	public static function get_SocialMediaList()
 	{
-		return getSocialMediaList(); // Standard-Array für zukünftige Optionen
+		return getFields('socialmedia'); // Standard-Array für zukünftige Optionen
 	}
 
 	public static function create_Place($data, $itemprop = 'location', $class = '', $surroundingtag = 'div', $widthbreak = true, $widthaddress = true, $phoneuri = true)
@@ -480,6 +480,12 @@ class Schema
 			$res .= '>';
 		}
 		$screenreaderadd = self::create_NameforAttributs($data);
+
+
+		echo '<pre>';
+		var_dump($data);
+		exit;
+
 
 		$SocialMedia = self::get_SocialMediaList();
 		foreach ($SocialMedia as $key => $value) {

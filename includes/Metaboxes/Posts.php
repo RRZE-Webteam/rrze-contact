@@ -27,7 +27,7 @@ class Posts extends Metaboxes {
     
 
     public function cmb2_posts_metaboxes( $meta_boxes ) {
-	$prefix = $this->prefix;
+	$prefix = RRZE_CONTACT_PREFIX;
 	
 	if (isset($this->settings->options) && isset($this->settings->options['constants_backend_view_metabox_contactlist']) && ($this->settings->options['constants_backend_view_metabox_contactlist'])) {
 	    // Meta-Box zur Anzeige der verfügbaren Kontakte auf post und page, um die Personen-ID schneller herauszufinden

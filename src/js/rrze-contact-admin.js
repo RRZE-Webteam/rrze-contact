@@ -3,18 +3,18 @@
  */
 jQuery(document).ready(function ($) {
 
-	$('#rrze_contact_showhint').hide();
-	$(document).on('change', '#rrze_contact_contactselect', function () {
+	$('#_rrze_contact_showhint').hide();
+	$(document).on('change', '#_rrze_contact_contactselect', function () {
 
-		var value = $('#rrze_contact_contactselect').val();
+		var value = $('#_rrze_contact_contactselect').val();
 		var shortcode = '[contact id="' + value + '"]';
 
-		$('#rrze_contact_showhint').show();
+		$('#_rrze_contact_showhint').show();
 		$('#copyshortcode').text(shortcode);
 	});
 
 
-	$('#rrze_contact_cp_shortcode').bind('click', function (event) {
+	$('#_rrze_contact_cp_shortcode').bind('click', function (event) {
 		var $tempElement = $("<input>");
 		$("body").append($tempElement);
 		var copyText = $('#copyshortcode').text();
@@ -24,14 +24,14 @@ jQuery(document).ready(function ($) {
 	});
 
 
-	if ($("#rrze_contact_standort_sync").is(":checked")) {
+	if ($("#_rrze_contact_standort_sync").is(":checked")) {
 		$(".cmb2-id-rrze-contact-streetAddress").hide();
 		$(".cmb2-id-rrze-contact-postalCode").hide();
 		$(".cmb2-id-rrze-contact-addressLocality").hide();
 		$(".cmb2-id-rrze-contact-addressCountry").hide();
 	}
 
-	$("#rrze_contact_standort_sync").click(function () {
+	$("#_rrze_contact_standort_sync").click(function () {
 		if ($(this).is(":checked")) {
 			$(".cmb2-id-rrze-contact-streetAddress").hide(300);
 			$(".cmb2-id-rrze-contact-postalCode").hide(300);

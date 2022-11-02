@@ -152,7 +152,8 @@ class UnivIS extends API
         if ($apiResponse['valid']) {
             return [
                 'valid' => true,
-                'content' => sanitizeAll($this->mapData($apiResponse['content'])),
+                // 'content' => sanitizeAll($this->mapData($apiResponse['content'])),
+                'content' => $this->mapData($apiResponse['content']),
             ];
         } else {
             return $apiResponse;

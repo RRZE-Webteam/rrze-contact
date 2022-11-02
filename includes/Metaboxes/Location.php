@@ -29,7 +29,7 @@ class Location extends Metaboxes
 
 	public function cmb2_location_metaboxes($meta_boxes)
 	{
-		$prefix = $this->prefix;
+		$prefix = RRZE_CONTACT_PREFIX;
 
 
 		// Meta-Box Locationinformation - fau_location_info

@@ -25,13 +25,12 @@ class Contact extends Taxonomy
     {
         add_action('init', [$this, 'register']);
         register_taxonomy_for_object_type($this->taxonomy, $this->postType);
+
         add_action('restrict_manage_posts', [$this, 'contact_restrict_manage_posts']);
         add_filter('parse_query', [$this, 'taxonomy_filter_post_type_request']);
-        // Kontakttyp als zusätzliche Spalte in Übersicht
 
         add_filter('manage_contact_posts_columns', array($this, 'change_columns'));
         add_action('manage_contact_posts_custom_column', array($this, 'custom_columns'), 10, 2);
-        // Sortierung der zusätzlichen Spalte
 
         add_filter('manage_edit-contact_sortable_columns', array($this, 'sortable_columns'));
         add_action('pre_get_posts', array($this, 'posttype_contact_custom_columns_orderby'));
@@ -80,22 +79,6 @@ class Contact extends Taxonomy
             ]
         );
     }
-
-    // public function register()
-    // {
-    //     register_taxonomy_for_object_type($this->taxonomy, $this->postType);
-    //     add_action('restrict_manage_posts', [$this, 'contact_restrict_manage_posts']);
-    //     add_filter('parse_query', [$this, 'taxonomy_filter_post_type_request']);
-    //     // Kontakttyp als zusätzliche Spalte in Übersicht
-
-    //     add_filter('manage_contact_posts_columns', array($this, 'change_columns'));
-    //     add_action('manage_contact_posts_custom_column', array($this, 'custom_columns'), 10, 2);
-    //     // Sortierung der zusätzlichen Spalte
-
-    //     add_filter('manage_edit-contact_sortable_columns', array($this, 'sortable_columns'));
-    //     add_action('pre_get_posts', array($this, 'posttype_contact_custom_columns_orderby'));
-
-    // }
 
     public function taxonomy_filter_post_type_request($query)
     {
@@ -148,7 +131,6 @@ class Contact extends Taxonomy
             'title' => __('Title', 'rrze-contact'),
             'thumb' => __('Image', 'rrze-contact'),
             'fullname' => __('Shown name', 'rrze-contact'),
-            'contact' => __('Contact', 'rrze-contact'),
             'source' => __('Data source', 'rrze-contact'),
             'author' => __('Editor', 'rrze-contact'),
             'date' => __('Date', 'rrze-contact'),
@@ -157,10 +139,34 @@ class Contact extends Taxonomy
         return $cols;
     }
 
+    private function getFullname(&$postID, &$postMeta){
+        $ret = '';
+
+        $ret = (!empty($postMeta[RRZE_CONTACT_PREFIX . 'honorificPrefix'][0]) ? $postMeta[RRZE_CONTACT_PREFIX . 'honorificPrefix'][0] . ' ' : '') . 
+            (!empty($postMeta[RRZE_CONTACT_PREFIX . 'firstName'][0]) ? $postMeta[RRZE_CONTACT_PREFIX . 'firstName'][0] . ' ' : '') .
+            (!empty($postMeta[RRZE_CONTACT_PREFIX . 'familyName'][0]) ? $postMeta[RRZE_CONTACT_PREFIX . 'familyName'][0] . ' ' : '') .
+            (!empty($postMeta[RRZE_CONTACT_PREFIX . 'honorificSuffix'][0]) ? '(' . $postMeta[RRZE_CONTACT_PREFIX . 'honorificSuffix'][0] . ')' : '');
+
+        if (empty($ret)){
+            $ret = get_the_title($postID);   
+        }
+
+        return $ret;
+    }
+
+    private function getSource(&$postMeta){
+        if (!empty($postMeta[RRZE_CONTACT_PREFIX . 'univisID'][0])){
+            return 'UnivIS (ID: <a target="univis" href="' . UNIVIS_URL . '?search=contacts&id=' . $postMeta[RRZE_CONTACT_PREFIX . 'univisID'][0] . '&show=info">' . $postMeta[RRZE_CONTACT_PREFIX . 'univisID'][0] . '</a>)';
+        }elseif (!empty($postMeta[RRZE_CONTACT_PREFIX . 'DIPID'])){
+            return 'UnivIS (ID: <a target="univis" href="' . DIP_URL . '?id=' . $postMeta[RRZE_CONTACT_PREFIX . 'DIPID'][0] . '>' . $postMeta[RRZE_CONTACT_PREFIX . 'DIPID'][0] . '</a>)';
+        }else{
+            return __('local', 'rrze-contact');
+        }
+    }
+
     public function custom_columns($column, $postID)
     {
-        $univis_id = get_post_meta($postID, 'rrze_contact_univis_id', true);
-        $dip_id = get_post_meta($postID, 'rrze_contact_dip_id', true);
+        $postMeta = get_post_meta($postID);
 
         switch ($column) {
             case 'ID':
@@ -170,26 +176,10 @@ class Contact extends Taxonomy
                 echo self::getContactImage($postID);
                 break;
             case 'fullname':
-                // $fullname = Schema::create_Name($data, '', '', 'span', false);
-                $fullname = '2DO';
-                if (empty(trim($fullname))) {
-                    $fullname = get_the_title($postID);
-                }
-                echo $fullname;
-                break;
-            case 'contact':
-                // echo $data['email'];
-                // echo Schema::create_contactpointlist($data, 'ul', '', '', 'li');
-
+                echo self::getFullname($postID, $postMeta);
                 break;
             case 'source':
-                if ($univis_id) {
-                    echo __('UnivIS', 'rrze-contact') . ' (ID: <a target="univis" href="' . UNIVIS_URL . '?search=contacts&id=' . $univis_id . '&show=info">' . $univis_id . '</a>)';
-                } elseif ($dip_id) {
-                    echo __('DIP', 'rrze-contact') . ' (ID: <a target="univis" href="' . DIP_URL . '?' . $dipid . '&show=info">' . $dipid . '</a>)';
-                } else {
-                    echo __('Local', 'rrze-contact');
-                }
+                echo self::getSource($postMeta);
                 break;
         }
     }
@@ -239,12 +229,12 @@ class Contact extends Taxonomy
                 $meta_query = array(
                     'relation' => 'OR',
                     array(
-                        'key' => 'rrze_contact_univis_id',
+                        'key' => 'rrze_contact_univisID',
                         'compare' => 'NOT EXISTS',
                         'value' => 0,
                     ),
                     array(
-                        'key' => 'rrze_contact_univis_id',
+                        'key' => 'rrze_contact_univisID',
                         'compare' => 'EXISTS',
                     ),
                 );
@@ -304,7 +294,7 @@ class Contact extends Taxonomy
                 $img['height'] = '160';    
             }
         } else {
-            $type = get_post_meta($this->prefix . 'type');
+            $type = get_post_meta(RRZE_CONTACT_PREFIX . 'type');
             $src = '';
 
             switch ($type) {

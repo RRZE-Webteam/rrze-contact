@@ -82,7 +82,7 @@ class Main
     {
         wp_register_style('rrze-contact-adminstyle', plugins_url('css/rrze-contact-admin.css', plugin_basename($this->pluginFile)));
         wp_enqueue_style('rrze-contact-adminstyle');
-        wp_register_script('rrze-contact-adminscripts', plugins_url('js/rrze-contact-admin.js', plugin_basename($this->pluginFile)));
+        wp_register_script('rrze-contact-adminscripts', plugins_url('src/js/rrze-contact-admin.js', plugin_basename($this->pluginFile)));
         wp_enqueue_script('rrze-contact-adminscripts');
         wp_enqueue_script('jquery');
 

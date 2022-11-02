@@ -38,6 +38,10 @@ class Contact extends Shortcode
 
         $displayfield = Data::get_display_field($atts['format'], $atts['show'], $atts['hide']);
 
+        // echo '<pre>';
+        // var_dump($displayfield);
+        // exit;
+
         if (!empty($atts['category'])) {
             return $this->shortcode_contactlist($atts, $content);
         }
@@ -88,23 +92,22 @@ class Contact extends Shortcode
                     $content = '';
             }
 
-            $list_ids = array_map('trim', explode(',', $atts['id']));
-            $number = count($list_ids);
+            $aPostIDs = array_map('trim', explode(',', $atts['id']));
+            $number = count($aPostIDs);
             $i = 1;
-            foreach ($list_ids as $value) {
-                $post = get_post($value);
+            foreach ($aPostIDs as $postID) {
+                $post = get_post($postID);
                 if ($post && $post->post_type == 'contact') {
-
                     switch ($format) {
                         case 'liste':
-                            $thisentry = Data::RRZE_Contact_shortlist($value, $displayfield, $atts);
+                            $thisentry = Data::RRZE_Contact_shortlist($postID, $displayfield, $atts);
                             if (!empty($thisentry)) {
                                 $content .= $thisentry;
                             }
                             break;
                         case 'name':
                         case 'shortlist':
-                            $thisentry = Data::RRZE_Contact_shortlist($value, $displayfield, $atts);
+                            $thisentry = Data::RRZE_Contact_shortlist($postID, $displayfield, $atts);
                             if (!empty($thisentry)) {
                                 $content .= $thisentry;
                                 if ($i < $number) {
@@ -114,20 +117,20 @@ class Contact extends Shortcode
                             break;
 
                         case 'table':
-                            $content .= Data::RRZE_Contact_tablerow($value, $displayfield, $atts);
+                            $content .= Data::RRZE_Contact_tablerow($postID, $displayfield, $atts);
                             break;
                         case 'page':
-                            $content .= Data::RRZE_Contact_page($value, $displayfield, $atts, true);
+                            $content .= Data::RRZE_Contact_page($postID, $displayfield, $atts, true);
                             break;
                         case 'sidebar':
-                            $content .= Data::RRZE_Contact_sidebar($value, $displayfield, $atts);
+                            $content .= Data::RRZE_Contact_sidebar($postID, $displayfield, $atts);
                             break;
                         case 'card':
-                            $content .= Data::RRZE_Contact_card($value, $displayfield, $atts);
+                            $content .= Data::RRZE_Contact_card($postID, $displayfield, $atts);
                             break;
 
                         default:
-                            $content .= Data::RRZE_Contact_markup($value, $displayfield, $atts);}
+                            $content .= Data::RRZE_Contact_markup($postID, $displayfield, $atts);}
                     $i++;
 
                 } else {

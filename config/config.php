@@ -12,6 +12,8 @@ defined('ABSPATH') || exit;
 
 define('UNIVIS_URL', 'http://univis.uni-erlangen.de/prg');
 define('DIP_URL', 'https://api.fau.de/pub/v1/mschema/contacts');
+define('RRZE_CONTACT_PREFIX', '_rrze_contact_'); // starts with an underscore to hide fields from custom fields list 
+
 
 
 function getOptionName()
@@ -97,16 +99,16 @@ function getFields($group = NULL)
     $aFields =
         [
         'contact' => [
-            [
-                'name' => 'univisID',
-                'label' => __('UnivIS ID', 'rrze-contact'),
-                'type' => 'hidden',
-            ],
-            [
-                'name' => 'IDM',
-                'label' => __('IDM', 'rrze-contact'),
-                'type' => 'hidden',
-            ],
+            // [
+            //     'name' => 'univisID',
+            //     'label' => __('UnivIS ID', 'rrze-contact'),
+            //     'type' => 'hidden',
+            // ],
+            // [
+            //     'name' => 'IDM',
+            //     'label' => __('IDM', 'rrze-contact'),
+            //     'type' => 'hidden',
+            // ],
             [
                 'name' => 'honorificPrefix',
                 'label' => __('Title (prefix)', 'rrze-contact'),
