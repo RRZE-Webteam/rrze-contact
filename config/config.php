@@ -21,9 +21,9 @@ function getOptionName()
     return 'rrze-contact';
 }
 
-function getConstants()
+function getConstants($group = null)
 {
-    $options = array(
+    $aFields = [
         'UnivIS_Transient' => 'sui_1k4fu7056Kl12a5',
         'images' => [
             /* Thumb for person-type; small for sidebar - Name: person-thumb */
@@ -46,12 +46,21 @@ function getConstants()
             'FAU-Techfak',
             'FAU-Jobs',
         ],
+        'bgColors' => [
+            'grau', 
+            'fau', 
+            'phil', 
+            'med', 
+            'nat', 
+            'tf', 
+            'rw',
+        ],
         'admin_posts_per_page' => 25,
+    ];
 
-    );
     // für ergänzende Optionen aus anderen Plugins
-    $options = apply_filters('fau_contact_constants', $options);
-    return $options; // Standard-Array für zukünftige Optionen
+    $aFields = apply_filters('fau_contact_constants', $aFields);
+    return (!empty($aFields[$group]) ? $aFields[$group] : $aFields);
 }
 
 /**
@@ -618,14 +627,34 @@ function getSettingsFields()
     return $aRet;
 }
 
+
+function getDisplayFields(&$shortcodeSettings, $format = '', $show = '', $hide = ''){
+
+    $aRet = [];
+    $aFormat = (!empty($shortcodeSettings['format']['values']) ? $shortcodeSettings['format']['values'] : []);
+
+    foreach($aFormat as $nr => $aVal){
+        if ($aVal['id'] == $format){
+            $aRet = $aVal['fields'];
+            break;
+        }
+    }
+
+    $aRet = array_diff($aRet, array_map('trim', explode(',', $hide)));
+    $aRet = $aRet + array_map('trim', explode(',', $show));
+
+    return $aRet;
+}
+
 /**
  * Gibt die Einstellungen der Parameter für Shortcode für den klassischen Editor und für Gutenberg zurück.
  *
  * @return array [description]
  */
-function getShortcodeSettings()
+function getShortcodeSettings($group = NULL)
 {
-    return [
+    $aFields =
+        [
         'contact' => [
             'block' => [
                 'blocktype' => 'rrze-contact/contact',
@@ -654,7 +683,6 @@ function getShortcodeSettings()
                 'label' => __('Category', 'rrze-contact'),
                 'type' => 'text', // Variablentyp der Eingabe
             ],
-
             'format' => [
                 'default' => '',
                 'field_type' => 'select',
@@ -662,40 +690,138 @@ function getShortcodeSettings()
                 'type' => 'string',
                 'values' => [
                     [
+                        'id' => '',
+                        'val' => __('Default', 'rrze-contact'),
+                        'fields' => [
+                            'honorificPrefix',
+                            'honorificSuffix', 
+                            'firstName',
+                            'familyName',
+                            'organization', 
+                            'department',
+                            'locations',
+                            'phone',
+                            'email',
+                            'border',
+                            'permalink',
+                        ],
+                    ],
+                    [
                         'id' => 'name',
                         'val' => __('Name', 'rrze-contact'),
+                        'fields' => [
+                            'honorificPrefix',
+                            'honorificSuffix', 
+                            'firstName',
+                            'familyName', 
+                            'permalink',
+                        ],
                     ],
                     [
                         'id' => 'shortlist',
                         'val' => __('Short list', 'rrze-contact'),
-                    ],
-                    [
-                        'id' => 'sidebar',
-                        'val' => __('Sidebar', 'rrze-contact'),
-                    ],
-                    [
-                        'id' => 'page',
-                        'val' => __('Page', 'rrze-contact'),
-                    ],
-                    [
-                        'id' => 'list',
-                        'val' => __('List', 'rrze-contact'),
+                        'fields' => [
+                            'honorificPrefix', 
+                            'honorificSuffix', 
+                            'firstName',
+                            'familyName', 
+                            'permalink',
+                            'locations',
+                            'email',
+                            'phone',
+                        ],
                     ],
                     [
                         'id' => 'plain',
                         'val' => __('Unformatted', 'rrze-contact'),
+                        'fields' => [
+                            'honorificPrefix', 
+                            'honorificSuffix', 
+                            'firstName',
+                            'familyName', 
+                        ],
                     ],
                     [
                         'id' => 'compact',
                         'val' => __('compact', 'rrze-contact'),
+                        'fields' => [
+                            'honorificPrefix', 
+                            'honorificSuffix', 
+                            'firstName',
+                            'familyName', 
+                            'position',
+                            'socialmedia',
+                            'locations',
+                            'street',
+                            'city',
+                            'room',
+                            'phone',
+                            'fax',
+                            'email',
+                            'zoom',
+                            'teams',
+                            'matrix',
+                            'url',
+                            'pgp',                            
+                            'picture',
+                            'border',
+                            'permalink',
+                        ],
                     ],
                     [
-                        'id' => 'card',
-                        'val' => __('Card', 'rrze-contact'),
+                        'id' => 'page',
+                        'val' => __('Page', 'rrze-contact'),
+                        'fields' => [
+                            'all', 
+                        ],
+
+                    ],
+                    [
+                        'id' => 'list',
+                        'val' => __('List', 'rrze-contact'),
+                        'fields' => [
+                            'honorificPrefix', 
+                            'honorificSuffix', 
+                            'firstName',
+                            'familyName', 
+                            'description',
+                            'permalink',
+                        ],
+                    ],
+                    [
+                        'id' => 'sidebar',
+                        'val' => __('Sidebar', 'rrze-contact'),
+                        'fields' => [
+                            'all', // check user settings
+                        ],
                     ],
                     [
                         'id' => 'table',
                         'val' => __('Table', 'rrze-contact'),
+                        'fields' => [
+                            'honorificPrefix', 
+                            'honorificSuffix', 
+                            'firstName',
+                            'familyName', 
+                            'locations',
+                            'phone',
+                            'email',
+                            'permalink',
+                        ],
+                    ],
+                    [
+                        'id' => 'card',
+                        'val' => __('Card', 'rrze-contact'),
+                        'fields' => [
+                            'honorificPrefix', 
+                            'honorificSuffix', 
+                            'firstName',
+                            'familyName', 
+                            'picture',
+                            'position',
+                            'socialmedia',
+                            'permalink',
+                        ],
                     ],
                 ],
             ],
@@ -1033,6 +1159,8 @@ function getShortcodeSettings()
             ],
         ],
     ];
+
+    return (!empty($aFields[$group]) ? $aFields[$group] : $aFields);
 }
 
 function getShortcodeDefaults($settings)
@@ -1046,20 +1174,22 @@ function getShortcodeDefaults($settings)
     return $atts_default;
 }
 
+
+
 function get_all_image_sizes()
 {
 
     $image_sizes = array();
 
-    $ownsizes = getConstants();
-    if (isset($ownsizes['images']['default_contact_thumb_width'])) {
-        $image_sizes['contact-thumb-v3']['width'] = $ownsizes['images']['default_contact_thumb_width'];
-        $image_sizes['contact-thumb-v3']['height'] = $ownsizes['images']['default_contact_thumb_height'];
+    $ownsizes = getConstants('images');
+    if (isset($ownsizes['default_contact_thumb_width'])) {
+        $image_sizes['contact-thumb-v3']['width'] = $ownsizes['default_contact_thumb_width'];
+        $image_sizes['contact-thumb-v3']['height'] = $ownsizes['default_contact_thumb_height'];
 
     }
-    if (isset($ownsizes['images']['default_contact_thumb_page_width'])) {
-        $image_sizes['contact-thumb-page-v3']['width'] = $ownsizes['images']['default_contact_thumb_page_width'];
-        $image_sizes['contact-thumb-page-v3']['height'] = $ownsizes['images']['default_contact_thumb_page_height'];
+    if (isset($ownsizes['default_contact_thumb_page_width'])) {
+        $image_sizes['contact-thumb-page-v3']['width'] = $ownsizes['default_contact_thumb_page_width'];
+        $image_sizes['contact-thumb-page-v3']['height'] = $ownsizes['default_contact_thumb_page_height'];
     }
 
     return $image_sizes;

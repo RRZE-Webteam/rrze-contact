@@ -27,8 +27,8 @@ class Shortcode
         $contact_shortcode = new Contact($this->pluginFile, $this->settings);
         $contact_shortcode->onLoaded();
 
-        $standort_shortcode = new Location($this->pluginFile, $this->settings);
-        $standort_shortcode->onLoaded();
+        // $standort_shortcode = new Location($this->pluginFile, $this->settings);
+        // $standort_shortcode->onLoaded();
     }
 
     public function isGutenberg()

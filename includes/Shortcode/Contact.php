@@ -2,9 +2,10 @@
 
 namespace RRZE\Contact\Shortcode;
 
-use function RRZE\Contact\Config\getShortcodeSettings;
+use function RRZE\Contact\Config\getConstants;
+use function RRZE\Contact\Config\getDisplayFields;
 use function RRZE\Contact\Config\getShortcodeDefaults;
-use RRZE\Contact\API\UnivIS;
+use function RRZE\Contact\Config\getShortcodeSettings;
 use RRZE\Contact\Data;
 
 defined('ABSPATH') || exit;
@@ -20,151 +21,162 @@ class Contact extends Shortcode
     public function __construct($pluginFile, $settings)
     {
         $this->pluginFile = $pluginFile;
-        $this->settings = getShortcodeSettings();
+        $this->settings = getShortcodeSettings('contact');
         add_action('init', [$this, 'initGutenberg']);
     }
 
     public function onLoaded()
     {
         add_shortcode('contact', [$this, 'shortcode_contact']);
-        add_shortcode('contact', [$this, 'shortcode_contact']);
-        add_shortcode('contactliste', [$this, 'shortcode_contactlist']);
-        add_shortcode('contacts', [$this, 'shortcode_contactlist']);
+        // add_shortcode('contact', [$this, 'shortcode_contact']);
+        // add_shortcode('contactliste', [$this, 'shortcode_contactlist']);
+        // add_shortcode('contacts', [$this, 'shortcode_contactlist']);
+    }
+
+    private function getCSSClass($class, $border, $background)
+    {
+        return 'rrze-contact' . (!empty($class) ? ' ' . esc_attr($class) : '') . ' ' . $border . (in_array($background, getConstants('bgColors')) ? 'background-' . esc_atts($background) : '');
+    }
+
+    private function getPostIDsByCategory($category)
+    {
+        $aRet = [];
+        $catObj = get_term_by('slug', $category, 'contacts_category');
+        if (is_object($catObj)) {
+            $aRet = get_posts([
+                'post_type' => 'contact',
+                'post_status' => 'publish',
+                'numberposts' => $limit,
+                'orderby' => 'title',
+                'order' => 'ASC',
+                'fields' => 'ids',
+                'suppress_filters' => false,
+                'tax_query' => [
+                    'taxonomy' => 'contacts_category',
+                    'field' => 'id',
+                    'terms' => $catObj->term_id,
+                ],
+            ]);
+        }
+        return $aRet;
     }
 
     public function shortcode_contact($atts, $content = null)
     {
-        $atts = shortcode_atts(getShortcodeDefaults($this->settings['contact']), $atts);
+        $atts = shortcode_atts(getShortcodeDefaults($this->settings), $atts);
 
-        $displayfield = Data::get_display_field($atts['format'], $atts['show'], $atts['hide']);
+        $aDisplayfields = getDisplayFields($this->settings, $atts['format'], $atts['show'], $atts['hide']);
 
-        // echo '<pre>';
-        // var_dump($displayfield);
-        // exit;
+        $class = (!empty($aDisplayfields['class']) ? $aDisplayfields['class'] : '');
+        $border = (!empty($aDisplayfields['border']) ? 'border' : 'noborder');
+        $background = (!empty($aDisplayfields['background']) ? $aDisplayfields['background'] : '');
+        $class = self::getCSSClass($class, $border, $background);
+
+        // switch ($atts['format']) {
+        //     case 'table':
+        //         $content = '<table class="' . $class . '">';
+        //         break;
+        //     case 'name':
+        //     case 'shortlist':
+        //         $class .= ' contact liste-contact';
+        //         $content = '<span class="' . $class . '">';
+        //         break;
+        //     case 'liste':
+        //         $class .= ' contact liste-contact';
+        //         $content = '<ul class="' . $class . '">';
+        //         break;
+        //     case 'card':
+        //         $class .= ' contact-card';
+        //         $content = '<div class="' . $class . '">';
+        //         break;
+        //     default:
+        //         $content = '';
+        // }
 
         if (!empty($atts['category'])) {
-            return $this->shortcode_contactlist($atts, $content);
-        }
-
-        if (!empty($atts['id'])) {
-            wp_enqueue_style('rrze-contact');
-
-            $class = 'rrze-contact';
-            if ($atts['class']) {
-                $class .= ' ' . esc_attr($atts['class']);
-            }
-            if (!empty($displayfield['border'])) {
-                if ($displayfield['border']) {
-                    $class .= ' border';
-                } else {
-                    $class .= ' noborder';
-                }
-            }
-            if (!empty($atts['background'])) {
-                $bg_array = array('grau', 'fau', 'phil', 'med', 'nat', 'tf', 'rw');
-                if (in_array($atts['background'], $bg_array)) {
-                    $class .= ' background-' . esc_attr($atts['background']);
-                }
-            }
-            $format = '';
-            if (!empty($atts['format'])) {
-                $format = $atts['format'];
-            }
-
-            switch ($format) {
-                case 'table':
-                    $content = '<table class="' . $class . '">';
-                    break;
-                case 'name':
-                case 'shortlist':
-                    $class .= ' contact liste-contact';
-                    $content = '<span class="' . $class . '">';
-                    break;
-                case 'liste':
-                    $class .= ' contact liste-contact';
-                    $content = '<ul class="' . $class . '">';
-                    break;
-                case 'card':
-                    $class .= ' contact-card';
-                    $content = '<div class="' . $class . '">';
-                    break;
-                default:
-                    $content = '';
-            }
-
+            $aPostIDs = getPostIDsByCategory($atts['category']);
+        } elseif (!empty($atts['id'])) {
             $aPostIDs = array_map('trim', explode(',', $atts['id']));
-            $number = count($aPostIDs);
-            $i = 1;
-            foreach ($aPostIDs as $postID) {
-                $post = get_post($postID);
-                if ($post && $post->post_type == 'contact') {
-                    switch ($format) {
-                        case 'liste':
-                            $thisentry = Data::RRZE_Contact_shortlist($postID, $displayfield, $atts);
-                            if (!empty($thisentry)) {
-                                $content .= $thisentry;
-                            }
-                            break;
-                        case 'name':
-                        case 'shortlist':
-                            $thisentry = Data::RRZE_Contact_shortlist($postID, $displayfield, $atts);
-                            if (!empty($thisentry)) {
-                                $content .= $thisentry;
-                                if ($i < $number) {
-                                    $content .= ", ";
-                                }
-                            }
-                            break;
-
-                        case 'table':
-                            $content .= Data::RRZE_Contact_tablerow($postID, $displayfield, $atts);
-                            break;
-                        case 'page':
-                            $content .= Data::RRZE_Contact_page($postID, $displayfield, $atts, true);
-                            break;
-                        case 'sidebar':
-                            $content .= Data::RRZE_Contact_sidebar($postID, $displayfield, $atts);
-                            break;
-                        case 'card':
-                            $content .= Data::RRZE_Contact_card($postID, $displayfield, $atts);
-                            break;
-
-                        default:
-                            $content .= Data::RRZE_Contact_markup($postID, $displayfield, $atts);}
-                    $i++;
-
-                } else {
-                    $content .= sprintf(__('No contact entry could be found with the specified ID %s.', 'rrze-contact'), $value);
-                }
-
-            }
-
-            switch ($format) {
-                case 'table':
-                    $content .= '</table>';
-                    break;
-                case 'name':
-                case 'shortlist':
-                    $content .= '</span>';
-                    break;
-                case 'liste':
-                    $content .= '</ul>';
-                    break;
-                case 'card':
-                    $content .= '</div>';
-                    break;
-                default:
-            }
-
-            return $content;
+        } else {
+            return __('id or category is needed', 'rrze-contact');
         }
+
+        foreach ($aPostIDs as $postID) {
+            $data = Data::getContactData($postID, $aDisplayfields, $atts['format']);
+
+            // echo '<pre>';
+            // var_dump($data);
+            // exit;
+
+            if (!empty($data)) {
+                switch ($atts['format']) {
+                    case 'liste':
+                        $thisentry = Data::RRZE_Contact_shortlist($postID, $aDisplayfields, $atts);
+                        if (!empty($thisentry)) {
+                            $content .= $thisentry;
+                        }
+                        break;
+                    case 'name':
+                    case 'shortlist':
+                        $thisentry = Data::RRZE_Contact_shortlist($postID, $aDisplayfields, $atts);
+                        if (!empty($thisentry)) {
+                            $content .= $thisentry;
+                            if ($i < $number) {
+                                $content .= ", ";
+                            }
+                        }
+                        break;
+
+                    case 'table':
+                        $content .= Data::RRZE_Contact_tablerow($postID, $aDisplayfields, $atts);
+                        break;
+                    case 'page':
+                        $content .= Data::RRZE_Contact_page($postID, $aDisplayfields, $atts, true);
+                        break;
+                    case 'sidebar':
+                        $content .= Data::RRZE_Contact_sidebar($postID, $aDisplayfields, $atts);
+                        break;
+                    case 'card':
+                        $content .= Data::RRZE_Contact_card($postID, $aDisplayfields, $atts);
+                        break;
+
+                    default:
+                        $content .= Data::RRZE_Contact_markup($postID, $aDisplayfields, $atts);}
+                $i++;
+
+            } else {
+                $content .= sprintf(__('No contact entry could be found with the specified ID %s.', 'rrze-contact'), $value);
+            }
+
+        }
+
+        // switch ($format) {
+        //     case 'table':
+        //         $content .= '</table>';
+        //         break;
+        //     case 'name':
+        //     case 'shortlist':
+        //         $content .= '</span>';
+        //         break;
+        //     case 'liste':
+        //         $content .= '</ul>';
+        //         break;
+        //     case 'card':
+        //         $content .= '</div>';
+        //         break;
+        //     default:
+        // }
+
+        wp_enqueue_style('rrze-contact');
+
+        return $content;
     }
 
     public function shortcode_contactlist($atts, $content = null)
     {
         $atts = shortcode_atts(getShortcodeDefaults($this->settings['contactlist']), $atts);
 
-        $displayfield = Data::get_display_field($atts['format'], $atts['show'], $atts['hide']);
+        $aDisplayfields = Data::get_display_field($atts['format'], $atts['show'], $atts['hide']);
         $limit = (!empty($atts['unlimited']) ? -1 : 100);
 
         if (isset($atts['category'])) {
@@ -186,8 +198,8 @@ class Contact extends Shortcode
                 $class .= ' ' . esc_attr($atts['class']);
             }
 
-            if (isset($displayfield['border'])) {
-                if ($displayfield['border']) {
+            if (isset($aDisplayfields['border'])) {
+                if ($aDisplayfields['border']) {
                     $class .= ' border';
                 } else {
                     $class .= ' noborder';
@@ -235,14 +247,14 @@ class Contact extends Shortcode
             foreach ($posts as $value) {
                 switch ($format) {
                     case 'liste':
-                        $thisentry = Data::RRZE_Contact_shortlist($value, $displayfield, $atts);
+                        $thisentry = Data::RRZE_Contact_shortlist($value, $aDisplayfields, $atts);
                         if (!empty($thisentry)) {
                             $content .= $thisentry;
                         }
                         break;
                     case 'name':
                     case 'shortlist':
-                        $thisentry = Data::RRZE_Contact_shortlist($value, $displayfield, $atts);
+                        $thisentry = Data::RRZE_Contact_shortlist($value, $aDisplayfields, $atts);
                         if (!empty($thisentry)) {
                             $content .= $thisentry;
                             if ($i < $number) {
@@ -252,19 +264,19 @@ class Contact extends Shortcode
                         break;
 
                     case 'table':
-                        $content .= Data::RRZE_Contact_tablerow($value, $displayfield, $atts);
+                        $content .= Data::RRZE_Contact_tablerow($value, $aDisplayfields, $atts);
                         break;
                     case 'page':
-                        $content .= Data::RRZE_Contact_page($value, $displayfield, $atts, true);
+                        $content .= Data::RRZE_Contact_page($value, $aDisplayfields, $atts, true);
                         break;
                     case 'sidebar':
-                        $content .= Data::RRZE_Contact_sidebar($value, $displayfield, $atts);
+                        $content .= Data::RRZE_Contact_sidebar($value, $aDisplayfields, $atts);
                         break;
                     case 'card':
-                        $content .= Data::RRZE_Contact_card($value, $displayfield, $atts);
+                        $content .= Data::RRZE_Contact_card($value, $aDisplayfields, $atts);
                         break;
                     default:
-                        $content .= Data::RRZE_Contact_markup($value, $displayfield, $atts);
+                        $content .= Data::RRZE_Contact_markup($value, $aDisplayfields, $atts);
                 }
                 $i++;
             }
@@ -297,11 +309,10 @@ class Contact extends Shortcode
         return $content;
     }
 
-
     public function fillGutenbergOptions()
     {
 
-        $mySettings = $this->settings['contact'];
+        $mySettings = $this->settings;
         // we don't need slug because we have id
         unset($mySettings['slug']);
 
@@ -346,7 +357,7 @@ class Contact extends Shortcode
         if (!$this->isGutenberg()) {
             return;
         }
-        
+
         // get prefills for dropdowns
         $mySettings = $this->fillGutenbergOptions();
 

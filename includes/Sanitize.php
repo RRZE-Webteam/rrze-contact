@@ -117,10 +117,6 @@ class Sanitize
         $aRet = [];
         $aFields = getFields();
 
-        // echo '<pre>';
-        // var_dump($aFields);
-        // exit;
-
         foreach ($aFields as $section => $aSecFields) {
             foreach ($aSecFields as $aDetails) {
                 if (!empty($aDetails['sanitization_cb'])) {
@@ -142,12 +138,8 @@ class Sanitize
     public static function sanitizeAll($data)
     {
         $sanitizeMap = self::getSanitizers();
-
-        // echo '<pre>';
-        // var_dump($sanitizeMap);
-        // exit;
-
         array_walk_recursive($data, 'self::sanitize', $sanitizeMap);
+        
         return $data;
     }
 }

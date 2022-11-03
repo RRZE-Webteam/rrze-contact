@@ -417,58 +417,85 @@ class Data
     }
 
     // BK
-    public static function getContactData($postID, $format = 'page')
+    public static function getContactData($postID, $aDisplayfields, $format = 'page')
     {
         $aRet = [];
 
-        $post = get_post($postID, ARRAY_N);
-        $postMeta = get_post_meta($postID);
+        if (in_array('all', $aDisplayfields) || in_array('description', $aDisplayfields) || $format == 'page'){
+            $post = get_post($postID, ARRAY_N);
 
-        $desc = self::getDescription($post, $format);
-        if (!empty($desc)) {
-            $aRet['description'] = $desc;
+            if (in_array('all', $aDisplayfields) || in_array('description', $aDisplayfields)){
+                $desc = self::getDescription($post, $format);
+                if (!empty($desc)) {
+                    $aRet['description'] = $desc;
+                }    
+            }
+
+            if (in_array('all', $aDisplayfields) || $format == 'page'){
+                if (!empty($post['post_content'])) {
+                    $aRet['post_content'] = $post['post_content'];
+                }    
+            }
         }
 
-        if (!empty($post['post_content'])) {
-            $aRet['post_content'] = $post['post_content'];
+        if (in_array('all', $aDisplayfields) || in_array('permalink', $aDisplayfields)){
+            $aRet['permalink'] = get_permalink($postID);
         }
-
-        $aRet['permalink'] = get_permalink($postID);
 
         $aFields = getFields('contact');
-        foreach ($aFields as $aDetails) {
-            if (!empty($postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0])) {
-                $aRet[$aDetails['name']] = $postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0];
-            }
-        }
 
-        $aGroups = ['locations', 'consultations'];
-        foreach ($aGroups as $group) {
-            if (!empty($postMeta[RRZE_CONTACT_PREFIX . $group . 'Group'])) {
-                $aLocations = unserialize($postMeta[RRZE_CONTACT_PREFIX . $group . 'Group'][0]);
-                foreach ($aLocations as $location) {
-                    $aTmp = [];
-                    foreach ($location as $field => $value) {
-                        $fieldName = substr($field, strlen(RRZE_CONTACT_PREFIX));
-                        $aTmp[$fieldName] = $value;
-                    }
-                    $aRet[$group][] = $aTmp;
+        if (!empty($aFields)){
+            $postMeta = get_post_meta($postID);
+
+            foreach ($aFields as $aDetails) {
+                if ((in_array('all', $aDisplayfields) || in_array($aDetails['name'], $aDisplayfields)) && !empty($postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0])) {
+                    $aRet[$aDetails['name']] = $postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0];
                 }
             }
-        }
 
-        if (!empty($postMeta[RRZE_CONTACT_PREFIX . 'consultation_headline'][0])) {
-            $aRet['consultation_headline'] = $postMeta[RRZE_CONTACT_PREFIX . 'consultation_headline'][0];
-        }
+            $aGroups = [];
 
-        if (!empty($postMeta[RRZE_CONTACT_PREFIX . 'consultation_notice'][0])) {
-            $aRet['consultation_notice'] = $postMeta[RRZE_CONTACT_PREFIX . 'consultation_notice'][0];
-        }
+            if (in_array('all', $aDisplayfields) || in_array('locations', $aDisplayfields)){
+                $aGroups[] = 'locations';
+            }
 
-        $aFields = getFields('socialmedia');
-        foreach ($aFields as $aDetails) {
-            if (!empty($postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0])) {
-                $aRet[$aDetails['name']] = $postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0];
+            if (in_array('all', $aDisplayfields) || in_array('consultations', $aDisplayfields)){
+                $aGroups[] = 'consultations';
+            }
+
+            foreach ($aGroups as $group) {
+                if (!empty($postMeta[RRZE_CONTACT_PREFIX . $group . 'Group'])) {
+                    $aLocations = unserialize($postMeta[RRZE_CONTACT_PREFIX . $group . 'Group'][0]);
+                    foreach ($aLocations as $location) {
+                        $aTmp = [];
+                        foreach ($location as $field => $value) {
+                            $fieldName = substr($field, strlen(RRZE_CONTACT_PREFIX));
+                            if (in_array('all', $aDisplayfields) || in_array($fieldName, $aDisplayfields)){
+                                $aTmp[$fieldName] = $value;
+                            }
+                        }
+                        $aRet[$group][] = $aTmp;
+                    }
+                }
+            }
+    
+            if (in_array('all', $aDisplayfields) || in_array('consultations', $aDisplayfields)){
+                if (!empty($postMeta[RRZE_CONTACT_PREFIX . 'consultation_headline'][0])) {
+                    $aRet['consultation_headline'] = $postMeta[RRZE_CONTACT_PREFIX . 'consultation_headline'][0];
+                }
+        
+                if (!empty($postMeta[RRZE_CONTACT_PREFIX . 'consultation_notice'][0])) {
+                    $aRet['consultation_notice'] = $postMeta[RRZE_CONTACT_PREFIX . 'consultation_notice'][0];
+                }
+            }    
+
+            if (in_array('all', $aDisplayfields) || in_array('socialmedia', $aDisplayfields)){
+                $aFields = getFields('socialmedia');
+                foreach ($aFields as $aDetails) {
+                    if (!empty($postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0])) {
+                        $aRet[$aDetails['name']] = $postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0];
+                    }
+                }
             }
         }
 

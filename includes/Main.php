@@ -104,14 +104,14 @@ class Main
 
     public function define_image_sizes()
     {
-        $constants = getConstants();
+        $constants = getConstants('images');
 
         /* Thumb for contact-type; small for sidebar - Name: contact-thumb */
-        add_image_size('contact-thumb-v3', $constants['images']['default_contact_thumb_width'], $constants['images']['default_contact_thumb_height'], $constants['images']['default_contact_thumb_crop']); // 60, 80, true
+        add_image_size('contact-thumb-v3', $constants['default_contact_thumb_width'], $constants['default_contact_thumb_height'], $constants['default_contact_thumb_crop']); // 60, 80, true
 
 
         /* Thumb for contact-type; big for content - Name: contact-thumb-page */
-        add_image_size('contact-thumb-page-v3', $constants['images']['default_contact_thumb_page_width'], $constants['images']['default_contact_thumb_page_height'], $constants['images']['default_contact_thumb_page_crop']); // 200,300,true
+        add_image_size('contact-thumb-page-v3', $constants['default_contact_thumb_page_width'], $constants['default_contact_thumb_page_height'], $constants['default_contact_thumb_page_crop']); // 200,300,true
 
     }
 

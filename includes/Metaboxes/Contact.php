@@ -41,20 +41,8 @@ class Contact extends Metaboxes
             return;
         }
 
-        // $test = get_post_meta($postID);
-        // echo '<pre>';
-        // var_dump($test);
-        // exit;
-
-
         $this->bUnivisSync = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'univisSync', true);
         $this->univisID = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'univisID', true);
-
-        // echo '<pre>';
-        // echo '$this->bUnivisSync = ' . $this->bUnivisSync . '<br>';
-        // echo '$this->univisID = ' . $this->univisID . '<br>';
-        // exit;
-
 
         if (!empty($this->bUnivisSync) && !empty($this->univisID)) {
             $aDisabled = [];
@@ -127,11 +115,6 @@ class Contact extends Metaboxes
 
             if ($univisResponse['valid']) {
                 $this->univisData = $univisResponse['content'][0];
-
-                // echo '<pre>';
-                // var_dump($this->univisData);
-                // exit;
-
             } else {
                 $univisSyncTxt = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
             }

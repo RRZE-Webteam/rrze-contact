@@ -481,12 +481,6 @@ class Schema
 		}
 		$screenreaderadd = self::create_NameforAttributs($data);
 
-
-		echo '<pre>';
-		var_dump($data);
-		exit;
-
-
 		$SocialMedia = self::get_SocialMediaList();
 		foreach ($SocialMedia as $key => $value) {
 			$datakey = $key . "_url";

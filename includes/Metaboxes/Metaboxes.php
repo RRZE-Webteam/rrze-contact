@@ -63,9 +63,6 @@ class Metaboxes
 
     public function getReadonly($fieldname)
     {
-        // echo '<pre>';
-        // var_dump($this->aDisabled);
-        // exit;
         return ($this->bUnivisSync && in_array($fieldname, $this->aDisabled));
     }
 

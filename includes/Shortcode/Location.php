@@ -21,7 +21,7 @@ class Location extends Shortcode
     public function __construct($pluginFile, $settings)
     {
         $this->pluginFile = $pluginFile;
-        $this->settings = getShortcodeSettings();
+        $this->settings = getShortcodeSettings('location');
         $this->settings = $this->settings['location'];
         add_action('init', [$this, 'initGutenberg']);
     }

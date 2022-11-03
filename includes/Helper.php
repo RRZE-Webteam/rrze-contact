@@ -1,7 +1,7 @@
 <?php
 
 namespace RRZE\Contact;
-use function RRZE\Contact\Config\getConstants;
+// use function RRZE\Contact\Config\getConstants;
 
 defined('ABSPATH') || exit;
 
@@ -65,17 +65,6 @@ class Helper {
         <?php
     }
 
-    public static function isFAUTheme() {
-        $constants = getConstants();
-        $themelist = $constants['fauthemes'];
-        $fautheme = false;
-        $active_theme = wp_get_theme();
-        $active_theme = $active_theme->get( 'Name' );
-        if (in_array($active_theme, $themelist)) {
-            $fautheme = true;
-        }
-        return $fautheme;   
-    }
     
     // public static function get_html_var_dump($input) {
 	// $out = self::get_var_dump($input);
