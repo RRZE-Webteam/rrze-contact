@@ -5,7 +5,8 @@ namespace RRZE\Contact\API;
 defined('ABSPATH') || exit;
 
 use RRZE\Contact\Functions;
-use function RRZE\Contact\Sanitize\sanitizeAll;
+// use function RRZE\Contact\Sanitize\sanitizeAll;
+use RRZE\Contact\Sanitize;
 
 class UnivIS extends API
 {
@@ -145,15 +146,14 @@ class UnivIS extends API
         return $ret;
     }
 
-    public function getPerson($sParam = null)
+    public function getContact($sParam = null)
     {
         $apiResponse = $this->getResponse($sParam);
 
         if ($apiResponse['valid']) {
             return [
                 'valid' => true,
-                // 'content' => sanitizeAll($this->mapData($apiResponse['content'])),
-                'content' => $this->mapData($apiResponse['content']),
+                'content' => Sanitize::sanitizeAll($this->mapData($apiResponse['content'])),
             ];
         } else {
             return $apiResponse;

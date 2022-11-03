@@ -1,6 +1,6 @@
 {
   "name": "rrze-contact",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "Einbindung von Kontakten aus DIP und UnivIS",
   "main": "rrze-contact.php",
   "textdomain": "rrze-contact",

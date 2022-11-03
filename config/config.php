@@ -165,13 +165,13 @@ function getFields($group = NULL)
                 'name' => 'phone',
                 'label' => __('Phone', 'rrze-contact'),
                 'type' => 'text',
-                // 'sanitization_cb' => 'RRZE\Contact\Sanitize\phone',
+                'sanitization_cb' => ['self', 'phone'],
             ],
             [
                 'name' => 'fax',
                 'label' => __('Fax', 'rrze-contact'),
                 'type' => 'text',
-                // 'sanitization_cb' => 'RRZE\Contact\Sanitize\phone',
+                'sanitization_cb' => ['self', 'phone'],
             ],
             [
                 'name' => 'email',
@@ -258,7 +258,7 @@ function getFields($group = NULL)
                 'name' => 'comment',
                 'label' => __('Comment', 'rrze-contact'),
                 'type' => 'textarea_small',
-                // 'sanitization_cb' => 'RRZE\Contact\Sanitize\markdown',
+                'sanitization_cb' => ['self', 'markdown'],
             ],
         ],
         'socialmedia' => [
@@ -314,7 +314,7 @@ function getFields($group = NULL)
             [
                 'name' => 'publons',
                 'label' => 'Publons',
-                'type' => 'text',
+                'type' => 'text_url',
                 'class' => 'publons',
                 'protocols' => ['https'],
             ],

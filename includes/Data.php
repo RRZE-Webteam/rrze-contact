@@ -1444,7 +1444,7 @@ class Data
         $contact = array();
         if ($univisID) {
             $univis = new UnivIS();
-            $contact = $univis->getPerson('id=' . $univisID);
+            $contact = $univis->getContact('id=' . $univisID);
             $univisSync = 1;
         }
         $fields = array();

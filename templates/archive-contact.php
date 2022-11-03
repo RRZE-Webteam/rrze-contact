@@ -1,34 +1,33 @@
 <?php
- 
-get_header(); 
-$screenreadertitle = __('Contact list','rrze-contact');
+
+get_header();
+$screenreadertitle = __('Contact list', 'rrze-contact');
 ?>
     <div id="content">
         <div class="container">
 	    <div class="row">
 		<main class="col-xs-12" id="droppoint">
-		    <h1 class="screen-reader-text"><?php echo $screenreadertitle; ?></h1>   
+		    <h1 class="screen-reader-text"><?php echo $screenreadertitle; ?></h1>
 
-                    <?php while ( have_posts() ) {
-			the_post();
-			if (!empty($post->ID)) {
-				echo do_shortcode('[contact id="' . $post->ID . '" ' . 'format="kompakt" showlink="0" showlist="1"]');
-			} else { ?>
+                    <?php while (have_posts()) {
+    the_post();
+    if (!empty($post->ID)) {
+        echo do_shortcode('[contact id="' . $post->ID . '" ' . 'format="kompakt" showlink="0" showlist="1"]');
+    } else {?>
 			    <p class="hinweis">
 				<strong><?php _e('We are sorry', 'rrze-contact');?></strong><br>
 				<?php _e('No information can be retrieved for the specified contact.', 'rrze-contact');?>
 			    </p>
-			<?php } 
-		    } ?>                                  
+			<?php }
+}?>
 		    <nav class="navigation">
-			<div class="nav-previous"><?php previous_posts_link(__('<span class="meta-nav">&laquo;</span> Back', 'rrze-contact')); ?></div>
-			<div class="nav-next"><?php next_posts_link(__('Next <span class="meta-nav">&raquo;</span>', 'rrze-contact'), '' ); ?></div>
+			<div class="nav-previous"><?php previous_posts_link(__('<span class="meta-nav">&laquo;</span> Back', 'rrze-contact'));?></div>
+			<div class="nav-next"><?php next_posts_link(__('Next <span class="meta-nav">&raquo;</span>', 'rrze-contact'), '');?></div>
 		    </nav>
 		</main>
-	    </div>    
+	    </div>
 	</div>
     </div>
-<?php 
-get_template_part('template-parts/footer', 'social'); 
-get_footer(); 
-
+<?php
+get_template_part('template-parts/footer', 'social');
+get_footer();

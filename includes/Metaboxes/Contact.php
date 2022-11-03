@@ -59,7 +59,7 @@ class Contact extends Metaboxes
         if (!empty($this->bUnivisSync) && !empty($this->univisID)) {
             $aDisabled = [];
             $univis = new UnivIS();
-            $univisResponse = $univis->getPerson('id=' . $this->univisID);
+            $univisResponse = $univis->getContact('id=' . $this->univisID);
 
             if ($univisResponse['valid']) {
                 $this->univisData = $univisResponse['content'][0];
@@ -123,7 +123,7 @@ class Contact extends Metaboxes
 
         if ($this->univisID) {
             $univis = new UnivIS();
-            $univisResponse = $univis->getPerson('id=' . $this->univisID);
+            $univisResponse = $univis->getContact('id=' . $this->univisID);
 
             if ($univisResponse['valid']) {
                 $this->univisData = $univisResponse['content'][0];

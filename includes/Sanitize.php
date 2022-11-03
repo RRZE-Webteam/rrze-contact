@@ -35,11 +35,8 @@ class Sanitize
         return $txt;
     }
 
-    public static function phone($phone, $field_args = null, $field = null)
+    public static function phone($phone)
     {
-
-        return 'JUHU HAT GEKLAPPT';
-
         $phone = filter_var($phone, FILTER_SANITIZE_NUMBER_INT);
 
         if ((strpos($phone, '+49 9131 85-') !== 0) && (strpos($phone, '+49 911 5302-') !== 0)) {
@@ -120,6 +117,10 @@ class Sanitize
         $aRet = [];
         $aFields = getFields();
 
+        // echo '<pre>';
+        // var_dump($aFields);
+        // exit;
+
         foreach ($aFields as $section => $aSecFields) {
             foreach ($aSecFields as $aDetails) {
                 if (!empty($aDetails['sanitization_cb'])) {
@@ -140,7 +141,12 @@ class Sanitize
 
     public static function sanitizeAll($data)
     {
-        $sanitizeMap = getSanitizers();
+        $sanitizeMap = self::getSanitizers();
+
+        // echo '<pre>';
+        // var_dump($sanitizeMap);
+        // exit;
+
         array_walk_recursive($data, 'self::sanitize', $sanitizeMap);
         return $data;
     }
