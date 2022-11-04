@@ -1,24 +1,19 @@
 <?php
-get_header(); 
-//	enqueueForeignThemes();
-	
-?>
-    <?php while ( have_posts() ) : the_post(); ?>
-        <div id="content">
-            <div class="container">
-                <div class="row">
-                    <div class="col-xs-12">
-                    <?php 
-		 $args = [
-		     'hstart' => 1,
-		 ];
+get_header();
+//    enqueueForeignThemes();
 
-                    //   echo RRZE\Contact\Data::rrze_contact_page($id,array(),$args,true);
-                    do_shortcode('[contact id=' . $id . ']');
-                    ?>         
-                    </div>
-                </div>
-            </div>
-        </div>
-    <?php endwhile;
+?>
+    <?php while (have_posts()): the_post();?>
+	        <div id="content">
+	            <div class="container">
+	                <div class="row">
+	                    <div class="col-xs-12">
+	                    <?php
+    echo do_shortcode('[contact id="' . $post->ID . '" format="page"]');
+    ?>
+	                    </div>
+	                </div>
+	            </div>
+	        </div>
+	    <?php endwhile;
 get_footer();

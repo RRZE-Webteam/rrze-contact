@@ -53,7 +53,7 @@
     }
     
     
-    .person-info ul.hoursAvailable_group,
+    .contact-info ul.hoursAvailable_group,
     [itemprop="hoursAvaible"] ul,
     ul.hoursAvailable_group {
 	    li {
@@ -115,25 +115,25 @@
 }
 
 
-.person-info {
+.contact-info {
     // Remove old definitions from theme
-	.person-info-phone:before,
-	.person-info-mobile:before,
-	.person-info-fax:before,
-	.person-info-email:before,
-	.person-info-www:before { 
+	.contact-info-phone:before,
+	.contact-info-mobile:before,
+	.contact-info-fax:before,
+	.contact-info-email:before,
+	.contact-info-www:before { 
 	    display: none;
 	}
-	.person-info-position {
+	.contact-info-position {
 	    font-weight: bold;
 	}
 	
-	.person-info-address {
+	.contact-info-address {
 	    margin-top: 10px;
 	    padding-left: 0px;
 	}
 	
-	.person-info-description {
+	.contact-info-description {
 	    margin-top: 10px;
 	    padding-left: 20px;
 	}
@@ -205,14 +205,14 @@
 	    
 
 	}
-	.person-info-description {
+	.contact-info-description {
 	    order: 3;
 	     padding: 5px;
 	     flex: 1 0 200px;
 	}
 	
 	// set to .standard-btn .primary-btn
-	.person-info-more {
+	.contact-info-more {
 		text-align: right;
 		order: 4;
 
@@ -228,7 +228,7 @@
 		text-align: left;
 		order: 2;
 		
-		.person-info-more {
+		.contact-info-more {
 		    text-align: left;
 		}
 	     }
@@ -293,7 +293,7 @@
     padding-left: 0px;
 }
 
-.person-info-more {
+.contact-info-more {
 		a {
 		    display: inline-block;
 		    border-radius: 3px;
@@ -310,17 +310,17 @@
 	 }
 
 .widget .rrze-contact {
-    ul.person-info ul {
+    ul.contact-info ul {
 	margin: 0 0 10px 25px;
     }   
     
-    li.person-info-address,
-    li.person-info-description,
-    li.person-info-office {
+    li.contact-info-address,
+    li.contact-info-description,
+    li.contact-info-office {
 	display: block;
 	margin-top: 10px;
     }
-    li.person-info-address {
+    li.contact-info-address {
 	margin-bottom: 5px;
     }
     
@@ -363,7 +363,7 @@
 			max-height: 160px;
 		}
 	}
-	.person-info {
+	.contact-info {
 	    order: 2;
 	    flex: 1 0 200px;
 	    
@@ -411,7 +411,7 @@
 	    }
 	}
 	
-	.person-info-position {
+	.contact-info-position {
 	    display: inline-block;	    
 	}
 	ul.contactpoints {
