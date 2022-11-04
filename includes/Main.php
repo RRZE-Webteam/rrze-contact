@@ -51,7 +51,7 @@ class Main
         $taxonomy = new Taxonomy($settings);
         $taxonomy->onLoaded();
 
-        $templates = new Templates($this->pluginFile, $settings);
+        $templates = new Template($this->pluginFile, $settings);
         $templates->onLoaded();
 
         $metaboxes = new Metaboxes($this->pluginFile, $settings);
@@ -88,19 +88,6 @@ class Main
 
     }
 
-    public function clearData($post_id, $post, $update){
-        // public function clearData($post_id, $post, $update){
-        // fires if clicked on "Add new" as well, but at this moment we don't have any details to be handled 
-        if ( !$update ) {
-            return;
-        }
-
-        echo 'clearData';
-        var_dump($post);
-        echo '<br> $post_id = ' . $post_id;
-        echo '<br>' . ($update?'is an update' : 'is not an update');
-        exit;
-    }
 
     public function define_image_sizes()
     {

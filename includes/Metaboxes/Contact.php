@@ -109,16 +109,16 @@ class Contact extends Metaboxes
 
         $univisSyncTxt = '';
 
-        if ($this->univisID) {
-            $univis = new UnivIS();
-            $univisResponse = $univis->getContact('id=' . $this->univisID);
+        // if ($this->univisID) {
+        //     $univis = new UnivIS();
+        //     $univisResponse = $univis->getContact('id=' . $this->univisID);
 
-            if ($univisResponse['valid']) {
-                $this->univisData = $univisResponse['content'][0];
-            } else {
-                $univisSyncTxt = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
-            }
-        }
+        //     if ($univisResponse['valid']) {
+        //         $this->univisData = $univisResponse['content'][0];
+        //     } else {
+        //         $univisSyncTxt = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
+        //     }
+        // }
 
 
         // Meta-Box Synchronize

@@ -7,6 +7,7 @@ use function RRZE\Contact\Config\getDisplayFields;
 use function RRZE\Contact\Config\getShortcodeDefaults;
 use function RRZE\Contact\Config\getShortcodeSettings;
 use RRZE\Contact\Data;
+use RRZE\Contact\Template;
 
 defined('ABSPATH') || exit;
 
@@ -17,6 +18,7 @@ class Contact extends Shortcode
 {
     public $pluginFile = '';
     private $settings = '';
+    private $aAllFormats = [];
 
     public function __construct($pluginFile, $settings)
     {
@@ -61,37 +63,41 @@ class Contact extends Shortcode
         return $aRet;
     }
 
+    private function getDisplayFields(&$shortcodeSettings, $format = '', $show = '', $hide = '')
+    {
+        $aRet = [];
+        $aFormat = (!empty($shortcodeSettings['format']['values']) ? $shortcodeSettings['format']['values'] : []);
+        $this->aAllFormats = [];
+
+        foreach ($aFormat as $nr => $aVal) {
+            if ($aVal['id'] == $format) {
+                $aRet = $aVal['fields'];
+            }
+            $this->aAllFormats[] = $aVal['id'];
+        }
+
+        $aRet = array_diff($aRet, array_map('trim', explode(',', $hide)));
+        $aRet = $aRet + array_map('trim', explode(',', $show));
+
+        return $aRet;
+    }
+
     public function shortcode_contact($atts, $content = null)
     {
+        wp_enqueue_style('rrze-contact');
+
         $atts = shortcode_atts(getShortcodeDefaults($this->settings), $atts);
 
-        $aDisplayfields = getDisplayFields($this->settings, $atts['format'], $atts['show'], $atts['hide']);
+        $aDisplayfields = $this->getDisplayFields($this->settings, $atts['format'], $atts['show'], $atts['hide']);
+
+        if (!in_array($atts['format'], $this->aAllFormats)) {
+            return __('Unknown format', 'rrze-contact') . ' "' . $atts['format'] . '"';
+        }
 
         $class = (!empty($aDisplayfields['class']) ? $aDisplayfields['class'] : '');
         $border = (!empty($aDisplayfields['border']) ? 'border' : 'noborder');
         $background = (!empty($aDisplayfields['background']) ? $aDisplayfields['background'] : '');
         $class = self::getCSSClass($class, $border, $background);
-
-        // switch ($atts['format']) {
-        //     case 'table':
-        //         $content = '<table class="' . $class . '">';
-        //         break;
-        //     case 'name':
-        //     case 'shortlist':
-        //         $class .= ' contact liste-contact';
-        //         $content = '<span class="' . $class . '">';
-        //         break;
-        //     case 'liste':
-        //         $class .= ' contact liste-contact';
-        //         $content = '<ul class="' . $class . '">';
-        //         break;
-        //     case 'card':
-        //         $class .= ' contact-card';
-        //         $content = '<div class="' . $class . '">';
-        //         break;
-        //     default:
-        //         $content = '';
-        // }
 
         if (!empty($atts['category'])) {
             $aPostIDs = getPostIDsByCategory($atts['category']);
@@ -103,71 +109,23 @@ class Contact extends Shortcode
 
         foreach ($aPostIDs as $postID) {
             $data = Data::getContactData($postID, $aDisplayfields, $atts['format']);
+            $data['class'] = $class;
 
             // echo '<pre>';
             // var_dump($data);
             // exit;
 
             if (!empty($data)) {
-                switch ($atts['format']) {
-                    case 'liste':
-                        $thisentry = Data::RRZE_Contact_shortlist($postID, $aDisplayfields, $atts);
-                        if (!empty($thisentry)) {
-                            $content .= $thisentry;
-                        }
-                        break;
-                    case 'name':
-                    case 'shortlist':
-                        $thisentry = Data::RRZE_Contact_shortlist($postID, $aDisplayfields, $atts);
-                        if (!empty($thisentry)) {
-                            $content .= $thisentry;
-                            if ($i < $number) {
-                                $content .= ", ";
-                            }
-                        }
-                        break;
-
-                    case 'table':
-                        $content .= Data::RRZE_Contact_tablerow($postID, $aDisplayfields, $atts);
-                        break;
-                    case 'page':
-                        $content .= Data::RRZE_Contact_page($postID, $aDisplayfields, $atts, true);
-                        break;
-                    case 'sidebar':
-                        $content .= Data::RRZE_Contact_sidebar($postID, $aDisplayfields, $atts);
-                        break;
-                    case 'card':
-                        $content .= Data::RRZE_Contact_card($postID, $aDisplayfields, $atts);
-                        break;
-
-                    default:
-                        $content .= Data::RRZE_Contact_markup($postID, $aDisplayfields, $atts);}
-                $i++;
-
+                $template = 'shortcodes/contact/' . $atts['format'] . '.html';
+                $content .= Template::getContent($template, $data);
+                if ($atts['format'] == 'organization') {
+                    $content = do_shortcode($content);
+                }
             } else {
-                $content .= sprintf(__('No contact entry could be found with the specified ID %s.', 'rrze-contact'), $value);
+                $content .= sprintf(__('No contact entry could be found with the specified ID %s.', 'rrze-contact'), $postID);
             }
 
         }
-
-        // switch ($format) {
-        //     case 'table':
-        //         $content .= '</table>';
-        //         break;
-        //     case 'name':
-        //     case 'shortlist':
-        //         $content .= '</span>';
-        //         break;
-        //     case 'liste':
-        //         $content .= '</ul>';
-        //         break;
-        //     case 'card':
-        //         $content .= '</div>';
-        //         break;
-        //     default:
-        // }
-
-        wp_enqueue_style('rrze-contact');
 
         return $content;
     }

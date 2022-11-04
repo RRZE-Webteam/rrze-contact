@@ -143,7 +143,7 @@ class Contact extends Taxonomy
         $ret = '';
 
         $ret = (!empty($postMeta[RRZE_CONTACT_PREFIX . 'honorificPrefix'][0]) ? $postMeta[RRZE_CONTACT_PREFIX . 'honorificPrefix'][0] . ' ' : '') . 
-            (!empty($postMeta[RRZE_CONTACT_PREFIX . 'firstName'][0]) ? $postMeta[RRZE_CONTACT_PREFIX . 'firstName'][0] . ' ' : '') .
+            (!empty($postMeta[RRZE_CONTACT_PREFIX . 'givenName'][0]) ? $postMeta[RRZE_CONTACT_PREFIX . 'givenName'][0] . ' ' : '') .
             (!empty($postMeta[RRZE_CONTACT_PREFIX . 'familyName'][0]) ? $postMeta[RRZE_CONTACT_PREFIX . 'familyName'][0] . ' ' : '') .
             (!empty($postMeta[RRZE_CONTACT_PREFIX . 'honorificSuffix'][0]) ? '(' . $postMeta[RRZE_CONTACT_PREFIX . 'honorificSuffix'][0] . ')' : '');
 

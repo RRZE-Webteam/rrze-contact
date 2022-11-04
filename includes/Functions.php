@@ -167,7 +167,7 @@ class Functions
                 // case 'contactByName':
                 //     foreach ($data as $entry) {
                 //         if (isset($entry['contact_id'])) {
-                //             $ret[$entry['contact_id']] = $entry['lastname'] . ', ' . $entry['firstName'];
+                //             $ret[$entry['contact_id']] = $entry['lastname'] . ', ' . $entry['givenName'];
                 //         }
                 //     }
                 //     break;
@@ -175,7 +175,7 @@ class Functions
                 //     foreach ($data as $position => $entries) {
                 //         foreach ($entries as $entry) {
                 //             if (isset($entry['contact_id'])) {
-                //                 $ret[$entry['contact_id']] = $entry['lastname'] . ', ' . $entry['firstName'];
+                //                 $ret[$entry['contact_id']] = $entry['lastname'] . ', ' . $entry['givenName'];
                 //             }
                 //         }
                 //     }

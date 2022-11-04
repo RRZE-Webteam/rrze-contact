@@ -16,8 +16,8 @@ class Vcard
     public function __construct(array $aPerson = []){
         $aCard = [];
         $aCard[] = 'BEGIN:VCARD\nVERSION:4.0';
-        $aCard[] = 'N:' . (!empty($aPerson['familyName']) ? $aPerson['familyName'] : '') . ';' . (!empty($aPerson['firstName']) ? $aPerson['firstName'] : '') . ';;' . (!empty($aPerson['honorificPrefix']) ? $aPerson['honorificPrefix'] : '') . ';' . (!empty($aPerson['honorificSuffix']) ? $aPerson['honorificSuffix'] : '');
-        $aCard[] = 'FN:' . (!empty($aPerson['honorificPrefix']) ? $aPerson['honorificPrefix'] . ' ' : '') . (!empty($aPerson['honorificSuffix']) ? '(' . $aPerson['honorificSuffix'] . ') ' : '') . (!empty($aPerson['firstName']) ? $aPerson['firstName'] . ' ' : '') . (!empty($aPerson['familyName']) ? $aPerson['familyName'] : '');
+        $aCard[] = 'N:' . (!empty($aPerson['familyName']) ? $aPerson['familyName'] : '') . ';' . (!empty($aPerson['givenName']) ? $aPerson['givenName'] : '') . ';;' . (!empty($aPerson['honorificPrefix']) ? $aPerson['honorificPrefix'] : '') . ';' . (!empty($aPerson['honorificSuffix']) ? $aPerson['honorificSuffix'] : '');
+        $aCard[] = 'FN:' . (!empty($aPerson['honorificPrefix']) ? $aPerson['honorificPrefix'] . ' ' : '') . (!empty($aPerson['honorificSuffix']) ? '(' . $aPerson['honorificSuffix'] . ') ' : '') . (!empty($aPerson['givenName']) ? $aPerson['givenName'] . ' ' : '') . (!empty($aPerson['familyName']) ? $aPerson['familyName'] : '');
         if (!empty($aPerson['organization_de'])){
             $aCard[] = 'ORG:' . implode(';', $aPerson['organization_de']);
         }

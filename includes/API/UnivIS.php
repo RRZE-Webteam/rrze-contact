@@ -51,7 +51,7 @@ class UnivIS extends API
             'key' => 'key',
             'honorificPrefix' => 'title',
             'honorificSuffix' => 'atitle',
-            'firstName' => 'firstname',
+            'givenName' => 'firstname',
             'familyName' => 'lastname',
             'position' => 'work',
             'organization_de' => [

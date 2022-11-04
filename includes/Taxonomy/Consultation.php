@@ -402,14 +402,14 @@ class Consultation
 
             if (CORONA_MODE) {
                 $encryptedFields = [
-                    'rrze-contact-booking-guest-firstname',
+                    'rrze-contact-booking-guest-givenName',
                     'rrze-contact-booking-guest-lastname',
                     'rrze-contact-booking-guest-email',
                     'rrze-contact-booking-guest-phone',
                 ];
             } else {
                 $encryptedFields = [
-                    'rrze-contact-booking-guest-firstname',
+                    'rrze-contact-booking-guest-givenName',
                     'rrze-contact-booking-guest-lastname',
                     'rrze-contact-booking-guest-email',
                 ];

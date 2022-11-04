@@ -64,8 +64,8 @@ class Data
                         } else {
                             if (ltrim(strpos($name, ' '))) {
                                 $lastname = ltrim(strrchr($name, ' '));
-                                $firstName = ltrim(str_replace($lastname, '', $name));
-                                $name = $lastname . ', ' . $firstName;
+                                $givenName = ltrim(str_replace($lastname, '', $name));
+                                $name = $lastname . ', ' . $givenName;
                             }
                         }
                         break;
@@ -249,10 +249,10 @@ class Data
                     case 'realmale':
                     case 'realfemale':
 
-                        if (($sorttype == 'firstName') || ($sorttype == 'vorname') || ($sorttype == 'fullname')) {
-                            $sortname = $fields['firstName'] . " - " . $fields['familyName'];
+                        if (($sorttype == 'givenName') || ($sorttype == 'vorname') || ($sorttype == 'fullname')) {
+                            $sortname = $fields['givenName'] . " - " . $fields['familyName'];
                         } elseif (($sorttype == 'familyName') || ($sorttype == 'nachname') || ($sorttype == 'name')) {
-                            $sortname = $fields['familyName'] . " - " . $fields['firstName'];
+                            $sortname = $fields['familyName'] . " - " . $fields['givenName'];
                         } elseif ($sorttype == 'title') {
                             $sortname = $fields['contact_title'];
                         } elseif ($sorttype == 'sortierfeld') {
@@ -1480,7 +1480,7 @@ class Data
             'department' => 'orgname',
             'honorificPrefix' => 'title',
             'honorificSuffix' => 'atitle',
-            'firstName' => 'firstName',
+            'givenName' => 'givenName',
             'familyName' => 'lastname',
             'jobTitle' => 'work',
         );
@@ -1563,7 +1563,7 @@ class Data
             'connection_only' => '',
             'connection_options' => array(),
             'connection_honorificPrefix' => 'honorificPrefix',
-            'connection_firstName' => 'firstName',
+            'connection_firstName' => 'givenName',
             'connection_familyName' => 'familyName',
             'connection_honorificSuffix' => 'honorificSuffix',
             'connection_sortField' => 'sortField',
@@ -1769,25 +1769,25 @@ class Data
         $display = '';
         switch ($format) {
             case 'name':
-                $display = 'titel, familyName, firstName, name, suffix, permalink, url, link';
+                $display = 'titel, familyName, givenName, name, suffix, permalink, url, link';
                 break;
             case 'shortlist':
-                $display = 'titel, familyName, firstName, name, mail, telefon, suffix, permalink, url, link';
+                $display = 'titel, familyName, givenName, name, mail, telefon, suffix, permalink, url, link';
                 break;
             case 'plain':
-                $display = 'titel, familyName, firstName, name';
+                $display = 'titel, familyName, givenName, name';
                 break;
             case 'full':
             case 'compactindex':
             case 'kompakt':
-                $display = 'titel, familyName, firstName, name, suffix, position, telefon, mobilePhone, email,  socialmedia, adresse, bild, permalink, url, border, border, link';
+                $display = 'titel, familyName, givenName, name, suffix, position, telefon, mobilePhone, email,  socialmedia, adresse, bild, permalink, url, border, border, link';
                 break;
             case 'page':
                 $display = '_all';
                 break;
             case 'listentry':
             case 'liste':
-                $display = 'titel, familyName, firstName, name, suffix, description, permalink, url, link';
+                $display = 'titel, familyName, givenName, name, suffix, description, permalink, url, link';
                 break;
             case 'sidebar':
                 $display = '';
@@ -1803,17 +1803,17 @@ class Data
                     }
                 }
                 if (empty(trim($display))) {
-                    $display = 'titel, familyName, firstName, name, suffix, workLocation, worksFor, jobTitle, telefon, mobilePhone, email, socialmedia, fax, url, adresse, bild, permalink, url, sprechzeiten, ansprechpartner, description';
+                    $display = 'titel, familyName, givenName, name, suffix, workLocation, worksFor, jobTitle, telefon, mobilePhone, email, socialmedia, fax, url, adresse, bild, permalink, url, sprechzeiten, ansprechpartner, description';
                 }
                 break;
             case 'table':
-                $display = 'titel, familyName, firstName, name, suffix, telefon, email, permalink, url, link';
+                $display = 'titel, familyName, givenName, name, suffix, telefon, email, permalink, url, link';
                 break;
             case 'card':
-                $display = 'titel, familyName, firstName, name, suffix, bild, position, permalink, socialmedia';
+                $display = 'titel, familyName, givenName, name, suffix, bild, position, permalink, socialmedia';
                 break;
             default:
-                $display = 'titel, familyName, firstName, name, suffix, worksFor, department, jobTitle, telefon, email, permalink, border, ansprechpartner';
+                $display = 'titel, familyName, givenName, name, suffix, worksFor, department, jobTitle, telefon, email, permalink, border, ansprechpartner';
         }
         return $display;
     }

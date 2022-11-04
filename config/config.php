@@ -124,7 +124,7 @@ function getFields($group = NULL)
                 'type' => 'select',
             ],
             [
-                'name' => 'firstName',
+                'name' => 'givenName',
                 'label' => __('First name', 'rrze-contact'),
                 'type' => 'text',
             ],
@@ -628,24 +628,6 @@ function getSettingsFields()
 }
 
 
-function getDisplayFields(&$shortcodeSettings, $format = '', $show = '', $hide = ''){
-
-    $aRet = [];
-    $aFormat = (!empty($shortcodeSettings['format']['values']) ? $shortcodeSettings['format']['values'] : []);
-
-    foreach($aFormat as $nr => $aVal){
-        if ($aVal['id'] == $format){
-            $aRet = $aVal['fields'];
-            break;
-        }
-    }
-
-    $aRet = array_diff($aRet, array_map('trim', explode(',', $hide)));
-    $aRet = $aRet + array_map('trim', explode(',', $show));
-
-    return $aRet;
-}
-
 /**
  * Gibt die Einstellungen der Parameter für Shortcode für den klassischen Editor und für Gutenberg zurück.
  *
@@ -684,18 +666,18 @@ function getShortcodeSettings($group = NULL)
                 'type' => 'text', // Variablentyp der Eingabe
             ],
             'format' => [
-                'default' => '',
+                'default' => 'default',
                 'field_type' => 'select',
                 'label' => __('Format', 'rrze-contact'),
                 'type' => 'string',
                 'values' => [
                     [
-                        'id' => '',
+                        'id' => 'default',
                         'val' => __('Default', 'rrze-contact'),
                         'fields' => [
                             'honorificPrefix',
                             'honorificSuffix', 
-                            'firstName',
+                            'givenName',
                             'familyName',
                             'organization', 
                             'department',
@@ -712,7 +694,7 @@ function getShortcodeSettings($group = NULL)
                         'fields' => [
                             'honorificPrefix',
                             'honorificSuffix', 
-                            'firstName',
+                            'givenName',
                             'familyName', 
                             'permalink',
                         ],
@@ -723,7 +705,7 @@ function getShortcodeSettings($group = NULL)
                         'fields' => [
                             'honorificPrefix', 
                             'honorificSuffix', 
-                            'firstName',
+                            'givenName',
                             'familyName', 
                             'permalink',
                             'locations',
@@ -737,8 +719,9 @@ function getShortcodeSettings($group = NULL)
                         'fields' => [
                             'honorificPrefix', 
                             'honorificSuffix', 
-                            'firstName',
+                            'givenName',
                             'familyName', 
+                            'permalink',
                         ],
                     ],
                     [
@@ -747,7 +730,7 @@ function getShortcodeSettings($group = NULL)
                         'fields' => [
                             'honorificPrefix', 
                             'honorificSuffix', 
-                            'firstName',
+                            'givenName',
                             'familyName', 
                             'position',
                             'socialmedia',
@@ -782,7 +765,7 @@ function getShortcodeSettings($group = NULL)
                         'fields' => [
                             'honorificPrefix', 
                             'honorificSuffix', 
-                            'firstName',
+                            'givenName',
                             'familyName', 
                             'description',
                             'permalink',
@@ -801,7 +784,7 @@ function getShortcodeSettings($group = NULL)
                         'fields' => [
                             'honorificPrefix', 
                             'honorificSuffix', 
-                            'firstName',
+                            'givenName',
                             'familyName', 
                             'locations',
                             'phone',
@@ -815,7 +798,7 @@ function getShortcodeSettings($group = NULL)
                         'fields' => [
                             'honorificPrefix', 
                             'honorificSuffix', 
-                            'firstName',
+                            'givenName',
                             'familyName', 
                             'picture',
                             'position',

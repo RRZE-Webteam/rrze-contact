@@ -210,7 +210,7 @@ class Schema
 
 
 
-		$honorificPrefix = $honorificSuffix = $firstName = $familyName = $fullname = '';
+		$honorificPrefix = $honorificSuffix = $givenName = $familyName = $fullname = '';
 
 		if ((isset($data['honorificPrefix'])) && (!empty($data['honorificPrefix']))) {
 			$honorificPrefix = '<span itemprop="honorificPrefix">' . esc_html($data['honorificPrefix']) . '</span>';
@@ -220,15 +220,15 @@ class Schema
 		}
 
 
-		if ((isset($data['firstName'])) && (!empty($data['firstName']))) {
-			$firstName = '<span itemprop="firstName">' . esc_html($data['firstName']) . '</span>';
+		if ((isset($data['givenName'])) && (!empty($data['givenName']))) {
+			$givenName = '<span itemprop="givenName">' . esc_html($data['givenName']) . '</span>';
 		}
 		if ((isset($data['familyName'])) && (!empty($data['familyName']))) {
 			$familyName = '<span itemprop="familyName">' . esc_html($data['familyName']) . '</span>';
 		}
 
-		if ((!empty($firstName)) || (!empty($familyName))) {
-			$fullname = '<span class="fullname">' . $firstName . ' ' . $familyName . '</span>';
+		if ((!empty($givenName)) || (!empty($familyName))) {
+			$fullname = '<span class="fullname">' . $givenName . ' ' . $familyName . '</span>';
 		}
 		elseif ((isset($data['name'])) && (!empty($data['name']))) {
 			$fullname = $data['name'];
@@ -277,23 +277,23 @@ class Schema
 		if (!is_array($data)) {
 			return;
 		}
-		$firstName = $familyName = '';
+		$givenName = $familyName = '';
 
-		if ((isset($data['firstName'])) && (!empty($data['firstName']))) {
-			$firstName = esc_html($data['firstName']);
+		if ((isset($data['givenName'])) && (!empty($data['givenName']))) {
+			$givenName = esc_html($data['givenName']);
 		}
 		if ((isset($data['familyName'])) && (!empty($data['familyName']))) {
 			$familyName = esc_html($data['familyName']);
 		}
 
-		if ((!empty($firstName)) || (!empty($familyName))) {
-			$fullname = $firstName . ' ' . $familyName;
+		if ((!empty($givenName)) || (!empty($familyName))) {
+			$fullname = $givenName . ' ' . $familyName;
 		}
 		elseif (!empty($familyName)) {
-			$fullname = $firstName;
+			$fullname = $givenName;
 		}
-		elseif (!empty($firstName)) {
-			$fullname = $firstName;
+		elseif (!empty($givenName)) {
+			$fullname = $givenName;
 		}
 		elseif ((isset($data['name'])) && (!empty($data['name']))) {
 			$fullname = esc_html($data['name']);

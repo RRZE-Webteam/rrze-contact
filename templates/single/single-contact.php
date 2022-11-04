@@ -13,7 +13,8 @@ get_header();
 		     'hstart' => 1,
 		 ];
 
-                      echo RRZE\Contact\Data::rrze_contact_page($id,array(),$args,true);
+                    //   echo RRZE\Contact\Data::rrze_contact_page($id,array(),$args,true);
+                    do_shortcode('[contact id=' . $id . ']');
                     ?>         
                     </div>
                 </div>

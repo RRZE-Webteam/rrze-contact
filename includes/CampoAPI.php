@@ -136,7 +136,7 @@ class DIPAPI
                         'key' => 'key',
                         'title' => 'title',
                         'atitle' => 'atitle',
-                        'firstName' => 'firstName',
+                        'givenName' => 'givenName',
                         'lastname' => 'lastname',
                         'work' => 'work',
                         'officehours' => 'officehour',
