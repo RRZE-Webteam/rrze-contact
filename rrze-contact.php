@@ -4,7 +4,7 @@
  * Plugin Name:     RRZE Contact
  * Plugin URI:      https://github.com/RRZE-Webteam/rrze-contact
  * Description:     Einbindung von Daten aus Contact
- * Version:         0.1.9
+ * Version:         0.1.10
  * Author:          RRZE-Webteam
  * Author URI:      https://blogs.fau.de/webworking/
  * License:         GNU General Public License v3

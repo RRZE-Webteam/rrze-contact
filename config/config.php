@@ -755,6 +755,7 @@ function getShortcodeSettings($group = NULL)
                             'picture',
                             'border',
                             'permalink',
+                            'small_description',
                         ],
                     ],
                     [
@@ -810,6 +811,7 @@ function getShortcodeSettings($group = NULL)
                             'position',
                             'socialmedia',
                             'permalink',
+                            'imagelink',
                         ],
                     ],
                 ],

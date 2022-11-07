@@ -1,7 +1,7 @@
 <div class="{{=class}} page" itemscope="" itemtype="http://schema.org/Person">
 
     <h2 itemprop="name">
-        {{/honorificPrefix}}<span itemprop="honorificPrefix">{{=honorificPrefix}}</span> {{/honorificPrefix}}<span
+        {{honorificPrefix}}<span itemprop="honorificPrefix">{{=honorificPrefix}}</span> {{/honorificPrefix}}<span
             class="fullname"><span itemprop="givenName">{{=givenName}}</span> <span
                 itemprop="familyName">{{=familyName}}</span></span>{{honorificSuffix}}, <span
             itemprop="honorificSuffix">{{=honorificSuffix}}</span>{{/honorificSuffix}}
@@ -24,37 +24,33 @@
                 <span itemprop="department">{{=department}}</span><br>
             </p>
 
-
             {{@locations}}
             <ul class="contactlist">
-
                 {{_val.street}}
-                <address itemprop="address" itemscope="" itemtype="http://schema.org/PostalAddress"><span
-                        class="screen-reader-text">Raum: </span><span class="room">{{=room}}</span><br>
-                    <span itemprop="streetAddress">{{=street}}</span><br>
-                    <span itemprop="addressLocality">{{=city}}</span><br>
+                <address itemprop="address" itemscope="" itemtype="http://schema.org/PostalAddress">
+                    {{room}}<span class="screen-reader-text">__('Room', 'rrze-contact'): </span><span class="room">{{=room}}</span><br>{{/room}}
+                    {{street}}<span itemprop="streetAddress">{{=street}}</span><br>{{/street}}
+                    {{city}}<span itemprop="addressLocality">{{=city}}</span><br>{{/city}}
                 </address>
                 {{/_val.street}}
-
-
                 {{_val.phone}}
                 <li class="contact-info-phone telephone">
                     <span class="screen-reader-text">Telefon: </span>
                     <a itemprop="telephone" href="tel:{{=_val.phone}}">{{=_val.phone}}</a>
                 </li>
                 {{/_val.phone}}
-                {{_val.phone}}
+                {{_val.mobile}}
                 <li class="contact-info-mobile mobilePhone">
                     <span class="screen-reader-text">Mobil: </span>
                     <a itemprop="telephone" href="tel:{{=_val.mobile}}">{{=_val.mobile}}</a>
                 </li>
-                {{/_val.phone}}
+                {{/_val.mobile}}
                 {{_val.fax}}
                 <li class="contact-info-fax faxNumber">
                     <span class="screen-reader-text">Faxnummer: </span>
                     <a itemprop="faxNumber" href="tel:{{=_val.fax}}">{{=_val.fax}}</a>
                 </li>
-                {{/_val.phone}}
+                {{/_val.fax}}
                 {{_val.email}}
                 <li class="contact-info-email email">
                     <span class="screen-reader-text">E-Mail: </span>
@@ -64,10 +60,9 @@
                 {{_val.url}}
                 <li class="contact-info-www url">
                     <span class="screen-reader-text">E-Webseite: </span>
-                    <a itemprop="url" href="mailto:{{=_val.url}}">{{=_val.url}}</a>
+                    <a itemprop="url" href="{{=_val.url}}">{{=_val.url}}</a>
                 </li>
                 {{/_val.url}}
-
             </ul>
             {{/@locations}}
             {{consultations}}
@@ -84,7 +79,7 @@
             {{/consultations}}
         </div>
     </div>
-    {{description}}
-    <div class="desc" itemprop="description">{{=description}}</div>
-    {{/description}}
+    {{post_content}}
+    <div class="desc" itemprop="description">{{=post_content}}</div>
+    {{/post_content}}
 </div>

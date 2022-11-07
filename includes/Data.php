@@ -394,72 +394,120 @@ class Data
         return $url;
     }
 
-
-
-
     // BK
-    private static function getDescription(&$post, &$format){
-        if (($format == 'sidebar') || ($format == 'kompakt')) {
-            if (!empty($post['small_description'])) {
-                return $post['small_description'];
-            }
+    private static function getDescription(&$post, &$format)
+    {
+        if (!empty($post['small_description'])) {
+            return $post['small_description'];
         }
         if (!empty($post['description'])) {
             return $post['description'];
         }
-    
-        // Fallback
         if (!empty($post['post_excerpt'])) {
             return $post['post_excerpt'];
-        }else{
+        } else {
             return '';
         }
     }
 
-    // BK
-    public static function getContactData($postID, $aDisplayfields, $format = 'page')
+    public static function getImage($postID, &$aDisplayfields)
     {
         $aRet = [];
 
-        if (in_array('all', $aDisplayfields) || in_array('description', $aDisplayfields) || $format == 'page'){
-            $post = get_post($postID, ARRAY_N);
+        $aRet['alt'] = esc_attr($fields['contact_title']);
 
-            if (in_array('all', $aDisplayfields) || in_array('description', $aDisplayfields)){
-                $desc = self::getDescription($post, $format);
-                if (!empty($desc)) {
-                    $aRet['description'] = $desc;
-                }    
+        if ($aDisplayfields['imagelink']) {
+            $aRet['imagelink'] = get_permalink($postID);
+        }
+
+        if (has_post_thumbnail($postID)) {
+            $size = $this->settings->options['view_contact_page_imagesize'];
+            if (empty($size)){
+                $size = 'contact-thumb-page-v3';
             }
 
-            if (in_array('all', $aDisplayfields) || $format == 'page'){
+            $imageID = get_post_thumbnail_id($postID);
+            $imageAtts = wp_get_attachment_image_src($imageID, $size);
+            if (is_array($imga)) {
+                $aRet['src'] = $imageAtts[0];
+                $aRet['width'] = $imageAtts[1];
+                $aRet['height'] = $imageAtts[2];
+                $aRet['srcset'] = wp_get_attachment_image_srcset($imageID, $size);
+                $aRet['sizes'] = wp_get_attachment_image_sizes($imageID, $size);
+            }
+            if ($showcaption) {
+                $attachment = get_post($imageID);
+                if (isset($attachment) && isset($attachment->post_excerpt)) {
+                    $aRet['caption'] = trim(strip_tags($attachment->post_excerpt));
+                }
+            }
+        } elseif ($defaultimage) {
+            $type = $fields['typ'];
+
+            $pluginfile = __DIR__;
+
+            if ($type == 'realmale') {
+                $bild = plugin_dir_url($pluginfile) . 'images/platzhalter-mann.png';
+            } elseif ($type == 'realfemale') {
+                $bild = plugin_dir_url($pluginfile) . 'images/platzhalter-frau.png';
+            } elseif ($type == 'einrichtung') {
+                $bild = plugin_dir_url($pluginfile) . 'images/platzhalter-organisation.png';
+            } else {
+                $bild = plugin_dir_url($pluginfile) . 'images/platzhalter-unisex.png';
+            }
+            if ($bild) {
+                $imagedata['src'] = $bild;
+                $imagedata['width'] = 120;
+                $imagedata['height'] = 160;
+            }
+        }
+        // $res = Schema::create_Image($imagedata, 'figure', 'image', $class, true, $targetlink, $linkttitle);
+        return $aRet;
+    }
+
+
+    // BK
+    public static function getContactData($postID, $aDisplayfields)
+    {
+        $aRet = [];
+
+        if (in_array('description', $aDisplayfields) || in_array('all', $aDisplayfields)) {
+            $post = get_post($postID, ARRAY_A);
+
+            $desc = self::getDescription($post, $format);
+            if (!empty($desc)) {
+                $aRet['description'] = $desc;
+            }
+
+            if (in_array('post_content', $aDisplayfields) || in_array('all', $aDisplayfields)) {
                 if (!empty($post['post_content'])) {
                     $aRet['post_content'] = $post['post_content'];
-                }    
+                }
             }
         }
 
-        if (in_array('all', $aDisplayfields) || in_array('permalink', $aDisplayfields)){
+        if (in_array('permalink', $aDisplayfields) || in_array('all', $aDisplayfields)) {
             $aRet['permalink'] = get_permalink($postID);
         }
 
         $aFields = getFields('contact');
 
-        if (!empty($aFields)){
+        if (!empty($aFields)) {
             $postMeta = get_post_meta($postID);
 
             foreach ($aFields as $aDetails) {
-                if ((in_array('all', $aDisplayfields) || in_array($aDetails['name'], $aDisplayfields)) && !empty($postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0])) {
+                if ((in_array('name', $aDisplayfields) || in_array('all', $aDisplayfields)) && !empty($postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0])) {
                     $aRet[$aDetails['name']] = $postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0];
                 }
             }
 
             $aGroups = [];
 
-            if (in_array('all', $aDisplayfields) || in_array('locations', $aDisplayfields)){
+            if (in_array('locations', $aDisplayfields) || in_array('all', $aDisplayfields)) {
                 $aGroups[] = 'locations';
             }
 
-            if (in_array('all', $aDisplayfields) || in_array('consultations', $aDisplayfields)){
+            if (in_array('consultations', $aDisplayfields) || in_array('all', $aDisplayfields)) {
                 $aGroups[] = 'consultations';
             }
 
@@ -470,7 +518,7 @@ class Data
                         $aTmp = [];
                         foreach ($location as $field => $value) {
                             $fieldName = substr($field, strlen(RRZE_CONTACT_PREFIX));
-                            if (in_array('all', $aDisplayfields) || in_array($fieldName, $aDisplayfields)){
+                            if (in_array($fieldName, $aDisplayfields) || in_array('all', $aDisplayfields)) {
                                 $aTmp[$fieldName] = $value;
                             }
                         }
@@ -478,24 +526,28 @@ class Data
                     }
                 }
             }
-    
-            if (in_array('all', $aDisplayfields) || in_array('consultations', $aDisplayfields)){
+
+            if (in_array('consultations', $aDisplayfields) || in_array('all', $aDisplayfields)) {
                 if (!empty($postMeta[RRZE_CONTACT_PREFIX . 'consultation_headline'][0])) {
                     $aRet['consultation_headline'] = $postMeta[RRZE_CONTACT_PREFIX . 'consultation_headline'][0];
                 }
-        
+
                 if (!empty($postMeta[RRZE_CONTACT_PREFIX . 'consultation_notice'][0])) {
                     $aRet['consultation_notice'] = $postMeta[RRZE_CONTACT_PREFIX . 'consultation_notice'][0];
                 }
-            }    
+            }
 
-            if (in_array('all', $aDisplayfields) || in_array('socialmedia', $aDisplayfields)){
+            if (in_array('socialmedia', $aDisplayfields) || in_array('all', $aDisplayfields)) {
                 $aFields = getFields('socialmedia');
                 foreach ($aFields as $aDetails) {
                     if (!empty($postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0])) {
                         $aRet[$aDetails['name']] = $postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0];
                     }
                 }
+            }
+
+            if (in_array('image', $aDisplayfields) || in_array('all', $aDisplayfields)) {
+                $aRet['image'] = self::getImage();
             }
         }
 
@@ -508,10 +560,8 @@ class Data
             return;
         }
 
-
         // BK 2DO : getContactData() display-fields übergeben
         $fields = self::getContactData($postID);
-
 
         $viewopts = self::get_viewsettings();
 
@@ -649,8 +699,6 @@ class Data
         $content .= '</div>';
         return $content;
     }
-
-    
 
     public static function rrze_contact_page($id, $display = array(), $arguments = array(), $is_shortcode = false)
     {
