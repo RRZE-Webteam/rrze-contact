@@ -176,6 +176,12 @@ function getFields($group = NULL)
                 'type' => 'text',
                 'sanitization_cb' => ['self', 'phone'],
             ],
+            'mobile' => [
+                'name' => 'mobile',
+                'label' => __('Mobile', 'rrze-contact'),
+                'type' => 'text',
+                'sanitization_cb' => ['self', 'phone'],
+            ],
             [
                 'name' => 'fax',
                 'label' => __('Fax', 'rrze-contact'),
