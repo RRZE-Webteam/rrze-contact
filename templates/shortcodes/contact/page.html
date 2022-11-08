@@ -8,15 +8,16 @@
     </h2>
 
     <div class="person-meta">
-        <figure itemprop="image" class="person-image alignright person-thumb-page-v3 with-caption" aria-hidden="true"
-            role="presentation" itemtype="http://schema.org/ImageObject"><img src="{{=class}}" itemprop="contentUrl"
-                alt="{{=class}}" width="200" height="266"
-                srcset="https://www.rrze.fau.de/files/2017/01/Wolfgang-Wiese.jpg 200w, https://www.rrze.fau.de/files/2017/01/Wolfgang-Wiese-150x200.jpg 150w"
-                sizes="(max-width: 200px) 100vw, 200px">
-            <meta itemprop="width" content="200">
-            <meta itemprop="height" content="266">
-            <figcaption itemprop="caption">{{=class}}</figcaption>
+        {{image}}
+        <figure itemprop="image" class="person-image alignright person-thumb-page-v3 with-caption" aria-hidden="true" role="presentation" itemtype="http://schema.org/ImageObject">
+            <img src="{{=image.src}}" itemprop="contentUrl" {{image.alt}}alt="{{=image.alt}}"{{/image.alt}} width="{{=image.width}}" height="{{=image.height}}" {{image.srcset}}srcset="{{=image.srcset}}"{{/image.srcset}} {{image.sizes}}sizes="{{=image.sizes}}"{{/image.sizes}}>
+            <meta itemprop="width" content="{{=image.width}}">
+            <meta itemprop="height" content="{{=image.height}}">
+            {{image.caption}}
+                <figcaption itemprop="caption">{{=image.caption}}</figcaption>
+            {{/image.caption}}
         </figure>
+        {{/image}}
 
         <div class="contact-info"><span class="contact-info-position" itemprop="jobTitle">{{=jobTitle}}</span><br>
             <p itemprop="worksFor" itemtype="http://schema.org/Organization"><span

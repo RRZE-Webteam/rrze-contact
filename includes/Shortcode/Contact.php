@@ -19,9 +19,12 @@ class Contact extends Shortcode
     public $pluginFile = '';
     private $settings = '';
     private $aAllFormats = [];
+    private $pluginSettings;
 
-    public function __construct($pluginFile, $settings)
+    public function __construct($pluginFile, $pluginSettings)
     {
+        $this->pluginSettings = (array) $pluginSettings;
+        $this->pluginSettings = $this->pluginSettings['options']; 
         $this->pluginFile = $pluginFile;
         $this->settings = getShortcodeSettings('contact');
         add_action('init', [$this, 'initGutenberg']);
@@ -107,17 +110,25 @@ class Contact extends Shortcode
             return __('id or category is needed', 'rrze-contact');
         }
 
+
         foreach ($aPostIDs as $postID) {
-            $data = Data::getContactData($postID, $aDisplayfields, $atts['format']);
+            $data = Data::getContactData($postID, $aDisplayfields, $this->pluginSettings);
             $data['class'] = $class;
 
             // echo '<pre>';
             // var_dump($data);
             // exit;
 
+            // $vcard = new Vcard($this->univisData);
+            // echo $vcard->showCard();
+            // $vcard->showCardQR();
+            // echo '<img src="' . $vcard->showCardQR() . '">';
+            // exit;
+
             if (!empty($data)) {
                 $template = 'shortcodes/contact/' . $atts['format'] . '.html';
                 $content .= Template::getContent($template, $data);
+
                 if ($atts['format'] == 'organization') {
                     $content = do_shortcode($content);
                 }

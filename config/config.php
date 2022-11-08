@@ -93,7 +93,7 @@ function getSections()
         ],
 
         [
-            'id' => 'constants',
+            'id' => 'additional_settings',
             'title' => __('Erweiterte Einstellungen', 'rrze-contact'),
         ],
         [
@@ -460,7 +460,7 @@ function getSettingsFields()
     ];
     $aRet['sidebar'] = $aRet['sidebar'] + $aAdded;
 
-    $aRet['constants'] = [
+    $aRet['additional_settings'] = [
         [
             'name' => 'view_telefonlink',
             'label' => __('Telefonnummer als Link', 'rrze-contact'),
@@ -485,7 +485,6 @@ function getSettingsFields()
                 'nach-name' => __('Direkt nach dem Namen', 'rrze-contact'),
             ],
         ],
-
         [
             'name' => 'view_raum_prefix',
             'default' => __('Raum', 'rrze-contact'),

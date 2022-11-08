@@ -97,7 +97,6 @@ class Contact extends Metaboxes
     {
         // Meta-Box Contact
         $contactselect_connection = Data::get_contactdata(1);
-        $default_rrze_contact_typ = Data::get_default_rrze_contact_typ();
 
         $postID = intval(!empty($_GET['post']) ? $_GET['post'] : (!empty($_POST['post_ID']) ? $_POST['post_ID'] : 0));
 
@@ -108,18 +107,6 @@ class Contact extends Metaboxes
         $this->univisID = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'univisID', true);
 
         $univisSyncTxt = '';
-
-        // if ($this->univisID) {
-        //     $univis = new UnivIS();
-        //     $univisResponse = $univis->getContact('id=' . $this->univisID);
-
-        //     if ($univisResponse['valid']) {
-        //         $this->univisData = $univisResponse['content'][0];
-        //     } else {
-        //         $univisSyncTxt = '<p class="cmb2-metabox-description">' . __('Derzeit sind keine Daten aus UnivIS syncronisiert.', 'rrze-contact') . '</p>';
-        //     }
-        // }
-
 
         // Meta-Box Synchronize
         $cmb = new_cmb2_box([
@@ -133,14 +120,14 @@ class Contact extends Metaboxes
                     'name' => __('Typ des Eintrags', 'rrze-contact'),
                     'type' => 'select',
                     'options' => [
-                        'realcontact' => __('Person (allgemein)', 'rrze-contact'),
-                        'realmale' => __('Person (männlich)', 'rrze-contact'),
-                        'realfemale' => __('Person (weiblich)', 'rrze-contact'),
-                        'einrichtung' => __('Einrichtung', 'rrze-contact'),
+                        'unisex' => __('Person (allgemein)', 'rrze-contact'),
+                        'man' => __('Person (männlich)', 'rrze-contact'),
+                        'woman' => __('Person (weiblich)', 'rrze-contact'),
+                        'organization' => __('Einrichtung', 'rrze-contact'),
                         'pseudo' => __('Pseudonym', 'rrze-contact'),
                     ],
-                    'id' => RRZE_CONTACT_PREFIX . 'type',
-                    'default' => $default_rrze_contact_typ,
+                    'id' => RRZE_CONTACT_PREFIX . 'contactType',
+                    'default' => 'unisex',
                 ],
                 [
                     'name' => __('UnivIS-Id', 'rrze-contact'),
@@ -196,12 +183,6 @@ class Contact extends Metaboxes
             'options' => $linkOptions,
             'default' => $myUrl,
         ];
-
-        // $vcard = new Vcard($this->univisData);
-        // echo $vcard->showCard();
-        // $vcard->showCardQR();
-        // echo '<img src="' . $vcard->showCardQR() . '">';
-        // exit;
 
         $cmb = new_cmb2_box([
             'id' => 'rrze_contact_info',

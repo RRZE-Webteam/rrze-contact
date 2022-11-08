@@ -150,6 +150,7 @@ class Data
         }
         return $fields;
     }
+
     public static function get_more_link($targeturl, $screenreadertext = '', $class = 'contact-info-more', $withdiv = true, $linktitle = '')
     {
         if ((!isset($targeturl)) || empty($targeturl)) {
@@ -410,64 +411,48 @@ class Data
         }
     }
 
-    public static function getImage($postID, &$aDisplayfields)
+    public static function getImage($postID, &$aDisplayfields, $imageLink, $showCaption, $imageSize, $contactType)
     {
         $aRet = [];
 
-        $aRet['alt'] = esc_attr($fields['contact_title']);
+        $aRet['alt'] = get_the_title($postID);
 
-        if ($aDisplayfields['imagelink']) {
+        if ($imageLink) {
             $aRet['imagelink'] = get_permalink($postID);
         }
 
         if (has_post_thumbnail($postID)) {
-            $size = $this->settings->options['view_contact_page_imagesize'];
-            if (empty($size)){
-                $size = 'contact-thumb-page-v3';
-            }
 
             $imageID = get_post_thumbnail_id($postID);
-            $imageAtts = wp_get_attachment_image_src($imageID, $size);
-            if (is_array($imga)) {
-                $aRet['src'] = $imageAtts[0];
-                $aRet['width'] = $imageAtts[1];
-                $aRet['height'] = $imageAtts[2];
-                $aRet['srcset'] = wp_get_attachment_image_srcset($imageID, $size);
-                $aRet['sizes'] = wp_get_attachment_image_sizes($imageID, $size);
-            }
-            if ($showcaption) {
+
+            $imageAtts = wp_get_attachment_image_src($imageID, $imageSize);
+            $aRet['src'] = $imageAtts[0];
+            $aRet['width'] = $imageAtts[1];
+            $aRet['height'] = $imageAtts[2];
+            $aRet['srcset'] = wp_get_attachment_image_srcset($imageID, $imageSize);
+            $aRet['sizes'] = wp_get_attachment_image_sizes($imageID, $imageSize);
+
+            if ($showCaption) {
                 $attachment = get_post($imageID);
+
                 if (isset($attachment) && isset($attachment->post_excerpt)) {
-                    $aRet['caption'] = trim(strip_tags($attachment->post_excerpt));
+                    $caption = trim(strip_tags($attachment->post_excerpt));
+                    if (!empty($caption)){
+                        $aRet['caption'] = $caption;
+                    }
                 }
             }
-        } elseif ($defaultimage) {
-            $type = $fields['typ'];
-
-            $pluginfile = __DIR__;
-
-            if ($type == 'realmale') {
-                $bild = plugin_dir_url($pluginfile) . 'images/platzhalter-mann.png';
-            } elseif ($type == 'realfemale') {
-                $bild = plugin_dir_url($pluginfile) . 'images/platzhalter-frau.png';
-            } elseif ($type == 'einrichtung') {
-                $bild = plugin_dir_url($pluginfile) . 'images/platzhalter-organisation.png';
-            } else {
-                $bild = plugin_dir_url($pluginfile) . 'images/platzhalter-unisex.png';
-            }
-            if ($bild) {
-                $imagedata['src'] = $bild;
-                $imagedata['width'] = 120;
-                $imagedata['height'] = 160;
-            }
+        } else {
+            $aRet['src'] = plugin_dir_url(__DIR__) . 'images/placeholder-' . $contactType . '.png';
+            $aRet['width'] = 120;
+            $aRet['height'] = 160;
         }
-        // $res = Schema::create_Image($imagedata, 'figure', 'image', $class, true, $targetlink, $linkttitle);
+
         return $aRet;
     }
 
-
     // BK
-    public static function getContactData($postID, $aDisplayfields)
+    public static function getContactData($postID, &$aDisplayfields, &$pluginSettings)
     {
         $aRet = [];
 
@@ -547,7 +532,12 @@ class Data
             }
 
             if (in_array('image', $aDisplayfields) || in_array('all', $aDisplayfields)) {
-                $aRet['image'] = self::getImage();
+                $imageLink = $pluginSettings['additional_settings_view_card_linkimage'];
+                $imageSize = $pluginSettings['additional_settings_view_contact_page_imagesize'];
+                $showCaption = (!empty($pluginSettings['additional_settings-view_contact_page_imagecaption']) ? true : false);
+                $contactType = (!empty($postMeta[RRZE_CONTACT_PREFIX . 'contactType'][0]) ? $postMeta[RRZE_CONTACT_PREFIX . 'contactType'][0] : '');
+
+                $aRet['image'] = self::getImage($postID, $aDisplayfields, $imageLink, $showCaption, $imageSize, $contactType);
             }
         }
 
