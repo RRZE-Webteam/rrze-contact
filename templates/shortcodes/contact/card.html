@@ -1,0 +1,74 @@
+<div class="rrze-contact contact-card">
+    <div class="card-item card-small" itemscope="" itemtype="http://schema.org/Person">
+        {{image}}
+        <figure itemprop="image" class="person-image alignright contact-thumb-page-v3 with-caption" aria-hidden="true" role="presentation" itemtype="http://schema.org/ImageObject">
+            <img src="{{=image.src}}" itemprop="contentUrl" {{image.alt}}alt="{{=image.alt}}"{{/image.alt}} width="{{=image.width}}" height="{{=image.height}}" {{image.srcset}}srcset="{{=image.srcset}}"{{/image.srcset}} {{image.sizes}}sizes="{{=image.sizes}}"{{/image.sizes}}>
+            <meta itemprop="width" content="{{=image.width}}">
+            <meta itemprop="height" content="{{=image.height}}">
+            {{image.caption}}
+                <figcaption itemprop="caption">{{=image.caption}}</figcaption>
+            {{/image.caption}}
+        </figure>
+        {{/image}}
+        <h3><a href="{{=permalink}}"><span itemprop="name">{{honorificPrefix}}<span itemprop="honorificPrefix">{{=honorificPrefix}}</span>{{/honorificPrefix}} <span class="fullname">{{givenName}}<span itemprop="givenName">{{=givenName}}</span>{{/givenName}}{{familyName}}<span itemprop="familyName">{{=familyName}}</span>{{/familyName}}</span>{{honorificSuffix}}, <span itemprop="honorificSuffix">{{=honorificSuffix}}</span>{{/honorificSuffix}}</span></a></h3>
+
+        {{position}}<p><span class="contact-info-position" itemprop="jobTitle">{{=position}}</span></p>{{/position}}
+
+        {{socialmedia}}
+        <ul class="socialmedia">
+            {{twitter}}
+            <li class="twitter"><a itemprop="sameAs" href="{{=twitter}}">Twitter<span
+                        class="screen-reader-text">: {{=screen-reader-text}}</span></a></li>
+            {{/twitter}}
+            {{facebook}}
+            <li class="facebook"><a itemprop="sameAs" href="{{=facebook}}">Facebook<span
+                        class="screen-reader-text">: {{=screen-reader-text}}</span></a></li>
+            {{/facebook}}
+            {{linkedin}}
+            <li class="linkedin"><a itemprop="sameAs" href="{{=linkedin}}">LinkedIn<span
+                        class="screen-reader-text">: {{=screen-reader-text}}</span></a></li>
+            {{/linkedin}}
+            {{instagram}}
+            <li class="instagram"><a itemprop="sameAs" href="{{=instagram}}">Instagram<span
+                        class="screen-reader-text">: {{=screen-reader-text}}</span></a></li>
+            {{/instagram}}
+            {{xing}}
+            <li class="xing"><a itemprop="sameAs" href="{{=xing}}">Xing<span class="screen-reader-text">:
+                        {{=screen-reader-text}}</span></a></li>
+            {{/xing}}
+            {{youtube}}
+            <li class="youtube"><a itemprop="sameAs" href="{{=youtube}}">YouTube<span
+                        class="screen-reader-text">: {{=screen-reader-text}}</span></a></li>
+            {{/youtube}}
+            {{github}}
+            <li class="github"><a itemprop="sameAs" href="{{=github}}">GitHub<span class="screen-reader-text">:
+                        {{=screen-reader-text}}</span></a></li>
+            {{/github}}
+            {{publons}}
+            <li class="publons"><a itemprop="sameAs" href="{{=publons}}">Publons<span
+                        class="screen-reader-text">: {{=screen-reader-text}}</span></a></li>
+            {{/publons}}
+            {{scopus}}
+            <li class="scopus"><a itemprop="sameAs" href="{{=scopus}}">Scopus<span class="screen-reader-text">:
+                        {{=screen-reader-text}}</span></a></li>
+            {{/scopus}}
+            {{googlescholar}}
+            <li class="googlescholar"><a itemprop="sameAs" href="{{=googlescholar}}">Google Scholar<span
+                        class="screen-reader-text">: {{=screen-reader-text}}</span></a></li>
+            {{/googlescholar}}
+            {{orcid}}
+            <li class="orcid"><a itemprop="sameAs" href="{{=orcid}}">ORCID<span class="screen-reader-text">:
+                        {{=screen-reader-text}}</span></a></li>
+            {{/orcid}}
+            {{researchgate}}
+            <li class="researchgate"><a itemprop="sameAs" href="{{=researchgate}}">Research Gate<span
+                        class="screen-reader-text">: {{=screen-reader-text}}</span></a></li>
+            {{/researchgate}}
+            {{tiktok}}
+            <li class="tiktok"><a itemprop="sameAs" href="{{=tiktok}}">TikTok<span class="screen-reader-text">:
+                        {{=screen-reader-text}}</span></a></li>
+            {{/tiktok}}
+        </ul>
+        {{/socialmedia}}
+    </div>
+</div>
