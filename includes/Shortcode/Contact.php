@@ -33,6 +33,8 @@ class Contact extends Shortcode
     public function onLoaded()
     {
         add_shortcode('contact', [$this, 'shortcode_contact']);
+        remove_filter('the_content', 'wpautop');
+
         // add_shortcode('contact', [$this, 'shortcode_contact']);
         // add_shortcode('contactliste', [$this, 'shortcode_contactlist']);
         // add_shortcode('contacts', [$this, 'shortcode_contactlist']);
@@ -98,9 +100,9 @@ class Contact extends Shortcode
         }
 
         $class = (!empty($aDisplayfields['class']) ? $aDisplayfields['class'] : '');
-        $border = (!empty($aDisplayfields['border']) ? 'border' : 'noborder');
-        $background = (!empty($aDisplayfields['background']) ? $aDisplayfields['background'] : '');
-        $class = self::getCSSClass($class, $border, $background);
+        $border = (in_array('border', $aDisplayfields) ? 'border' : 'noborder');
+
+        $class = self::getCSSClass($atts['class'], $border, $atts['background']);
 
         if (!empty($atts['category'])) {
             $aPostIDs = getPostIDsByCategory($atts['category']);

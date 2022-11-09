@@ -157,13 +157,13 @@
 	    margin-right: 0;
 	    
 	
-	    .person-default-thumb,
+	    .contact-default-thumb",
 	    .person-default {
 		margin-left: 5px;
 		margin-right: 5px;
 		padding: 0 5px;	
 	    }
-	    .person-thumb {
+	    .contact-thumb {
 		flex: 0 0 80px;
 		float: none;
 		order: 1;
@@ -172,14 +172,14 @@
 	    }
 	    .person-default,
 	    .person-sidebar,
-	    .person-default-thumb {
+	    .contact-default-thumb" {
 		flex: 1 0 200px;
 		float: none;
 		order: 2;
 		max-width: inherit;
 		width: inherit;
 	    } 
-	    .person-default-thumb {
+	    .contact-default-thumb" {
 		@media (min-width: 768px) {
 		    flex-basis: 250px; 
 		}
@@ -197,7 +197,7 @@
 		width: inherit;
 			
 	    }
-	    .person-default-more {
+	    .contact-default-more {
 		 float: none;
 		 padding: 5px;
 		 order: 4;
@@ -220,11 +220,11 @@
 	.compactindex .row {
 	    
 	     .person-default,  
-	     .person-default-thumb {
+	     .contact-default-thumb" {
 		 order: 1;
 		 
 	     }
-	     .person-default-more {
+	     .contact-default-more {
 		text-align: left;
 		order: 2;
 		
@@ -232,7 +232,7 @@
 		    text-align: left;
 		}
 	     }
-	     .person-thumb {
+	     .contact-thumb {
 		order: 3;
 		padding-left: 5px;
 		padding-right: 0;
@@ -242,7 +242,7 @@
 	 
 	
 	 
-	 .person-thumb {
+	 .contact-thumb {
 	     img {
 		 max-width: 100%;
 	     }
@@ -250,7 +250,7 @@
 }
 
 .rrze-contact.thumb-size-small {
-    .row .person-thumb {
+    .row .contact-thumb {
 	flex-basis: 80px;
 	img {
 	    width: 80px;
@@ -261,7 +261,7 @@
     }
 }
 .rrze-contact.thumb-size-medium {
-    .row .person-thumb {
+    .row .contact-thumb {
 	flex-basis: 100px;
 	img {
 	    width: 100px;
@@ -272,7 +272,7 @@
     }
 }
 .rrze-contact.thumb-size-large {
-    .row .person-thumb {
+    .row .contact-thumb {
 	flex-basis: 120px;
 	img {
 	    width: 120px;
@@ -289,7 +289,7 @@
     padding: 0 5px;
 }
 
-.sidebar-inline .person .row .person-thumb {
+.sidebar-inline .person .row .contact-thumb {
     padding-left: 0px;
 }
 
@@ -354,11 +354,11 @@
 	    figcaption {
 			font-size: 0.9em;
 		    }
-		&.person-thumb-page-v3 {
+		&.contact-thumb-page-v3 {
 			max-width: 240px;
 			max-height: 320px;
 		}
-		&.person-thumb-v3 {
+		&.contact-thumb-v3 {
 			max-width: 120px;
 			max-height: 160px;
 		}

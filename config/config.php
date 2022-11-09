@@ -26,12 +26,12 @@ function getConstants($group = null)
     $aFields = [
         'UnivIS_Transient' => 'sui_1k4fu7056Kl12a5',
         'images' => [
-            /* Thumb for person-type; small for sidebar - Name: person-thumb */
+            /* Thumb for person-type; small for sidebar - Name: contact-thumb */
             'default_contact_thumb_width' => 120,
             'default_contact_thumb_height' => 160,
             'default_contact_thumb_crop' => true,
 
-            /* Thumb for person-type; small for content - Name: person-thumb-page */
+            /* Thumb for person-type; small for content - Name: contact-thumb-page */
             'default_contact_thumb_page_width' => 240,
             'default_contact_thumb_page_height' => 320,
             'default_contact_thumb_page_crop' => true,
@@ -93,7 +93,7 @@ function getSections()
         ],
 
         [
-            'id' => 'additional_settings',
+            'id' => 'layout',
             'title' => __('Erweiterte Einstellungen', 'rrze-contact'),
         ],
         [
@@ -460,33 +460,19 @@ function getSettingsFields()
     ];
     $aRet['sidebar'] = $aRet['sidebar'] + $aAdded;
 
-    $aRet['additional_settings'] = [
+    $aRet['layout'] = [
         [
-            'name' => 'view_telefonlink',
-            'label' => __('Telefonnummer als Link', 'rrze-contact'),
-            'desc' => __('Setzt die Telefonnummer als Link, so dass mobile Endgeräte und darauf vorbereitet Software bei einem Klick die Telefonwahlfunktion aufrufen.', 'rrze-contact'),
-            'type' => 'checkbox',
-            'default' => true,
-        ],
-        [
-            'name' => 'view_telefon_intformat',
-            'label' => __('Internationales Nummernformat', 'rrze-contact'),
-            'desc' => __('Die Telefonnnummer wird in dem internationalen Format angezeigt.', 'rrze-contact'),
-            'type' => 'checkbox',
-            'default' => true,
-        ],
-        [
-            'name' => 'view_some_position',
-            'label' => __('Position Social Media Icons', 'rrze-contact'),
-            'default' => 'nach-contact',
+            'name' => 'socialmedia',
+            'label' => __('Position of social media icons', 'rrze-contact'),
+            'default' => 'after-location',
             'type' => 'Select',
             'options' => [
-                'nach-contact' => __('Nach den Kontaktdaten', 'rrze-contact'),
-                'nach-name' => __('Direkt nach dem Namen', 'rrze-contact'),
+                'after-location' => __('After locations\'s data', 'rrze-contact'),
+                'after-name' => __('Directly after the name', 'rrze-contact'),
             ],
         ],
         [
-            'name' => 'view_raum_prefix',
+            'name' => 'room_text',
             'default' => __('Raum', 'rrze-contact'),
             'placeholder' => __('Raum', 'rrze-contact'),
             'label' => __('Anzuzeigender Text vor der Raumangabe', 'rrze-contact'),
@@ -494,10 +480,10 @@ function getSettingsFields()
             'type' => 'text',
         ],
         [
-            'name' => 'view_contact_linktext',
+            'name' => 'moreButton_text',
             'default' => __('Mehr', 'rrze-contact') . ' ›',
             'placeholder' => __('Mehr', 'rrze-contact') . ' ›',
-            'label' => __('Linktext für Kontaktseite', 'rrze-contact'),
+            'label' => __('Label for "more" button', 'rrze-contact'),
             'field_type' => 'text',
             'type' => 'text',
         ],
@@ -514,7 +500,7 @@ function getSettingsFields()
             ],
         ],
         [
-            'name' => 'view_contact_page_imagecaption',
+            'name' => 'imagecaption',
             'label' => __('Bildbeschriftung Kontaktseite', 'rrze-contact'),
             'desc' => __('Zeigt auf der Kontaktvisitenkarte und bei Nutzung des Shortcodes mit dem Attribut <code>format="page"</code> die Bildunterschriften eines Kontaktbildes an.', 'rrze-contact'),
             'type' => 'checkbox',
@@ -522,7 +508,7 @@ function getSettingsFields()
             'default' => true,
         ],
         [
-            'name' => 'view_contact_page_imagesize',
+            'name' => 'imagesize',
             'label' => __('Bildformat Kontaktseite', 'rrze-contact'),
             'desc' => __('Setzt auf der Kontaktseite oder bei Nutzung des Shortcodes mit dem Attribut <code>format="page"</code> das zu verwendete Bildformat.', 'rrze-contact'),
             'default' => 'contact-thumb-page-v3',
@@ -556,7 +542,7 @@ function getSettingsFields()
             ],
         ],
         [
-            'name' => 'view_card_linkimage',
+            'name' => 'imagelink',
             'label' => __('Personenbild verlinken', 'rrze-contact'),
             'desc' => __('In der Card-Ansicht auch das Personenbild als Link setzen.', 'rrze-contact'),
             'type' => 'checkbox',
@@ -677,6 +663,51 @@ function getShortcodeSettings($group = NULL)
                 'type' => 'string',
                 'values' => [
                     [
+                        'id' => 'card',
+                        'val' => __('Card', 'rrze-contact'),
+                        'fields' => [
+                            'honorificPrefix', 
+                            'honorificSuffix', 
+                            'givenName',
+                            'familyName', 
+                            'image',
+                            'position',
+                            'socialmedia',
+                            'permalink',
+                            'imagelink',
+                        ],
+                    ],
+                    [
+                        'id' => 'compact',
+                        'val' => __('compact', 'rrze-contact'),
+                        'fields' => [
+                            'honorificPrefix', 
+                            'honorificSuffix', 
+                            'givenName',
+                            'familyName', 
+                            'position',
+                            'socialmedia',
+                            'locations',
+                            'street',
+                            'city',
+                            'room',
+                            'phone',
+                            'mobile',
+                            'fax',
+                            'email',
+                            'zoom',
+                            'teams',
+                            'matrix',
+                            'url',
+                            'pgp',                            
+                            'image',
+                            'border',
+                            'permalink',
+                            'small_description',
+                            'moreButton',
+                        ],
+                    ],
+                    [
                         'id' => 'default',
                         'val' => __('Default', 'rrze-contact'),
                         'fields' => [
@@ -686,6 +717,7 @@ function getShortcodeSettings($group = NULL)
                             'familyName',
                             'organization', 
                             'department',
+                            'position',
                             'locations',
                             'phone',
                             'email',
@@ -694,10 +726,41 @@ function getShortcodeSettings($group = NULL)
                         ],
                     ],
                     [
+                        'id' => 'list',
+                        'val' => __('List', 'rrze-contact'),
+                        'fields' => [
+                            'honorificPrefix', 
+                            'honorificSuffix', 
+                            'givenName',
+                            'familyName', 
+                            'description',
+                            'permalink',
+                        ],
+                    ],
+                    [
                         'id' => 'name',
                         'val' => __('Name', 'rrze-contact'),
                         'fields' => [
                             'honorificPrefix',
+                            'honorificSuffix', 
+                            'givenName',
+                            'familyName', 
+                            'permalink',
+                        ],
+                    ],
+                    [
+                        'id' => 'page',
+                        'val' => __('Page', 'rrze-contact'),
+                        'fields' => [
+                            'all', 
+                        ],
+
+                    ],
+                    [
+                        'id' => 'plain',
+                        'val' => __('Unformatted', 'rrze-contact'),
+                        'fields' => [
+                            'honorificPrefix', 
                             'honorificSuffix', 
                             'givenName',
                             'familyName', 
@@ -719,65 +782,6 @@ function getShortcodeSettings($group = NULL)
                         ],
                     ],
                     [
-                        'id' => 'plain',
-                        'val' => __('Unformatted', 'rrze-contact'),
-                        'fields' => [
-                            'honorificPrefix', 
-                            'honorificSuffix', 
-                            'givenName',
-                            'familyName', 
-                            'permalink',
-                        ],
-                    ],
-                    [
-                        'id' => 'compact',
-                        'val' => __('compact', 'rrze-contact'),
-                        'fields' => [
-                            'honorificPrefix', 
-                            'honorificSuffix', 
-                            'givenName',
-                            'familyName', 
-                            'position',
-                            'socialmedia',
-                            'locations',
-                            'street',
-                            'city',
-                            'room',
-                            'phone',
-                            'fax',
-                            'email',
-                            'zoom',
-                            'teams',
-                            'matrix',
-                            'url',
-                            'pgp',                            
-                            'picture',
-                            'border',
-                            'permalink',
-                            'small_description',
-                        ],
-                    ],
-                    [
-                        'id' => 'page',
-                        'val' => __('Page', 'rrze-contact'),
-                        'fields' => [
-                            'all', 
-                        ],
-
-                    ],
-                    [
-                        'id' => 'list',
-                        'val' => __('List', 'rrze-contact'),
-                        'fields' => [
-                            'honorificPrefix', 
-                            'honorificSuffix', 
-                            'givenName',
-                            'familyName', 
-                            'description',
-                            'permalink',
-                        ],
-                    ],
-                    [
                         'id' => 'sidebar',
                         'val' => __('Sidebar', 'rrze-contact'),
                         'fields' => [
@@ -796,21 +800,6 @@ function getShortcodeSettings($group = NULL)
                             'phone',
                             'email',
                             'permalink',
-                        ],
-                    ],
-                    [
-                        'id' => 'card',
-                        'val' => __('Card', 'rrze-contact'),
-                        'fields' => [
-                            'honorificPrefix', 
-                            'honorificSuffix', 
-                            'givenName',
-                            'familyName', 
-                            'picture',
-                            'position',
-                            'socialmedia',
-                            'permalink',
-                            'imagelink',
                         ],
                     ],
                 ],

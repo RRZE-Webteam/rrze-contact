@@ -1,33 +1,40 @@
 <div class="{{=class}} thumb-size-small border" itemscope="" itemtype="http://schema.org/Person">
     <div class="row">
         <div class="contact-default">
-            <h3>
-                <a href="{{=permalink}}">
-                    <span itemprop="name">
-                        {{/honorificPrefix}}<span itemprop="honorificPrefix">{{=honorificPrefix}}</span> {{/honorificPrefix}}<span class="fullname"><span itemprop="givenName">{{=givenName}}</span> <span itemprop="familyName">{{=familyName}}</span></span>{{honorificSuffix}}, <span itemprop="honorificSuffix">{{=honorificSuffix}}</span>{{/honorificSuffix}}
-                    </span>
-                </a>
-            </h3>
+            <h3><a href="{{=permalink}}"><span itemprop="name">{{honorificPrefix}}<span itemprop="honorificPrefix">{{=honorificPrefix}}</span>{{/honorificPrefix}} <span class="fullname">{{givenName}}<span itemprop="givenName">{{=givenName}}</span>{{/givenName}}{{familyName}}<span itemprop="familyName">{{=familyName}}</span>{{/familyName}}</span>{{honorificSuffix}}, <span itemprop="honorificSuffix">{{=honorificSuffix}}</span>{{/honorificSuffix}}</span></a></h3>
             <div class="contact-info">
-                <span class="contact-info-position" itemprop="jobTitle">{{=position}}</span>
+                {{position}}<span class="contact-info-position" itemprop="jobTitle">{{=position}}</span><br>{{/position}}
                 <p itemprop="worksFor" itemtype="http://schema.org/Organization">
-                    <span itemprop="name">{{=organization}}</span><br>
-                    <span itemprop="department">{{=department}}</span>
+                    {{organization}}<span itemprop="name">{{=organization}}</span><br>{{/organization}}
+                    {{department}}<span itemprop="department">{{=department}}</span><br>{{/department}}
                 </p>
                 {{@locations}}
                 <ul class="contactlist">
                     {{_val.phone}}
                     <li class="contact-info-phone telephone">
-                        <span class="screen-reader-text">Telefon: </span>
-                        <a itemprop="telephone" href="tel:{{=phone}}">{{=_val.phone}}</a>
+                        <span class="screen-reader-text">Telefon: </span><a itemprop="telephone" href="tel:{{=_val.phone}}">{{=_val.phone}}</a>
                     </li>
                     {{/_val.phone}}
+                    {{_val.mobile}}
+                    <li class="contact-info-mobile mobilePhone">
+                        <span class="screen-reader-text">Mobil: </span><a class="mobile" itemprop="telephone" href="tel:{{=_val.mobile}}">{{=_val.mobile}}</a>
+                    </li>
+                    {{/_val.mobile}}
+                    {{_val.fax}}
+                    <li class="contact-info-fax faxNumber">
+                        <span class="screen-reader-text">Faxnummer: </span><a itemprop="faxNumber" href="tel:{{=_val.fax}}">{{=_val.fax}}</a>
+                    </li>
+                    {{/_val.fax}}
                     {{_val.email}}
                     <li class="contact-info-email email">
-                        <span class="screen-reader-text">E-Mail: </span>
-                        <a itemprop="email" href="mailto:{{=email}}">{{=_val.email}}</a>
+                        <span class="screen-reader-text">E-Mail: </span><a itemprop="email" href="mailto:{{=_val.email}}">{{=_val.email}}</a>
                     </li>
                     {{/_val.email}}
+                    {{_val.url}}
+                    <li class="contact-info-www url">
+                        <span class="screen-reader-text">E-Webseite: </span><a itemprop="url" href="{{=_val.url}}">{{=_val.url}}</a>
+                    </li>
+                    {{/_val.url}}
                 </ul>
                 {{/@locations}}
             </div>

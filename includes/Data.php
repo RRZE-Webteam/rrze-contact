@@ -179,8 +179,8 @@ class Data
             $res .= ' title="' . esc_attr($linktitle) . '"';
         }
         $res .= '>';
-        if ((isset($viewopts['view_contact_linktext'])) && (!empty($viewopts['view_contact_linktext']))) {
-            $res .= esc_html($viewopts['view_contact_linktext']);
+        if ((isset($viewopts['view_contact_moreButton_text'])) && (!empty($viewopts['view_contact_moreButton_text']))) {
+            $res .= esc_html($viewopts['view_contact_moreButton_text']);
         } else {
             $res .= __('Profil aufrufen', 'rrze-contact');
         }
@@ -448,6 +448,7 @@ class Data
             $aRet['height'] = 160;
         }
 
+        $aRet['css'] = $imageSize;
         return $aRet;
     }
 
@@ -480,15 +481,24 @@ class Data
         if (!empty($aFields)) {
             $postMeta = get_post_meta($postID);
 
+            // echo '<pre>';
+            // var_dump($postMeta);
+            // exit;
+
             foreach ($aFields as $aDetails) {
-                if ((in_array('name', $aDisplayfields) || in_array('all', $aDisplayfields)) && !empty($postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0])) {
+                if ((in_array($aDetails['name'], $aDisplayfields) || in_array('all', $aDisplayfields)) && !empty($postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0])) {
                     $aRet[$aDetails['name']] = $postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0];
                 }
             }
 
+
+            // echo '<pre>';
+            // var_dump($aRet);
+            // exit;
+
             $aGroups = [];
 
-            if (in_array('locations', $aDisplayfields) || in_array('all', $aDisplayfields)) {
+            if (in_array('locations', $aDisplayfields) || in_array('all', $aDisplayfields)) {                
                 $aGroups[] = 'locations';
             }
 
@@ -524,21 +534,38 @@ class Data
 
             if (in_array('socialmedia', $aDisplayfields) || in_array('all', $aDisplayfields)) {
                 $aFields = getFields('socialmedia');
+                $isSocialMedia = false;
+
                 foreach ($aFields as $aDetails) {
                     if (!empty($postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0])) {
                         $aRet[$aDetails['name']] = $postMeta[RRZE_CONTACT_PREFIX . $aDetails['name']][0];
+                        $isSocialMedia = true;
                     }
+                }
+
+                if ($isSocialMedia){
+                    $aRet['socialmedia'] = true;
+                    $aRet['socialmedia-' . $pluginSettings['layout_socialmedia']] = true;    
+                    $aRet['screen-reader-text'] = __('page by', 'rrze-contact') . ' ' . (!empty($aRet['givenName']) ? $aRet['givenName'] : '') . ' ' . (!empty($aRet['lastName']) ? $aRet['lastName'] : '');
                 }
             }
 
             if (in_array('image', $aDisplayfields) || in_array('all', $aDisplayfields)) {
-                $imageLink = $pluginSettings['additional_settings_view_card_linkimage'];
-                $imageSize = $pluginSettings['additional_settings_view_contact_page_imagesize'];
-                $showCaption = (!empty($pluginSettings['additional_settings-view_contact_page_imagecaption']) ? true : false);
+                $imageLink = $pluginSettings['layout_imagelink'];
+                $imageSize = $pluginSettings['layout_imagesize'];
+                $showCaption = (!empty($pluginSettings['layout_imagecaption']) ? true : false);
                 $contactType = (!empty($postMeta[RRZE_CONTACT_PREFIX . 'contactType'][0]) ? $postMeta[RRZE_CONTACT_PREFIX . 'contactType'][0] : '');
 
                 $aRet['image'] = self::getImage($postID, $aDisplayfields, $imageLink, $showCaption, $imageSize, $contactType);
             }
+
+            if (in_array('moreButton', $aDisplayfields)) {
+                $aRet['moreButton'] = true;
+                $aRet['moreButton_text'] =  (!empty($pluginSettings['layout_moreButton_text']) ? $pluginSettings['layout_moreButton_text'] : __('More', 'rrze-contact') . ' >');
+                $aRet['screen-reader-moreButton_text'] = __('Details to', 'rrze-contact') . ' ' . (!empty($aRet['givenName']) ? $aRet['givenName'] : '') . ' ' . (!empty($aRet['lastName']) ? $aRet['lastName'] : '');                
+            }
+
+            $aRet['room_text'] = $pluginSettings['layout_room_text'];
         }
 
         return $aRet;
@@ -730,12 +757,12 @@ class Data
         }
 
         $viewcaption = true;
-        if (isset($viewopts['view_contact_page_imagecaption'])) {
-            $viewcaption = $viewopts['view_contact_page_imagecaption'];
+        if (isset($viewopts['layout_imagecaption'])) {
+            $viewcaption = $viewopts['layout_imagecaption'];
         }
         $use_size = 'contact-thumb-page-v3';
-        if (isset($viewopts['view_contact_page_imagesize'])) {
-            $use_size = $viewopts['view_contact_page_imagesize'];
+        if (isset($viewopts['layout_imagesize'])) {
+            $use_size = $viewopts['layout_imagesize'];
         }
         if ((isset($viewopts['view_raum_prefix'])) && (!empty(trim($viewopts['view_raum_prefix'])))
             && (isset($data['workLocation']) && (!empty($data['workLocation'])))
@@ -917,7 +944,7 @@ class Data
 
         if ((isset($display['bild'])) && (!empty($display['bild']))) {
             $thisurl = '';
-            if (isset($viewopts['view_card_linkimage']) && $viewopts['view_card_linkimage'] == true) {
+            if (isset($viewopts['layout_imagelink']) && $viewopts['layout_imagelink'] == true) {
                 if (isset($data['morelink'])) {
                     $thisurl = $data['morelink'];
                 }
