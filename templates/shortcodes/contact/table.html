@@ -1,0 +1,44 @@
+{{accordion}}
+    {{accordion_start}}
+        [collapsibles]
+    {{/accordion_start}}
+    {{collapse_title}}
+        [collapse title="{{=collapse_title}}"]
+    {{/collapse_title}}
+{{/accordion}}
+<table class="{{=class}}">
+    <tbody>
+        <tr class="contact-info" itemscope="" itemtype="http://schema.org/Person">
+            <td>
+                <a href="{{=permalink}}"><span itemprop="name">{{honorificPrefix}}<span itemprop="honorificPrefix">{{=honorificPrefix}}</span>{{/honorificPrefix}} <span class="fullname">{{givenName}}<span itemprop="givenName">{{=givenName}}</span>{{/givenName}} {{familyName}}<span itemprop="familyName">{{=familyName}}</span>{{/familyName}}</span>{{honorificSuffix}}, <span itemprop="honorificSuffix">{{=honorificSuffix}}</span>{{/honorificSuffix}}</span></a>
+            </td>
+            <td class="contact-info-phone telephone">
+                {{@locations}}
+                {{_val.phone}}
+                <span class="screen-reader-text">Telefon: </span><a itemprop="telephone" href="tel:{{=_val.phone}}">{{=_val.phone}}</a>
+                {{/_val.phone}}
+                {{/@locations}}
+            </td>
+            <td class="contact-info-email email">
+                {{@locations}}
+                {{_val.email}}
+                <span class="screen-reader-text">E-Mail: </span><a itemprop="email" href="mailto:{{=_val.email}}">{{=_val.email}}</a>
+                {{/_val.email}}
+                {{/@locations}}
+            </td>
+            <td class="contact-info-www url">
+                {{@locations}}
+                {{_val.url}}
+                <span class="screen-reader-text">E-Webseite: </span><a itemprop="url" href="{{=_val.url}}">{{=_val.url}}</a>
+                {{/_val.url}}
+                {{/@locations}}
+            </td>
+        </tr>
+    </tbody>
+</table>
+{{accordion}}
+    [/collapse]
+    {{accordion_end}}
+        [/collapsibles]
+    {{/accordion_end}}
+{{/accordion}}

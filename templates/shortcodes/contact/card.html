@@ -1,7 +1,15 @@
+{{accordion}}
+    {{accordion_start}}
+        [collapsibles]
+    {{/accordion_start}}
+    {{collapse_title}}
+        [collapse title="{{=collapse_title}}"]
+    {{/collapse_title}}
+{{/accordion}}
 <div class="rrze-contact contact-card">
     <div class="card-item card-small" itemscope="" itemtype="http://schema.org/Person">
         {{image}}
-        <figure itemprop="image" class="person-image alignright contact-thumb-page-v3 with-caption" aria-hidden="true" role="presentation" itemtype="http://schema.org/ImageObject">
+        <figure itemprop="image" class="contact-image alignright contact-thumb-page-v3 with-caption" aria-hidden="true" role="presentation" itemtype="http://schema.org/ImageObject">
             <img src="{{=image.src}}" itemprop="contentUrl" {{image.alt}}alt="{{=image.alt}}"{{/image.alt}} width="{{=image.width}}" height="{{=image.height}}" {{image.srcset}}srcset="{{=image.srcset}}"{{/image.srcset}} {{image.sizes}}sizes="{{=image.sizes}}"{{/image.sizes}}>
             <meta itemprop="width" content="{{=image.width}}">
             <meta itemprop="height" content="{{=image.height}}">
@@ -10,7 +18,7 @@
             {{/image.caption}}
         </figure>
         {{/image}}
-        <h3><a href="{{=permalink}}"><span itemprop="name">{{honorificPrefix}}<span itemprop="honorificPrefix">{{=honorificPrefix}}</span>{{/honorificPrefix}} <span class="fullname">{{givenName}}<span itemprop="givenName">{{=givenName}}</span>{{/givenName}}{{familyName}}<span itemprop="familyName">{{=familyName}}</span>{{/familyName}}</span>{{honorificSuffix}}, <span itemprop="honorificSuffix">{{=honorificSuffix}}</span>{{/honorificSuffix}}</span></a></h3>
+        <h3><a href="{{=permalink}}"><span itemprop="name">{{honorificPrefix}}<span itemprop="honorificPrefix">{{=honorificPrefix}}</span>{{/honorificPrefix}} <span class="fullname">{{givenName}}<span itemprop="givenName">{{=givenName}}</span>{{/givenName}} {{familyName}}<span itemprop="familyName">{{=familyName}}</span>{{/familyName}}</span>{{honorificSuffix}}, <span itemprop="honorificSuffix">{{=honorificSuffix}}</span>{{/honorificSuffix}}</span></a></h3>
 
         {{position}}<p><span class="contact-info-position" itemprop="jobTitle">{{=position}}</span></p>{{/position}}
 
@@ -72,3 +80,9 @@
         {{/socialmedia}}
     </div>
 </div>
+{{accordion}}
+    [/collapse]
+    {{accordion_end}}
+        [/collapsibles]
+    {{/accordion_end}}
+{{/accordion}}

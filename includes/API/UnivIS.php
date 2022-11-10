@@ -150,6 +150,10 @@ class UnivIS extends API
     {
         $apiResponse = $this->getResponse($sParam);
 
+        echo '<pre>';
+        var_dump($apiResponse);
+        exit;
+
         if ($apiResponse['valid']) {
             return [
                 'valid' => true,

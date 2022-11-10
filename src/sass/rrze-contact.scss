@@ -108,7 +108,7 @@
     
 }
 
-.liste-person {
+.list-contact {
     li {
 	list-style: circle;
     }
@@ -171,7 +171,7 @@
 		padding: 5px 5px 5px 0;	
 	    }
 	    .person-default,
-	    .person-sidebar,
+	    .contact-sidebar,
 	    .contact-default-thumb" {
 		flex: 1 0 200px;
 		float: none;
@@ -343,7 +343,7 @@
 	margin-left: 0;
 	margin-right: 0;
 	    
-	.person-image {
+	.contact-image {
 	    order: 3;
 	    flex: 1 1 100px;
 	    margin: 0;
@@ -371,7 +371,7 @@
 		     flex: 1 0 350px;
 		}
 	}
-	.person-image.alignleft {
+	.contact-image.alignleft {
 	    order: 1;
 	}
 	

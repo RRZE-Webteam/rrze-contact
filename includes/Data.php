@@ -396,13 +396,13 @@ class Data
     }
 
     // BK
-    private static function getDescription(&$post, &$format)
+    private static function getDescription(&$post, &$postMeta)
     {
-        if (!empty($post['small_description'])) {
-            return $post['small_description'];
+        if (!empty($postMeta[RRZE_CONTACT_PREFIX . 'small_description'][0])) {
+            return $postMeta[RRZE_CONTACT_PREFIX . 'small_description'][0];
         }
-        if (!empty($post['description'])) {
-            return $post['description'];
+        if (!empty($postMeta[RRZE_CONTACT_PREFIX . 'description'][0])) {
+            return $postMeta[RRZE_CONTACT_PREFIX . 'description'][0];
         }
         if (!empty($post['post_excerpt'])) {
             return $post['post_excerpt'];
@@ -457,20 +457,6 @@ class Data
     {
         $aRet = [];
 
-        if (in_array('description', $aDisplayfields) || in_array('all', $aDisplayfields)) {
-            $post = get_post($postID, ARRAY_A);
-
-            $desc = self::getDescription($post, $format);
-            if (!empty($desc)) {
-                $aRet['description'] = $desc;
-            }
-
-            if (in_array('post_content', $aDisplayfields) || in_array('all', $aDisplayfields)) {
-                if (!empty($post['post_content'])) {
-                    $aRet['post_content'] = $post['post_content'];
-                }
-            }
-        }
 
         if (in_array('permalink', $aDisplayfields) || in_array('all', $aDisplayfields)) {
             $aRet['permalink'] = get_permalink($postID);
@@ -480,6 +466,22 @@ class Data
 
         if (!empty($aFields)) {
             $postMeta = get_post_meta($postID);
+
+            if (in_array('description', $aDisplayfields) || in_array('all', $aDisplayfields)) {
+                $post = get_post($postID, ARRAY_A);
+    
+                $desc = self::getDescription($post, $postMeta);
+                if (!empty($desc)) {
+                    $aRet['description'] = $desc;
+                }
+    
+                if (in_array('post_content', $aDisplayfields) || in_array('all', $aDisplayfields)) {
+                    if (!empty($post['post_content'])) {
+                        $aRet['post_content'] = $post['post_content'];
+                    }
+                }
+            }
+    
 
             // echo '<pre>';
             // var_dump($postMeta);

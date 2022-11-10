@@ -734,6 +734,9 @@ function getShortcodeSettings($group = NULL)
                             'givenName',
                             'familyName', 
                             'description',
+                            'locations',
+                            'url',
+                            'description',
                             'permalink',
                         ],
                     ],
@@ -746,6 +749,8 @@ function getShortcodeSettings($group = NULL)
                             'givenName',
                             'familyName', 
                             'permalink',
+                            'locations',
+                            'url',
                         ],
                     ],
                     [
@@ -775,10 +780,11 @@ function getShortcodeSettings($group = NULL)
                             'honorificSuffix', 
                             'givenName',
                             'familyName', 
-                            'permalink',
+                            'description',
                             'locations',
-                            'email',
-                            'phone',
+                            'url',
+                            'description',
+                            'permalink',
                         ],
                     ],
                     [
@@ -799,6 +805,7 @@ function getShortcodeSettings($group = NULL)
                             'locations',
                             'phone',
                             'email',
+                            'url',
                             'permalink',
                         ],
                     ],
@@ -852,7 +859,26 @@ function getShortcodeSettings($group = NULL)
                     ],
                 ],
             ],
-
+            'accordion' => [
+                'default' => '',
+                'field_type' => 'select',
+                'label' => __('Set display as accordions', 'rrze-contact'),
+                'type' => 'array',
+                'values' => [
+                    [
+                        'id' => '',
+                        'val' => '-- ' . __('none', 'rrze-contact') . ' --',
+                    ],
+                    [
+                        'id' => 'a-z',
+                        'val' => __('Von A bis Z', 'rrze-contact'),
+                    ],
+                    [
+                        'id' => 'organigram',
+                        'val' => __('Organigram', 'rrze-contact'),
+                    ],
+                ],
+            ],
             'hstart' => [
                 'default' => 3,
                 'field_type' => 'number',

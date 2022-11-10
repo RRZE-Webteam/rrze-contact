@@ -20,11 +20,12 @@ class Contact extends Shortcode
     private $settings = '';
     private $aAllFormats = [];
     private $pluginSettings;
+    private $lastTitle = '';
 
     public function __construct($pluginFile, $pluginSettings)
     {
         $this->pluginSettings = (array) $pluginSettings;
-        $this->pluginSettings = $this->pluginSettings['options']; 
+        $this->pluginSettings = $this->pluginSettings['options'];
         $this->pluginFile = $pluginFile;
         $this->settings = getShortcodeSettings('contact');
         add_action('init', [$this, 'initGutenberg']);
@@ -87,6 +88,36 @@ class Contact extends Shortcode
         return $aRet;
     }
 
+    private function makeCollapseTitle(&$data, &$group)
+    {
+        $ret = false;
+        // $group can contain slug or 'organigram' or 'a-z'
+        switch ($group) {
+            case 'organigram':
+                $ret = (!empty($data['positionGroup']) ? $data['positionGroup'] : '');
+                break;
+            case 'a-z':
+            default:
+                $ret = (!empty($data['familyName']) ? strtoupper(substr($data['familyName'], 0, 1)) : '');
+                break;
+        }
+        if ($ret != $this->lastTitle){
+            return $ret;
+        }else{
+            return false;
+        }
+    }
+
+    private function makeAccordion(&$data, &$i, &$max, &$group)
+    {
+        $data['accordion'] = true;
+        $data['accordion_start'] = ($i > 0 ? false : true);
+        $data['accordion_end'] = ($i == $max ? false : true);
+        $data['collapse_title'] = $this->makeCollapseTitle($data, $group);
+
+        return $data;
+    }
+
     public function shortcode_contact($atts, $content = null)
     {
         wp_enqueue_style('rrze-contact');
@@ -106,16 +137,23 @@ class Contact extends Shortcode
 
         if (!empty($atts['category'])) {
             $aPostIDs = getPostIDsByCategory($atts['category']);
-        } elseif (!empty($atts['id'])) {
+        }elseif (!empty($atts['id'])) {
             $aPostIDs = array_map('trim', explode(',', $atts['id']));
         } else {
             return __('id or category is needed', 'rrze-contact');
         }
 
+        $i = 0;
+        $max = count($aPostIDs);
 
         foreach ($aPostIDs as $postID) {
             $data = Data::getContactData($postID, $aDisplayfields, $this->pluginSettings);
             $data['class'] = $class;
+
+            if (!empty($atts['accordion'])) {
+                $data = $this->makeAccordion($data, $i, $max, $atts['accordion']);
+                $this->lastTitle = $data['collapse_title'];
+            }
 
             // echo '<pre>';
             // var_dump($data);
@@ -130,14 +168,12 @@ class Contact extends Shortcode
             if (!empty($data)) {
                 $template = 'shortcodes/contact/' . $atts['format'] . '.html';
                 $content .= Template::getContent($template, $data);
-
-                if ($atts['format'] == 'organization') {
-                    $content = do_shortcode($content);
-                }
+                $content = do_shortcode($content);
             } else {
                 $content .= sprintf(__('No contact entry could be found with the specified ID %s.', 'rrze-contact'), $postID);
             }
 
+            $i++;
         }
 
         return $content;
