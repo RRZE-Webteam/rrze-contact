@@ -426,11 +426,16 @@ class Data
             $imageID = get_post_thumbnail_id($postID);
 
             $imageAtts = wp_get_attachment_image_src($imageID, $imageSize);
-            $aRet['src'] = $imageAtts[0];
-            $aRet['width'] = $imageAtts[1];
-            $aRet['height'] = $imageAtts[2];
-            $aRet['srcset'] = wp_get_attachment_image_srcset($imageID, $imageSize);
-            $aRet['sizes'] = wp_get_attachment_image_sizes($imageID, $imageSize);
+            // echo '<pre>';
+            // var_dump($imageSize);
+            // exit;
+            if (!empty($imageAtts)){
+                $aRet['src'] = $imageAtts[0];
+                $aRet['width'] = $imageAtts[1];
+                $aRet['height'] = $imageAtts[2];
+                $aRet['srcset'] = wp_get_attachment_image_srcset($imageID, $imageSize);
+                $aRet['sizes'] = wp_get_attachment_image_sizes($imageID, $imageSize);
+            }
 
             if ($showCaption) {
                 $attachment = get_post($imageID);
