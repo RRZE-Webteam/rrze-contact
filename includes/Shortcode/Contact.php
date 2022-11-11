@@ -49,9 +49,9 @@ class Contact extends Shortcode
     private function getPostIDsByCategory($category)
     {
         $aRet = [];
-        $catObj = get_term_by('slug', $category, 'contacts_category');
+        $aCategory = get_term_by('slug', $category, 'contacts_category', ARRAY_A);
 
-        if (is_object($catObj)) {
+        if (!empty($aCategory['term_id'])) {
             $aRet = get_posts([
                 'post_type' => 'contact',
                 'post_status' => 'publish',
@@ -59,18 +59,14 @@ class Contact extends Shortcode
                 'order' => 'ASC',
                 'fields' => 'ids',
                 'suppress_filters' => false,
-                'tax_query' => [
+                'tax_query' => [[
                     'taxonomy' => 'contacts_category',
                     'field' => 'term_id',
-                    'terms' => $catObj->term_id,
-                ],
+                    'terms' => $aCategory['term_id'],
+                ]],
                 'nopaging' => true,
             ]);
         }
-
-        // echo '<pre>';
-        // var_dump($aRet);
-        // exit;
 
         return $aRet;
     }
@@ -97,19 +93,25 @@ class Contact extends Shortcode
     private function makeCollapseTitle(&$data, &$group)
     {
         $ret = false;
-        // $group can contain slug or 'organigram' or 'a-z'
+
         switch ($group) {
             case 'organigram':
                 $ret = (!empty($data['positionGroup']) ? $data['positionGroup'] : '.');
                 break;
             case 'a-z':
             default:
-                $ret = (!empty($data['familyName']) ? strtoupper(substr($data['familyName'], 0, 1)) : '.');
+                if (!empty($data['familyName'])) {
+                    $ret = strtoupper(substr($data['familyName'], 0, 1));
+                } else {
+                    $ret = '?';
+                }
                 break;
         }
-        if ($ret != $this->lastTitle){
+
+        if ($ret != $this->lastTitle) {
+            $this->lastTitle = $ret;
             return $ret;
-        }else{
+        } else {
             return false;
         }
     }
@@ -134,23 +136,20 @@ class Contact extends Shortcode
 
         $aDisplayfields = $this->getDisplayFields($this->settings, $atts['format'], $atts['show'], $atts['hide']);
 
+        // we must check if given format exists because format.html as template will be used
         if (!in_array($atts['format'], $this->aAllFormats)) {
             return __('Unknown format', 'rrze-contact') . ' "' . $atts['format'] . '"';
         }
 
-        $class = (!empty($aDisplayfields['class']) ? $aDisplayfields['class'] : '');
-        $border = (in_array('border', $aDisplayfields) ? 'border' : 'noborder');
-
-        $class = self::getCSSClass($atts['class'], $border, $atts['background']);
+        $class = self::getCSSClass($atts['class'], (in_array('border', $aDisplayfields) ? 'border' : 'noborder'), $atts['background']);
 
         if (!empty($atts['category'])) {
             $aPostIDs = $this->getPostIDsByCategory($atts['category']);
-        }elseif (!empty($atts['id'])) {
+        } elseif (!empty($atts['id'])) {
             $aPostIDs = array_map('trim', explode(',', $atts['id']));
         } else {
             return __('id or category is needed', 'rrze-contact');
         }
-
 
         $i = 1;
         $max = count($aPostIDs);
@@ -161,10 +160,11 @@ class Contact extends Shortcode
             $data['class'] = $class;
 
             if (!empty($atts['accordion'])) {
+                // 2DO: sortBy collapse_title
                 $data = $this->makeAccordion($data, $i, $max, $atts['accordion']);
-                $this->lastTitle = $data['collapse_title'];
             }
 
+            // 2DO: store vcf & vcf.qr as post_meta
             // $vcard = new Vcard($this->univisData);
             // echo $vcard->showCard();
             // $vcard->showCardQR();
