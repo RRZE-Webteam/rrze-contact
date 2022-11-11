@@ -1,10 +1,13 @@
 {{accordion}}
-    {{accordion_start}}
+    {{collapse_end}}
+        [/collapse]
+    {{/collapse_end}}
+    {{collapsibles_start}}
         [collapsibles]
-    {{/accordion_start}}
-    {{collapse_title}}
+    {{/collapsibles_start}}
+    {{collapse_start}}
         [collapse title="{{=collapse_title}}"]
-    {{/collapse_title}}
+    {{/collapse_start}}
 {{/accordion}}
 <div class="{{=class}} page" itemscope="" itemtype="http://schema.org/Person">
     <h3><a href="{{=permalink}}"><span itemprop="name">{{honorificPrefix}}<span itemprop="honorificPrefix">{{=honorificPrefix}}</span>{{/honorificPrefix}} <span class="fullname">{{givenName}}<span itemprop="givenName">{{=givenName}}</span>{{/givenName}} {{familyName}}<span itemprop="familyName">{{=familyName}}</span>{{/familyName}}</span>{{honorificSuffix}}, <span itemprop="honorificSuffix">{{=honorificSuffix}}</span>{{/honorificSuffix}}</span></a></h3>
@@ -198,8 +201,8 @@
     {{/post_content}}
 </div>
 {{accordion}}
-    [/collapse]
-    {{accordion_end}}
+    {{collapsibles_end}}
+        [/collapse]
         [/collapsibles]
-    {{/accordion_end}}
+    {{/collapsibles_end}}
 {{/accordion}}

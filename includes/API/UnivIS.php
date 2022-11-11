@@ -150,9 +150,19 @@ class UnivIS extends API
     {
         $apiResponse = $this->getResponse($sParam);
 
-        echo '<pre>';
-        var_dump($apiResponse);
-        exit;
+        // echo '<pre>';
+        // var_dump($apiResponse);
+        // exit;
+
+        // $url .= 'persons&department=' . $this->orgID;
+        // 2DO: ist orgID in Person-Request? => Nein
+
+        // http://univis.uni-erlangen.de/prg?search=departments&name=Zentrale%20wissenschaftliche%20Einrichtungen%20der%20FAU&show=json
+        // besser (aber als json werden die Job-Titel nicht angezeigt, nur xml?!): http://univis.uni-erlangen.de/prg?search=departments&name=Abteilung%20Ausbildung%20&%20Information%20(RRZE)&show=xml
+
+        // Einfachste Lsg: wie bei rrze-univis: orgID muss eingegeben werden in settings, bei accordion="organigram" ohne orgid kommt Meldung
+        // besser: ohne orgid, nur über univisID der person
+        
 
         if ($apiResponse['valid']) {
             return [

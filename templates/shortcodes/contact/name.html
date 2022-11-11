@@ -1,3 +1,14 @@
+{{accordion}}
+    {{collapse_end}}
+        [/collapse]
+    {{/collapse_end}}
+    {{collapsibles_start}}
+        [collapsibles]
+    {{/collapsibles_start}}
+    {{collapse_start}}
+        [collapse title="{{=collapse_title}}"]
+    {{/collapse_start}}
+{{/accordion}}
 <div class="{{=class}}" itemscope="" itemtype="http://schema.org/Person">
     <div class="row">
         <div class="person-default">
@@ -5,3 +16,9 @@
         </div>
     </div>
 </div>
+{{accordion}}
+    {{collapsibles_end}}
+        [/collapse]
+        [/collapsibles]
+    {{/collapsibles_end}}
+{{/accordion}}
