@@ -34,7 +34,9 @@ class Contact extends Shortcode
     public function onLoaded()
     {
         add_shortcode('contact', [$this, 'shortcode_contact']);
-        remove_filter('the_content', 'wpautop');
+        // add_shortcode('consultation', [$this, 'shortcode_contact']); // next feature
+
+        // remove_filter('the_content', 'wpautop'); // still needed?
 
         // add_shortcode('contact', [$this, 'shortcode_contact']);
         // add_shortcode('contactliste', [$this, 'shortcode_contactlist']);
@@ -107,6 +109,7 @@ class Contact extends Shortcode
                 }
                 break;
         }
+        $data['sort'] = $ret;
 
         if ($ret != $this->lastTitle) {
             $this->lastTitle = $ret;
@@ -155,6 +158,7 @@ class Contact extends Shortcode
         $max = count($aPostIDs);
         $template = 'shortcodes/contact/' . $atts['format'] . '.html';
 
+        $aData = [];
         foreach ($aPostIDs as $postID) {
             $data = Data::getContactData($postID, $aDisplayfields, $this->pluginSettings);
             $data['class'] = $class;
@@ -162,27 +166,35 @@ class Contact extends Shortcode
             if (!empty($atts['accordion'])) {
                 // 2DO: sortBy collapse_title
                 $data = $this->makeAccordion($data, $i, $max, $atts['accordion']);
+                $aData[$data['sort']][] = $data;
             }
-
-            // 2DO: store vcf & vcf.qr as post_meta
-            // $vcard = new Vcard($this->univisData);
-            // echo $vcard->showCard();
-            // $vcard->showCardQR();
-            // echo '<img src="' . $vcard->showCardQR() . '">';
-            // exit;
-
-            if (!empty($data)) {
-                $content .= Template::getContent($template, $data);
-            } else {
-                $content .= sprintf(__('No contact entry could be found with the specified ID %s.', 'rrze-contact'), $postID);
-            }
-
             $i++;
         }
 
-        $content = do_shortcode($content);
-        // echo $content;
+        // echo '<pre>';
+        // var_dump($aData);
         // exit;
+
+        if (!empty($atts['accordion'])) {
+            ksort($aData);
+            foreach ($aData as $aGroup) {
+                foreach ($aGroup as $contact) {
+                    $content .= Template::getContent($template, $contact);
+                }
+            }
+        } elseif (!empty($data)) {
+            $content .= Template::getContent($template, $data);
+        }
+
+        // 2DO: on-save: store vcf + vcf.qr as post_meta
+
+        // $vcard = new Vcard($this->univisData);
+        // echo $vcard->showCard();
+        // $vcard->showCardQR();
+        // echo '<img src="' . $vcard->showCardQR() . '">';
+        // exit;
+
+        $content = do_shortcode($content);
 
         return $content;
     }
