@@ -21,7 +21,6 @@ class Contact extends Metaboxes
     public $bUnivisSync = false;
     public $aDisabled = [];
     public $univisData = [];
-    public $postMeta = [];
     public $descFound = '';
     public $descNotFound = '';
     public $univisID = 0;
@@ -37,12 +36,26 @@ class Contact extends Metaboxes
 
     public function saveMeta($postID, $post_after, $post_before)
     {
+
+
+        // 2DO: on-save: store vcf + vcf.qr as post_meta
+
+        // $vcard = new Vcard($this->univisData);
+        // echo $vcard->showCard();
+        // $vcard->showCardQR();
+        // echo '<img src="' . $vcard->showCardQR() . '">';
+        // exit;
+
+
+
+
         if (get_post_type($postID) != 'contact') {
             return;
         }
 
-        $this->bUnivisSync = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'univisSync', true);
-        $this->univisID = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'univisID', true);
+        $postMeta = get_post_meta($postID);
+        $this->bUnivisSync = $postMeta[RRZE_CONTACT_PREFIX . 'univisSync'][0];
+        $this->univisID = $postMeta[RRZE_CONTACT_PREFIX . 'univisID'][0];
 
         if (!empty($this->bUnivisSync) && !empty($this->univisID)) {
             $aDisabled = [];
@@ -85,6 +98,18 @@ class Contact extends Metaboxes
                 update_post_meta($postID, RRZE_CONTACT_PREFIX . 'disabled', $aDisabled);
             }
         }
+        
+        $familyName = $postMeta[RRZE_CONTACT_PREFIX . 'familyName'][0];
+        $givenName = $postMeta[RRZE_CONTACT_PREFIX . 'givenName'][0];
+        $name = (!empty($familyName) ? $familyName : ' ') . (!empty($givenName) ? ', ' . $givenName : ' ');
+
+        if (empty($name)){
+            $title = strip_tags(get_the_title($postID));
+            $aParts = explode(' ', $title);
+            $name = (!empty($aParts[1]) ? $aParts[1] : ' ') . (!empty($aParts[0]) ? ', ' . $aParts[0] : ' ');
+        }
+
+        update_post_meta($postID, RRZE_CONTACT_PREFIX . 'name', (empty($name) ? '?' : $name));
     }
 
     public function onLoaded()
@@ -95,9 +120,6 @@ class Contact extends Metaboxes
 
     public function makeContactMetaboxes()
     {
-        // Meta-Box Contact
-        $contactselect_connection = Data::get_contactdata(1);
-
         $postID = intval(!empty($_GET['post']) ? $_GET['post'] : (!empty($_POST['post_ID']) ? $_POST['post_ID'] : 0));
 
         $this->bUnivisSync = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'univisSync', true);
@@ -222,9 +244,6 @@ class Contact extends Metaboxes
         ]);
 
         // Meta-Box Locations
-        $locationDefault = Data::get_standort_defaults($postID);
-        $locationSelect = Data::get_standortdata();
-
         $cmb = new_cmb2_box([
             'id' => 'rrze_contact_locations',
             'title' => __('Locations', 'rrze-contact'),
@@ -236,7 +255,7 @@ class Contact extends Metaboxes
                     'name' => __('Zugeordneter Standort', 'rrze-contact'),
                     'type' => 'select',
                     'id' => RRZE_CONTACT_PREFIX . 'standort_id',
-                    'options' => $locationSelect,
+                    'options' => $this->getLocationOptions(),
                 ],
                 [
                     'name' => __('Standort-Daten für Adressanzeige nutzen', 'rrze-contact'),
@@ -260,16 +279,6 @@ class Contact extends Metaboxes
         ]);
 
         // Meta-Box Social Media
-
-        // foreach ($smList as $key => $value) {
-        //     $smFields[] = [
-        //         'name' => $smList[$key]['title'] . ' URL',
-        //         'id' => RRZE_CONTACT_PREFIX . $key . '_url',
-        //         'type' => 'text_url',
-        //         'protocols' => ['https'],
-        //     ];
-        // }
-
         $cmb = new_cmb2_box([
             'id' => 'rrze_contact_socialmedia',
             'title' => __('Social Media', 'rrze-contact'),
@@ -279,7 +288,7 @@ class Contact extends Metaboxes
             'fields' => $this->makeCMB2fields(getFields('socialmedia')),
         ]);
 
-        // Meta-Box Cosultations
+        // Meta-Box Consultations
         $cmb = new_cmb2_box([
             'id' => 'rrze_contact_consultations',
             'title' => __('Consultations', 'rrze-contact'),
@@ -335,7 +344,7 @@ class Contact extends Metaboxes
                     'desc' => '',
                     'id' => RRZE_CONTACT_PREFIX . 'connection_id',
                     'type' => 'select',
-                    'options' => $contactselect_connection,
+                    'options' => $this->getConnectOptions(),
                     'repeatable' => true,
                 ],
                 [
@@ -360,10 +369,43 @@ class Contact extends Metaboxes
                 ],
             ],
         ]);
-
     }
 
-    public function getHonorificPrefixOptions($newVal)
+    private function getConnectOptions(){
+        $aRet = [];
+        $aPosts = get_posts([
+            'post_type' => 'contact',
+            'post_status' => 'publish',
+            'fields' => 'ids',
+            'suppress_filters' => false,
+            'nopaging' => true,
+        ]);
+
+        foreach($aPosts as $postID){
+            $aRet[$postID] = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'name', true);
+        }
+
+        return natcasesort($aRet);
+    }
+
+    private function getLocationOptions(){
+        $aRet = [];
+        $aPosts = get_posts([
+            'post_type' => 'location',
+            'post_status' => 'publish',
+            'suppress_filters' => false,
+            'nopaging' => true,
+            'orderby' => 'title',
+        ]);
+
+        foreach($aPosts as $post){
+            $aRet[$post->ID] = $post->post_title;
+        }
+
+        return natcasesort($aRet);
+    }
+
+    private function getHonorificPrefixOptions($newVal)
     {
         $aOptions = [
             '' => __('No indication', 'rrze-contact'),

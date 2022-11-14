@@ -37,10 +37,6 @@ class Contact extends Shortcode
         // add_shortcode('consultation', [$this, 'shortcode_contact']); // next feature
 
         // remove_filter('the_content', 'wpautop'); // still needed?
-
-        // add_shortcode('contact', [$this, 'shortcode_contact']);
-        // add_shortcode('contactliste', [$this, 'shortcode_contactlist']);
-        // add_shortcode('contacts', [$this, 'shortcode_contactlist']);
     }
 
     private function getCSSClass($class, $border, $background)
@@ -94,7 +90,7 @@ class Contact extends Shortcode
 
     private function makeCollapseTitle(&$data, &$group)
     {
-        $ret = false;
+        $ret = '?';
 
         switch ($group) {
             case 'organigram':
@@ -104,25 +100,17 @@ class Contact extends Shortcode
             default:
                 if (!empty($data['familyName'])) {
                     $ret = strtoupper(substr($data['familyName'], 0, 1));
-                } else {
-                    $ret = '?';
                 }
                 break;
         }
-        $data['sort'] = $ret;
 
-        if ($ret != $this->lastTitle) {
-            $this->lastTitle = $ret;
-            return $ret;
-        } else {
-            return false;
-        }
+        return $ret;
     }
 
-    private function makeAccordion(&$data, &$i, &$max, &$group)
+    private function makeAccordion(&$data, &$i, &$max, &$tite, &$group)
     {
         $data['accordion'] = true;
-        $data['collapsibles_start'] = ($i > 1 ? false : true);
+        $data['collapsibles_start'] = ($i == 1 ? true : false);
         $data['collapsibles_end'] = ($i < $max ? false : true);
         $data['collapse_title'] = $this->makeCollapseTitle($data, $group);
         $data['collapse_start'] = ($data['collapse_title'] ? true : false);
@@ -154,187 +142,59 @@ class Contact extends Shortcode
             return __('id or category is needed', 'rrze-contact');
         }
 
-        $i = 1;
-        $max = count($aPostIDs);
-        $template = 'shortcodes/contact/' . $atts['format'] . '.html';
 
         $aData = [];
+        $iMax = 0;
         foreach ($aPostIDs as $postID) {
             $data = Data::getContactData($postID, $aDisplayfields, $this->pluginSettings);
-            $data['class'] = $class;
-
-            if (!empty($atts['accordion'])) {
-                // 2DO: sortBy collapse_title
-                $data = $this->makeAccordion($data, $i, $max, $atts['accordion']);
-                $aData[$data['sort']][] = $data;
+            if (!empty($data)){
+                $data['class'] = $class;
+                $aData[] = $data;
+                $iMax++;    
             }
-            $i++;
         }
 
-        // echo '<pre>';
-        // var_dump($aData);
-        // exit;
 
         if (!empty($atts['accordion'])) {
-            ksort($aData);
-            foreach ($aData as $aGroup) {
-                foreach ($aGroup as $contact) {
-                    $content .= Template::getContent($template, $contact);
+            $aTmp = [];
+
+            foreach($aData as $data){
+                $aTmp[$this->makeCollapseTitle($data, $atts['accordion'])][] = $data;
+            }
+
+            $aData = $aTmp;
+            array_multisort(array_keys($aData), SORT_NATURAL | SORT_FLAG_CASE, $aData);
+
+            $aTmp = [];
+            foreach($aData as $title => $aEntries){
+                $i = 1;
+
+                foreach($aEntries as $nr => $data){
+                    $data['accordion'] = true;
+                    $data['collapsibles_start'] = ($nr == 0 ? true : false);
+                    $data['collapse_title'] = ($nr == 0 ? $title : false);
+                    $data['collapsibles_end'] = ($i < $iMax ? false : true);
+                    $data['collapse_start'] = ($data['collapse_title'] ? true : false);
+                    $data['collapse_end'] = ($i == count($aEntries) ? true : false);                    
+                    $aTmp[] = $data;        
+                    $i++;
                 }
             }
-        } elseif (!empty($data)) {
-            $content .= Template::getContent($template, $data);
+            $aData = $aTmp;
         }
 
-        // 2DO: on-save: store vcf + vcf.qr as post_meta
+        $template = 'shortcodes/contact/' . $atts['format'] . '.html';
 
-        // $vcard = new Vcard($this->univisData);
-        // echo $vcard->showCard();
-        // $vcard->showCardQR();
-        // echo '<img src="' . $vcard->showCardQR() . '">';
-        // exit;
+        foreach ($aData as $data) {
+            $content .= Template::getContent($template, $data);
+        }
 
         $content = do_shortcode($content);
 
         return $content;
     }
 
-    // public function shortcode_contactlist($atts, $content = null)
-    // {
-    //     $atts = shortcode_atts(getShortcodeDefaults($this->settings['contactlist']), $atts);
-
-    //     $aDisplayfields = Data::get_display_field($atts['format'], $atts['show'], $atts['hide']);
-    //     $limit = (!empty($atts['unlimited']) ? -1 : 100);
-
-    //     if (isset($atts['category'])) {
-    //         $category = get_term_by('slug', $atts['category'], 'contacts_category');
-    //         if (is_object($category)) {
-    //             $posts = get_posts(array('post_type' => 'contact', 'fields' => 'ids', 'post_status' => 'publish', 'numberposts' => $limit, 'orderby' => 'title', 'order' => 'ASC', 'tax_query' => array(
-    //                 array(
-    //                     'taxonomy' => 'contacts_category',
-    //                     'field' => 'id', // can be slug or id - a CPT-onomy term's ID is the same as its post ID
-    //                     'terms' => $category->term_id, // Notice: Trying to get property of non-object bei unbekannter Kategorie
-    //                 ),
-    //             ), 'suppress_filters' => false));
-    //         }
-    //     }
-
-    //     if (isset($posts)) {
-    //         $class = 'rrze-contact';
-    //         if ($atts['class']) {
-    //             $class .= ' ' . esc_attr($atts['class']);
-    //         }
-
-    //         if (isset($aDisplayfields['border'])) {
-    //             if ($aDisplayfields['border']) {
-    //                 $class .= ' border';
-    //             } else {
-    //                 $class .= ' noborder';
-    //             }
-    //         }
-
-    //         if (isset($atts['background']) && (!empty($atts['background']))) {
-    //             $bg_array = array('grau', 'fau', 'phil', 'med', 'nat', 'tf', 'rw');
-    //             if (in_array($atts['background'], $bg_array)) {
-    //                 $class .= ' background-' . esc_attr($atts['background']);
-    //             }
-    //         }
-    //         $format = '';
-
-    //         if (isset($atts['format'])) {
-    //             $format = $atts['format'];
-    //         }
-
-    //         switch ($format) {
-    //             case 'table':
-    //                 $content = '<table class="' . $class . '">';
-    //                 break;
-    //             case 'name':
-    //             case 'shortlist':
-    //                 $class .= ' contact liste-contact';
-    //                 $content = '<span class="' . $class . '">';
-    //                 break;
-    //             case 'liste':
-    //                 $class .= ' contact liste-contact';
-    //                 $content = '<ul class="' . $class . '">';
-    //                 break;
-    //             case 'card':
-    //                 $class .= ' contact-card';
-    //                 $content = '<div class="' . $class . '">';
-    //                 break;
-    //             default:
-    //                 $content = '';
-    //         }
-
-    //         $number = count($posts);
-    //         $i = 1;
-
-    //         $posts = Data::sort_contact_posts($posts, $atts['sort'], $atts['order']);
-
-    //         foreach ($posts as $value) {
-    //             switch ($format) {
-    //                 case 'liste':
-    //                     $thisentry = Data::RRZE_Contact_shortlist($value, $aDisplayfields, $atts);
-    //                     if (!empty($thisentry)) {
-    //                         $content .= $thisentry;
-    //                     }
-    //                     break;
-    //                 case 'name':
-    //                 case 'shortlist':
-    //                     $thisentry = Data::RRZE_Contact_shortlist($value, $aDisplayfields, $atts);
-    //                     if (!empty($thisentry)) {
-    //                         $content .= $thisentry;
-    //                         if ($i < $number) {
-    //                             $content .= ", ";
-    //                         }
-    //                     }
-    //                     break;
-
-    //                 case 'table':
-    //                     $content .= Data::RRZE_Contact_tablerow($value, $aDisplayfields, $atts);
-    //                     break;
-    //                 case 'page':
-    //                     $content .= Data::RRZE_Contact_page($value, $aDisplayfields, $atts, true);
-    //                     break;
-    //                 case 'sidebar':
-    //                     $content .= Data::RRZE_Contact_sidebar($value, $aDisplayfields, $atts);
-    //                     break;
-    //                 case 'card':
-    //                     $content .= Data::RRZE_Contact_card($value, $aDisplayfields, $atts);
-    //                     break;
-    //                 default:
-    //                     $content .= Data::RRZE_Contact_markup($value, $aDisplayfields, $atts);
-    //             }
-    //             $i++;
-    //         }
-
-    //         switch ($format) {
-    //             case 'table':
-    //                 $content .= '</table>';
-    //                 break;
-    //             case 'name':
-    //             case 'shortlist':
-    //                 $content .= '</span>';
-    //                 break;
-    //             case 'liste':
-    //                 $content .= '</ul>';
-    //                 break;
-    //             case 'card':
-    //                 $content .= '</div>';
-    //                 break;
-    //             default:
-    //         }
-
-    //     } else {
-    //         if (is_object($category)) {
-    //             $content = '<p>' . sprintf(__('No contacts were found in the category "%s".', 'rrze-contact'), $category->slug) . '</p>';
-    //         } else {
-    //             $content = '<p>' . sprintf(__('Sorry, the category "%s" could not be found.', 'rrze-contact'), $atts['category']) . '</p>';
-    //         }
-    //     }
-
-    //     return $content;
-    // }
+    
 
     public function fillGutenbergOptions()
     {
