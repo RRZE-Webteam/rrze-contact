@@ -10,7 +10,7 @@
     <tbody>
         <tr class="contact-info" itemscope="" itemtype="http://schema.org/Person">
             <td>
-                <a href="{{=permalink}}"><span itemprop="name">{{honorificPrefix}}<span itemprop="honorificPrefix">{{=honorificPrefix}}</span>{{/honorificPrefix}} <span class="fullname">{{givenName}}<span itemprop="givenName">{{=givenName}}</span>{{/givenName}} {{familyName}}<span itemprop="familyName">{{=familyName}}</span>{{/familyName}}</span>{{honorificSuffix}}, <span itemprop="honorificSuffix">{{=honorificSuffix}}</span>{{/honorificSuffix}}</span></a>
+                <a href="{{=permalink}}"><span itemprop="name">{{familyName}}{{honorificPrefix}}<span itemprop="honorificPrefix">{{=honorificPrefix}}</span>{{/honorificPrefix}} <span class="fullname">{{givenName}}<span itemprop="givenName">{{=givenName}}</span>{{/givenName}} <span itemprop="familyName">{{=familyName}}</span></span>{{honorificSuffix}}, <span itemprop="honorificSuffix">{{=honorificSuffix}}</span>{{/honorificSuffix}}</span>{{:familyName}}{{name}}{{=name}}{{/name}}{{/familyName}}</a>
             </td>
             <td class="contact-info-phone telephone">
                 {{@locations}}

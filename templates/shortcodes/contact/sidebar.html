@@ -10,14 +10,7 @@
     <div class="side">
         <div class="row">
             <div class="contact-sidebar">
-                <h3><a href="{{=permalink}}"><span itemprop="name">{{honorificPrefix}}<span
-                                itemprop="honorificPrefix">{{=honorificPrefix}}</span>{{/honorificPrefix}} <span
-                                class="fullname">{{givenName}}<span
-                                    itemprop="givenName">{{=givenName}}</span>{{/givenName}} {{familyName}}<span
-                                    itemprop="familyName">{{=familyName}}</span>{{/familyName}}</span>{{honorificSuffix}},
-                            <span itemprop="honorificSuffix">{{=honorificSuffix}}</span>{{/honorificSuffix}}</span></a>
-                </h3>
-                <div class="person-meta">
+                <h3><a href="{{=permalink}}"><span itemprop="name">{{familyName}}{{honorificPrefix}}<span itemprop="honorificPrefix">{{=honorificPrefix}}</span>{{/honorificPrefix}} <span class="fullname">{{givenName}}<span itemprop="givenName">{{=givenName}}</span>{{/givenName}} <span itemprop="familyName">{{=familyName}}</span></span>{{honorificSuffix}}, <span itemprop="honorificSuffix">{{=honorificSuffix}}</span>{{/honorificSuffix}}</span>{{:familyName}}{{name}}{{=name}}{{/name}}{{/familyName}}</a></h3>                <div class="person-meta">
                     {{image}}
                     <figure itemprop="image" class="contact-image alignright contact-thumb-page-v3 with-caption"
                         aria-hidden="true" role="presentation" itemtype="http://schema.org/ImageObject">

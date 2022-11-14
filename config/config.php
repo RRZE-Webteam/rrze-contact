@@ -666,6 +666,7 @@ function getShortcodeSettings($group = NULL)
                         'id' => 'card',
                         'val' => __('Card', 'rrze-contact'),
                         'fields' => [
+                            'name',
                             'honorificPrefix', 
                             'honorificSuffix', 
                             'givenName',
@@ -681,6 +682,7 @@ function getShortcodeSettings($group = NULL)
                         'id' => 'compact',
                         'val' => __('compact', 'rrze-contact'),
                         'fields' => [
+                            'name',
                             'honorificPrefix', 
                             'honorificSuffix', 
                             'givenName',
@@ -711,6 +713,7 @@ function getShortcodeSettings($group = NULL)
                         'id' => 'default',
                         'val' => __('Default', 'rrze-contact'),
                         'fields' => [
+                            'name',
                             'honorificPrefix',
                             'honorificSuffix', 
                             'givenName',
@@ -729,6 +732,7 @@ function getShortcodeSettings($group = NULL)
                         'id' => 'list',
                         'val' => __('List', 'rrze-contact'),
                         'fields' => [
+                            'name',
                             'honorificPrefix', 
                             'honorificSuffix', 
                             'givenName',
@@ -744,6 +748,7 @@ function getShortcodeSettings($group = NULL)
                         'id' => 'name',
                         'val' => __('Name', 'rrze-contact'),
                         'fields' => [
+                            'name',
                             'honorificPrefix',
                             'honorificSuffix', 
                             'givenName',
@@ -751,6 +756,7 @@ function getShortcodeSettings($group = NULL)
                             'permalink',
                             'locations',
                             'url',
+                            'permalink',
                         ],
                     ],
                     [
@@ -765,6 +771,7 @@ function getShortcodeSettings($group = NULL)
                         'id' => 'plain',
                         'val' => __('Unformatted', 'rrze-contact'),
                         'fields' => [
+                            'name',
                             'honorificPrefix', 
                             'honorificSuffix', 
                             'givenName',
@@ -776,6 +783,7 @@ function getShortcodeSettings($group = NULL)
                         'id' => 'shortlist',
                         'val' => __('Short list', 'rrze-contact'),
                         'fields' => [
+                            'name',
                             'honorificPrefix', 
                             'honorificSuffix', 
                             'givenName',
@@ -798,6 +806,7 @@ function getShortcodeSettings($group = NULL)
                         'id' => 'table',
                         'val' => __('Table', 'rrze-contact'),
                         'fields' => [
+                            'name',
                             'honorificPrefix', 
                             'honorificSuffix', 
                             'givenName',

@@ -8,7 +8,7 @@
 {{/accordion}}
 <ul class="{{=class}} list-contact">
     <li itemscope="" itemtype="http://schema.org/Person">
-        <a href="{{=permalink}}"><span itemprop="name">{{honorificPrefix}}<span itemprop="honorificPrefix">{{=honorificPrefix}}</span>{{/honorificPrefix}} <span class="fullname">{{givenName}}<span itemprop="givenName">{{=givenName}}</span>{{/givenName}} {{familyName}}<span itemprop="familyName">{{=familyName}}</span>{{/familyName}}</span>{{honorificSuffix}}, <span itemprop="honorificSuffix">{{=honorificSuffix}}</span>{{/honorificSuffix}}</span></a> ( <span>{{@locations}}{{_val.url}}<span class="contact-info-www url"><span class="screen-reader-text">Webseite: </span><a itemprop="url" href="{{=_val.url}}">{{=_val.url}}</a> </span>{{/_val.url}}{{/@locations}}</span>)
+        <a href="{{=permalink}}"><span itemprop="name">{{familyName}}{{honorificPrefix}}<span itemprop="honorificPrefix">{{=honorificPrefix}}</span>{{/honorificPrefix}} <span class="fullname">{{givenName}}<span itemprop="givenName">{{=givenName}}</span>{{/givenName}} <span itemprop="familyName">{{=familyName}}</span></span>{{honorificSuffix}}, <span itemprop="honorificSuffix">{{=honorificSuffix}}</span>{{/honorificSuffix}}</span>{{:familyName}}{{name}}{{=name}}{{/name}}{{/familyName}}</a>{{locations}} ( <span>{{@locations}}{{_val.url}}<span class="contact-info-www url"><span class="screen-reader-text">Webseite: </span><a itemprop="url" href="{{=_val.url}}">{{=_val.url}}</a> </span>{{/_val.url}}{{/@locations}}</span>){{/locations}}
     </li>
 </ul>
 {{accordion}}
