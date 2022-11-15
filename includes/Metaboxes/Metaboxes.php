@@ -63,7 +63,7 @@ class Metaboxes
 
     public function getReadonly($fieldname)
     {
-        return ($this->bUnivisSync && in_array($fieldname, $this->aDisabled));
+        return ($this->bUnivisSync && in_array(RRZE_CONTACT_PREFIX . $fieldname, $this->aDisabled));
     }
 
     public function makeCMB2fields($aFields)

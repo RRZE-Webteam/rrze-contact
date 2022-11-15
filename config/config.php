@@ -170,13 +170,13 @@ function getFields($group = NULL)
                 'label' => __('Office', 'rrze-contact'),
                 'type' => 'text_small',
             ],
-            'phone' => [
+            [
                 'name' => 'phone',
                 'label' => __('Phone', 'rrze-contact'),
                 'type' => 'text',
                 'sanitization_cb' => ['self', 'phone'],
             ],
-            'mobile' => [
+            [
                 'name' => 'mobile',
                 'label' => __('Mobile', 'rrze-contact'),
                 'type' => 'text',
