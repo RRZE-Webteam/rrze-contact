@@ -56,6 +56,11 @@ class Contact extends Metaboxes
         $postMeta = get_post_meta($postID);
         $this->bUnivisSync = $postMeta[RRZE_CONTACT_PREFIX . 'univisSync'][0];
         $this->univisID = $postMeta[RRZE_CONTACT_PREFIX . 'univisID'][0];
+        $aAddressFields = ['street', 'city', 'room'];
+
+        // echo '<pre>';
+        // var_dump($postMeta);
+        // exit;
 
         if (!empty($this->bUnivisSync) && !empty($this->univisID)) {
             $aDisabled = [];
@@ -85,7 +90,7 @@ class Contact extends Metaboxes
                             $locationPostMeta = get_post_meta($postMeta[RRZE_CONTACT_PREFIX . 'associatedLocationID'][0]);
                             $aTmp = [];
 
-                            foreach (['street', 'city', 'room'] as $field) {
+                            foreach ($aAddressFields as $field) {
                                 if (!empty($locationPostMeta[RRZE_CONTACT_PREFIX . $field][0])) {
                                     $aTmp[0][RRZE_CONTACT_PREFIX . $field] = $locationPostMeta[RRZE_CONTACT_PREFIX . $field][0];
                                     $aDisabled[] = RRZE_CONTACT_PREFIX . 'locationsGroup_0_' . RRZE_CONTACT_PREFIX . $field;
@@ -111,6 +116,66 @@ class Contact extends Metaboxes
                             update_post_meta($postID, RRZE_CONTACT_PREFIX . $group . 'Group', $aTmp);
                         }
                     }
+
+                    // echo '<pre>';
+                    // var_dump($postMeta);
+                    // exit;
+
+                    // check if there are contact associations
+                    if (!empty($postMeta[RRZE_CONTACT_PREFIX . 'connectionID'][0])) {
+                        $aPostIDs = unserialize($postMeta[RRZE_CONTACT_PREFIX . 'connectionID'][0]);
+                        $bOnlyConnectionFields = (!empty($postMeta[RRZE_CONTACT_PREFIX . 'connectionFields'][0]) ? true : false);
+                        $aFields = unserialize($postMeta[RRZE_CONTACT_PREFIX . 'connectionFields'][0]);
+
+                        if (in_array('address', $aFields)) {
+                            unset($aFields['address']);
+                            $aFields = $aFields + $aAddressFields;
+                        }
+
+                        $aLocations = [];
+                        foreach ($aPostIDs as $postID) {
+                            $locationPostMeta = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'locationsGroup');
+                            $locationPostMeta = (!empty($locationPostMeta[0]) ? $locationPostMeta[0] : []);
+                            $aLocationsPostID = [];
+
+                            foreach ($locationPostMeta as $aLocation) {
+                                $aLoc = [];
+                                foreach ($aFields as $field) {
+                                    if (!empty($aLocation[RRZE_CONTACT_PREFIX . $field])) {
+                                        $aLoc[RRZE_CONTACT_PREFIX . $field] = $aLocation[RRZE_CONTACT_PREFIX . $field];
+                                        // $aDisabled[] = RRZE_CONTACT_PREFIX . 'locationsGroup_0_' . RRZE_CONTACT_PREFIX . $field;
+                                    }
+                                }
+                                if (!empty($aLoc)){
+                                    $aLocationsPostID[] = $aLoc;
+                                }
+                            }
+
+                            if (!empty($aLocationsPostID)){
+                                $aLocations[] = $aLocationsPostID;
+                            }
+                        }
+
+
+                        $aStoredLocations = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'locationsGroup');
+                        $aLocations = (!empty($aStoredLocations[0]) ? $aStoredLocations[0] : []) + $aLocations;
+
+
+                        // echo 'stored:<br><pre>';
+                        // var_dump($aStoredLocations);
+                        // echo '<br><br><br>';
+                        // var_dump($aLocations);
+                        // exit;
+
+                        update_post_meta($postID, RRZE_CONTACT_PREFIX . 'locationsGroup', $aLocations);
+
+                        // if ($bOnlyConnectionFields) {
+
+                        // } else {
+
+                        // }
+
+                    }
                 }
             }
 
@@ -129,7 +194,7 @@ class Contact extends Metaboxes
             $name = (!empty($aParts[1]) ? $aParts[1] : ' ') . (!empty($aParts[0]) ? ', ' . $aParts[0] : ' ');
         }
 
-        update_post_meta($postID, RRZE_CONTACT_PREFIX . 'name', (empty($name) ? '?' : $name));
+        update_post_meta($postID, RRZE_CONTACT_PREFIX . 'name', $name);
     }
 
     public function makeMetaboxes()
@@ -148,7 +213,7 @@ class Contact extends Metaboxes
         $cmb = new_cmb2_box([
             'id' => 'rrze_contact_sync',
             'title' => __('Metadaten zum Contact', 'rrze-contact'),
-            'object_types' => ['contact'], 
+            'object_types' => ['contact'],
             'context' => 'side',
             'priority' => 'high',
             'fields' => [
@@ -222,7 +287,7 @@ class Contact extends Metaboxes
         $cmb = new_cmb2_box([
             'id' => 'rrze_contact_info',
             'title' => __('Contact\'s informations', 'rrze-contact'),
-            'object_types' => ['contact'], 
+            'object_types' => ['contact'],
             'context' => 'normal',
             'priority' => 'default',
             'fields' => $aFields,
@@ -234,7 +299,7 @@ class Contact extends Metaboxes
         $cmb = new_cmb2_box([
             'id' => 'rrze_contact_textinfos',
             'title' => __('Contact description in shortform', 'rrze-contact'),
-            'object_types' => ['contact'], 
+            'object_types' => ['contact'],
             'context' => 'normal',
             'priority' => 'high',
             'fields' => [
@@ -260,7 +325,7 @@ class Contact extends Metaboxes
         $cmb = new_cmb2_box([
             'id' => 'rrze_contact_locations',
             'title' => __('Locations', 'rrze-contact'),
-            'object_types' => ['contact'], 
+            'object_types' => ['contact'],
             'context' => 'normal',
             'priority' => 'default',
             'fields' => [
@@ -295,7 +360,7 @@ class Contact extends Metaboxes
         $cmb = new_cmb2_box([
             'id' => 'rrze_contact_socialmedia',
             'title' => __('Social Media', 'rrze-contact'),
-            'object_types' => ['contact'], 
+            'object_types' => ['contact'],
             'context' => 'normal',
             'priority' => 'default',
             'fields' => $this->makeCMB2fields(getFields('socialmedia')),
@@ -305,7 +370,7 @@ class Contact extends Metaboxes
         $cmb = new_cmb2_box([
             'id' => 'rrze_contact_consultations',
             'title' => __('Consultations', 'rrze-contact'),
-            'object_types' => ['contact'], 
+            'object_types' => ['contact'],
             'context' => 'normal',
             'priority' => 'default',
             'fields' => [
@@ -340,44 +405,43 @@ class Contact extends Metaboxes
         $cmb = new_cmb2_box([
             'id' => 'rrze_contact_connection',
             'title' => __('Associated contact', 'rrze-contact'),
-            'object_types' => ['contact'], 
+            'object_types' => ['contact'],
             'context' => 'normal',
             'priority' => 'default',
             'fields' => [
                 [
                     'name' => __('Type of association', 'rrze-contact'),
-                    'desc' => __('Der hier eingegebene Text wird vor der Ausgabe des verknüpften Contactes angezeigt (z.B. Vorzimmer, Contact über).', 'rrze-contact'),
+                    'desc' => __('The text entered here is displayed before the output of the linked contact (e.g. anteroom, contact through).', 'rrze-contact'),
                     'id' => RRZE_CONTACT_PREFIX . 'connection_text',
                     'type' => 'text',
                 ],
                 [
                     'name' => __('Select combined contacts', 'rrze-contact'),
                     'desc' => '',
-                    'id' => RRZE_CONTACT_PREFIX . 'connection_id',
+                    'id' => RRZE_CONTACT_PREFIX . 'connectionID',
                     'type' => 'select',
                     'options' => $this->getConnectOptions(),
                     'repeatable' => true,
                     'add_row_text' => __('Add a combined contact', 'rrze-contact'),
                 ],
                 [
-                    'name' => __('Angezeigte Daten der verknüpften Contacte', 'rrze-contact'),
+                    'name' => __('These fields will be used from the selected contacts', 'rrze-contact'),
                     'desc' => '',
-                    'id' => RRZE_CONTACT_PREFIX . 'connection_options',
+                    'id' => RRZE_CONTACT_PREFIX . 'connectionFields',
                     'type' => 'multicheck',
                     'options' => [
-                        'contactPoint' => __('Adresse', 'rrze-contact'),
-                        'telephone' => __('Telefon', 'rrze-contact'),
-                        'faxNumber' => __('Telefax', 'rrze-contact'),
+                        'address' => __('Address', 'rrze-contact'),
+                        'phone' => __('Phone', 'rrze-contact'),
+                        'fax' => __('Fax', 'rrze-contact'),
                         'email' => __('E-Mail', 'rrze-contact'),
-                        'hoursAvailable' => __('Sprechzeiten', 'rrze-contact'),
+                        'consultations' => __('Consultations', 'rrze-contact'),
                     ],
                 ],
                 [
-                    'name' => __('Eigene Daten ausblenden', 'rrze-contact'),
-                    'desc' => __('Ausschließlich die verknüpften Contacte werden in der Ausgabe angezeigt.', 'rrze-contact'),
+                    'name' => __('Use associated contacts\' fields', 'rrze-contact'),
+                    'desc' => __('Show selected fields from associated contacts only', 'rrze-contact'),
                     'type' => 'checkbox',
-                    'id' => RRZE_CONTACT_PREFIX . 'connection_only',
-                    //'before' => $standort_sync,
+                    'id' => RRZE_CONTACT_PREFIX . 'onlyConnectionFields',
                 ],
             ],
         ]);
@@ -395,7 +459,7 @@ class Contact extends Metaboxes
         ]);
 
         if (!empty($aPosts)) {
-            $firstItem = [0 => '-- ' . __('No connection selected', 'rrze-contact') . ' ---'];
+            $firstItem = [0 => '-- ' . __('No connection selected', 'rrze-contact') . ' --'];
 
             foreach ($aPosts as $postID) {
                 $aRet[$postID] = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'name', true);
@@ -403,7 +467,7 @@ class Contact extends Metaboxes
 
             natcasesort($aRet);
         } else {
-            $firstItem = [0 => '-- ' . __('No location entered', 'rrze-contact') . ' ---'];
+            $firstItem = [0 => '-- ' . __('No connection entered', 'rrze-contact') . ' --'];
         }
 
         return $firstItem + $aRet;
@@ -412,7 +476,7 @@ class Contact extends Metaboxes
     private function getLocationOptions()
     {
         $aRet = [];
-        $firstItem = [0 => '-- ' . __('No location selected', 'rrze-contact') . ' ---'];
+        $firstItem = [0 => '-- ' . __('No location selected', 'rrze-contact') . ' --'];
 
         $aPosts = get_posts([
             'post_type' => 'location',
@@ -428,6 +492,8 @@ class Contact extends Metaboxes
             }
 
             natcasesort($aRet);
+        } else {
+            $firstItem = [0 => '-- ' . __('No location entered', 'rrze-contact') . ' --'];
         }
 
         return $firstItem + $aRet;
