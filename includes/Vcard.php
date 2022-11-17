@@ -67,14 +67,6 @@ class Vcard
         return $this->vCard;
     }
 
-    public function showCardQR(){
-        if ((include_once 'phpqrcode/qrlib.php') == TRUE) {
-            // \QRcode::png($this->vCard); // this displays the image directly in the browser - I want data to be returned - 
-        }else{
-            return 'QR Lib is missing';
-        }
-    }
-
     public function encodeCard(){
         return '';
     }

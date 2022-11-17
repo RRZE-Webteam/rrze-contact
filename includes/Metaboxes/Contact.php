@@ -45,25 +45,37 @@ class Contact extends Metaboxes
 
         // $vcard = new Vcard($this->univisData);
         // echo $vcard->showCard();
-        // $vcard->showCardQR();
-        // echo '<img src="' . $vcard->showCardQR() . '">';
-        // exit;
+
+        // $generator = new QRCode($data, $options); -> https://github.com/psyon/php-qrcode
+        /* Output directly to standard output. */
+        // $generator->output_image();
+        // /* Create bitmap image. */
+        // $image = $generator->render_image();
+        // imagepng($image);
+        // imagedestroy($image);
+
 
         if (get_post_type($postID) != 'contact') {
             return;
         }
 
         $postMeta = get_post_meta($postID);
-        $this->bUnivisSync = $postMeta[RRZE_CONTACT_PREFIX . 'univisSync'][0];
-        $this->univisID = $postMeta[RRZE_CONTACT_PREFIX . 'univisID'][0];
-        $aAddressFields = ['street', 'city', 'room'];
+
+        // f.e. auto-draft
+        // if (empty($postMeta)){
+        //     return;
+        // }
 
         // echo '<pre>';
         // var_dump($postMeta);
         // exit;
 
+        $aDisabled = [];
+        $this->bUnivisSync = (!empty($postMeta[RRZE_CONTACT_PREFIX . 'univisSync'][0]) ? true : false);
+        $this->univisID = (!empty($postMeta[RRZE_CONTACT_PREFIX . 'univisID'][0]) ? $postMeta[RRZE_CONTACT_PREFIX . 'univisID'][0] : 0);
+        $aAddressFields = ['street', 'city', 'room'];
+
         if (!empty($this->bUnivisSync) && !empty($this->univisID)) {
-            $aDisabled = [];
             $univis = new UnivIS();
             $univisResponse = $univis->getContact('id=' . $this->univisID);
 
@@ -121,68 +133,81 @@ class Contact extends Metaboxes
                     // var_dump($postMeta);
                     // exit;
 
-                    // check if there are contact associations
-                    if (!empty($postMeta[RRZE_CONTACT_PREFIX . 'connectionID'][0])) {
-                        $aPostIDs = unserialize($postMeta[RRZE_CONTACT_PREFIX . 'connectionID'][0]);
-                        $bOnlyConnectionFields = (!empty($postMeta[RRZE_CONTACT_PREFIX . 'connectionFields'][0]) ? true : false);
-                        $aFields = unserialize($postMeta[RRZE_CONTACT_PREFIX . 'connectionFields'][0]);
-
-                        if (in_array('address', $aFields)) {
-                            unset($aFields['address']);
-                            $aFields = $aFields + $aAddressFields;
-                        }
-
-                        $aLocations = [];
-                        foreach ($aPostIDs as $postID) {
-                            $locationPostMeta = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'locationsGroup');
-                            $locationPostMeta = (!empty($locationPostMeta[0]) ? $locationPostMeta[0] : []);
-                            $aLocationsPostID = [];
-
-                            foreach ($locationPostMeta as $aLocation) {
-                                $aLoc = [];
-                                foreach ($aFields as $field) {
-                                    if (!empty($aLocation[RRZE_CONTACT_PREFIX . $field])) {
-                                        $aLoc[RRZE_CONTACT_PREFIX . $field] = $aLocation[RRZE_CONTACT_PREFIX . $field];
-                                        // $aDisabled[] = RRZE_CONTACT_PREFIX . 'locationsGroup_0_' . RRZE_CONTACT_PREFIX . $field;
-                                    }
-                                }
-                                if (!empty($aLoc)){
-                                    $aLocationsPostID[] = $aLoc;
-                                }
-                            }
-
-                            if (!empty($aLocationsPostID)){
-                                $aLocations[] = $aLocationsPostID;
-                            }
-                        }
-
-
-                        $aStoredLocations = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'locationsGroup');
-                        $aLocations = (!empty($aStoredLocations[0]) ? $aStoredLocations[0] : []) + $aLocations;
-
-
-                        // echo 'stored:<br><pre>';
-                        // var_dump($aStoredLocations);
-                        // echo '<br><br><br>';
-                        // var_dump($aLocations);
-                        // exit;
-
-                        update_post_meta($postID, RRZE_CONTACT_PREFIX . 'locationsGroup', $aLocations);
-
-                        // if ($bOnlyConnectionFields) {
-
-                        // } else {
-
-                        // }
-
-                    }
                 }
             }
 
-            if (!empty($this->bUnivisSync)) {
-                update_post_meta($postID, RRZE_CONTACT_PREFIX . 'disabled', $aDisabled);
-            }
         }
+
+        // check if there are contact associations
+        if (!empty($postMeta[RRZE_CONTACT_PREFIX . 'connectionID'][0])) {
+            $aConnetionIDs = unserialize($postMeta[RRZE_CONTACT_PREFIX . 'connectionID'][0]);
+            $bOnlyConnectionFields = (!empty($postMeta[RRZE_CONTACT_PREFIX . 'connectionFields'][0]) ? true : false);
+            $aFields = unserialize($postMeta[RRZE_CONTACT_PREFIX . 'connectionFields'][0]);
+
+            if (in_array('address', $aFields)) {
+                $aFields = array_merge($aFields, $aAddressFields);
+            }
+
+            $aLocations = [];
+
+            foreach ($aConnetionIDs as $connectionID) {
+                // $locationPostMeta = get_post_meta($connectionID, RRZE_CONTACT_PREFIX . 'locationsGroup');
+                $locationPostMeta = get_post_meta($connectionID);
+                // $locationPostMeta = (!empty($locationPostMeta[0]) ? $locationPostMeta[0] : []);
+                $aLocationsPostID = [];
+
+                echo '<pre>';
+                var_dump($locationPostMeta);
+                exit;
+    
+
+                foreach ($locationPostMeta as $aLocation) {
+                    $aLoc = [];
+                    foreach ($aFields as $field) {
+                        if (!empty($aLocation[RRZE_CONTACT_PREFIX . $field])) {
+                            $aLoc[RRZE_CONTACT_PREFIX . $field] = $aLocation[RRZE_CONTACT_PREFIX . $field];
+                            // $aDisabled[] = RRZE_CONTACT_PREFIX . 'locationsGroup_0_' . RRZE_CONTACT_PREFIX . $field;
+                        }
+                    }
+                    if (!empty($aLoc)) {
+                        $aLocationsPostID[] = $aLoc;
+                    }
+                }
+
+                if (!empty($aLocationsPostID)) {
+                    $aLocations[] = $aLocationsPostID;
+                }
+            }
+
+            $aStoredLocations = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'locationsGroup');
+            // $aLocations = (!empty($aStoredLocations[0]) ? $aStoredLocations[0] : []) + $aLocations;
+
+            echo 'stored:<br><pre>';
+            var_dump($aStoredLocations);
+            echo '<br><br><br>';
+            var_dump($aLocations);
+            exit;
+
+            update_post_meta($postID, RRZE_CONTACT_PREFIX . 'locationsGroup', $aLocations);
+
+            // if ($bOnlyConnectionFields) {
+
+            // } else {
+
+            // }
+
+        }
+
+
+        // $aStoredLocations = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'locationsGroup');
+        // // $aLocations = (!empty($aStoredLocations[0]) ? $aStoredLocations[0] : []) + $aLocations;
+
+        // echo 'stored:<br><pre>';
+        // var_dump($aStoredLocations);
+        // exit;
+
+
+        update_post_meta($postID, RRZE_CONTACT_PREFIX . 'disabled', $aDisabled);
 
         $familyName = $postMeta[RRZE_CONTACT_PREFIX . 'familyName'][0];
         $givenName = $postMeta[RRZE_CONTACT_PREFIX . 'givenName'][0];
