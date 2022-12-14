@@ -361,4 +361,18 @@ class Functions
         return false;
     }
 
+
+    public static function storeTransientOption($transient){
+            // lets store $transient in an option to delete them on save using deleteTransients()
+            $aOptions = get_option('rrze-contact-shortcode-transients');
+
+            if (!empty($aOptions)) {
+                $aOptions[] = $transient;
+            } else {
+                $aOptions = [$transient];
+            }
+
+            update_option('rrze-contact-shortcode-transients', $aOptions);
+    }
+
 }

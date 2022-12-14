@@ -29,6 +29,7 @@ class Contact extends Metaboxes
         $this->settings = $settings;
         $this->descFound = __('Value displayed from UnivIS:', 'rrze-contact') . ' ';
         $this->descNotFound = __('No value is stored for this in UnivIS.', 'rrze-contact');
+        add_action('save_post_contact', [$this, 'deleteTransients'], 10, 3);
         add_action('save_post', [$this, 'saveMeta'], 12, 3); // priority 10 would not work because post_meta is not stored yet. save_post_contact would not work because save_post is fired after save_post_contact
     }
 
@@ -36,6 +37,15 @@ class Contact extends Metaboxes
     {
         add_action('cmb2_admin_init', [$this, 'makeMetaboxes']);
 
+    }
+
+    public function deleteTransients()
+    {
+        $aTransients = get_option('rrze-contact-shortcode-transients');
+        foreach ($aTransients as $transient) {
+            delete_transient($transient);
+        }
+        update_option('rrze-contact-shortcode-transients', '');
     }
 
     public function saveMeta($postID, $post_after, $post_before)
@@ -53,7 +63,6 @@ class Contact extends Metaboxes
         // $image = $generator->render_image();
         // imagepng($image);
         // imagedestroy($image);
-
 
         if (get_post_type($postID) != 'contact') {
             return;
@@ -159,7 +168,6 @@ class Contact extends Metaboxes
                 echo '<pre>';
                 var_dump($locationPostMeta);
                 exit;
-    
 
                 foreach ($locationPostMeta as $aLocation) {
                     $aLoc = [];
@@ -198,14 +206,12 @@ class Contact extends Metaboxes
 
         }
 
-
         // $aStoredLocations = get_post_meta($postID, RRZE_CONTACT_PREFIX . 'locationsGroup');
         // // $aLocations = (!empty($aStoredLocations[0]) ? $aStoredLocations[0] : []) + $aLocations;
 
         // echo 'stored:<br><pre>';
         // var_dump($aStoredLocations);
         // exit;
-
 
         update_post_meta($postID, RRZE_CONTACT_PREFIX . 'disabled', $aDisabled);
 

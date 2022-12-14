@@ -21,6 +21,8 @@ class Contact extends Shortcode
     private $aAllFormats = [];
     private $pluginSettings;
     private $lastTitle = '';
+    const TRANSIENT_PREFIX = 'rrze_contact_cache_';
+    const TRANSIENT_EXPIRATION = DAY_IN_SECONDS;
 
     public function __construct($pluginFile, $pluginSettings)
     {
@@ -134,6 +136,18 @@ class Contact extends Shortcode
 
         $class = self::getCSSClass($atts['class'], (in_array('border', $aDisplayfields) ? 'border' : 'noborder'), $atts['background']);
 
+        // Cache
+        if (empty($atts['nocache'])) {
+            $transient = sha1(self::TRANSIENT_PREFIX . json_encode($atts) . json_encode($aDisplayfields) . json_encode($class));
+            $content = get_transient($transient);
+            if (!empty($content)) {
+                Main::enqueueForeignThemes();
+                return $content;
+            } else {
+                $content = '';
+            }
+        }
+
         if (!empty($atts['category'])) {
             $aPostIDs = $this->getPostIDsByCategory($atts['category']);
         } elseif (!empty($atts['id'])) {
@@ -142,23 +156,21 @@ class Contact extends Shortcode
             return __('id or category is needed', 'rrze-contact');
         }
 
-
         $aData = [];
         $iMax = 0;
         foreach ($aPostIDs as $postID) {
             $data = Data::getContactData($postID, $aDisplayfields, $this->pluginSettings);
-            if (!empty($data)){
+            if (!empty($data)) {
                 $data['class'] = $class;
                 $aData[] = $data;
-                $iMax++;    
+                $iMax++;
             }
         }
-
 
         if (!empty($atts['accordion'])) {
             $aTmp = [];
 
-            foreach($aData as $data){
+            foreach ($aData as $data) {
                 $aTmp[$this->makeCollapseTitle($data, $atts['accordion'])][] = $data;
             }
 
@@ -166,17 +178,17 @@ class Contact extends Shortcode
             array_multisort(array_keys($aData), SORT_NATURAL | SORT_FLAG_CASE, $aData);
 
             $aTmp = [];
-            foreach($aData as $title => $aEntries){
+            foreach ($aData as $title => $aEntries) {
                 $i = 1;
 
-                foreach($aEntries as $nr => $data){
+                foreach ($aEntries as $nr => $data) {
                     $data['accordion'] = true;
                     $data['collapsibles_start'] = ($nr == 0 ? true : false);
                     $data['collapse_title'] = ($nr == 0 ? $title : false);
                     $data['collapsibles_end'] = ($i < $iMax ? false : true);
                     $data['collapse_start'] = ($data['collapse_title'] ? true : false);
-                    $data['collapse_end'] = ($i == count($aEntries) ? true : false);                    
-                    $aTmp[] = $data;        
+                    $data['collapse_end'] = ($i == count($aEntries) ? true : false);
+                    $aTmp[] = $data;
                     $i++;
                 }
             }
@@ -191,10 +203,13 @@ class Contact extends Shortcode
 
         $content = do_shortcode($content);
 
+        // Cache
+        $transient = sha1(self::TRANSIENT_PREFIX . json_encode($atts) . json_encode($aDisplayfields) . json_encode($class));
+        set_transient($transient, $content, self::TRANSIENT_EXPIRATION);
+        Functions::storeTransientOption($transient);
+
         return $content;
     }
-
-    
 
     public function fillGutenbergOptions()
     {
