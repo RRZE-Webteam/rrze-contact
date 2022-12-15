@@ -6,6 +6,7 @@ use function RRZE\Contact\Config\getConstants;
 use function RRZE\Contact\Config\getDisplayFields;
 use function RRZE\Contact\Config\getShortcodeDefaults;
 use function RRZE\Contact\Config\getShortcodeSettings;
+use function RRZE\Contact\Functions\storeTransientOption;
 use RRZE\Contact\Data;
 use RRZE\Contact\Template;
 
@@ -137,16 +138,16 @@ class Contact extends Shortcode
         $class = self::getCSSClass($atts['class'], (in_array('border', $aDisplayfields) ? 'border' : 'noborder'), $atts['background']);
 
         // Cache
-        if (empty($atts['nocache'])) {
-            $transient = sha1(self::TRANSIENT_PREFIX . json_encode($atts) . json_encode($aDisplayfields) . json_encode($class));
-            $content = get_transient($transient);
-            if (!empty($content)) {
-                Main::enqueueForeignThemes();
-                return $content;
-            } else {
-                $content = '';
-            }
-        }
+        // if (empty($atts['nocache'])) {
+        //     $transient = sha1(self::TRANSIENT_PREFIX . json_encode($atts) . json_encode($aDisplayfields) . json_encode($class));
+        //     $content = get_transient($transient);
+        //     if (!empty($content)) {
+        //         // Main::enqueueForeignThemes();
+        //         return $content;
+        //     } else {
+        //         $content = '';
+        //     }
+        // }
 
         if (!empty($atts['category'])) {
             $aPostIDs = $this->getPostIDsByCategory($atts['category']);
@@ -206,7 +207,7 @@ class Contact extends Shortcode
         // Cache
         $transient = sha1(self::TRANSIENT_PREFIX . json_encode($atts) . json_encode($aDisplayfields) . json_encode($class));
         set_transient($transient, $content, self::TRANSIENT_EXPIRATION);
-        Functions::storeTransientOption($transient);
+        // storeTransientOption($transient);
 
         return $content;
     }
