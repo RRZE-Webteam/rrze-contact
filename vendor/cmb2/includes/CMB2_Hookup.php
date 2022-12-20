@@ -169,7 +169,7 @@ class CMB2_Hookup extends CMB2_Hookup_Base {
 		add_action( 'edit_user_profile', array( $this, 'user_metabox' ), $priority );
 		add_action( 'user_new_form', array( $this, 'user_new_metabox' ), $priority );
 
-		add_action( 'contactal_options_update', array( $this, 'save_user' ) );
+		add_action( 'personal_options_update', array( $this, 'save_user' ) );
 		add_action( 'edit_user_profile_update', array( $this, 'save_user' ) );
 		add_action( 'user_register', array( $this, 'save_user' ) );
 
@@ -537,21 +537,48 @@ class CMB2_Hookup extends CMB2_Hookup_Base {
 	 * @param bool $add_handle Whether to add the metabox handle and opening div for .inside.
 	 */
 	public function context_box_title_markup_open( $add_handle = true ) {
-		$title = $this->cmb->prop( 'title' );
+		$cmb_id = $this->cmb->cmb_id;
+		$title  = $this->cmb->prop( 'title' );
+		$screen = get_current_screen();
+		$page   = $screen->id;
+		$is_55  = CMB2_Utils::wp_at_least( '5.5' );
 
-		$page = get_current_screen()->id;
-		add_filter( "postbox_classes_{$page}_{$this->cmb->cmb_id}", array( $this, 'postbox_classes' ) );
+		add_filter( "postbox_classes_{$page}_{$cmb_id}", array( $this, 'postbox_classes' ) );
 
-		echo '<div id="' . $this->cmb->cmb_id . '" class="' . postbox_classes( $this->cmb->cmb_id, $page ) . '">' . "\n";
+		$hidden_class = '';
+
+		if ( $is_55 ) {
+
+			// get_hidden_meta_boxes() doesn't apply in the block editor.
+			$is_hidden = ! $screen->is_block_editor() && in_array( $cmb_id, get_hidden_meta_boxes( $screen ), true );
+
+			$hidden_class = $is_hidden
+				? ' hide-if-js'
+				: '';
+		}
+
+		$toggle_button = '<button type="button" class="handlediv button-link" aria-expanded="true"><span class="screen-reader-text">' . sprintf( __( 'Toggle panel: %s' ), $title ) . '</span><span class="toggle-indicator" aria-hidden="true"></span></button>';
+		$title_tag = '<h2 class="hndle"><span>' . esc_attr( $title ) . '</span></h2>' . "\n";
+
+		echo '<div id="' . $cmb_id . '" class="' . postbox_classes( $cmb_id, $page ) . $hidden_class . '">' . "\n";
 
 		if ( $add_handle ) {
 
-			echo '<button type="button" class="handlediv button-link" aria-expanded="true">';
-				echo '<span class="screen-reader-text">' . sprintf( __( 'Toggle panel: %s' ), $title ) . '</span>';
-				echo '<span class="toggle-indicator" aria-hidden="true"></span>';
-			echo '</button>';
+			if ( $is_55 ) {
+				echo '<div class="postbox-header">';
+				echo $title_tag;
 
-			echo '<h2 class="hndle"><span>' . esc_attr( $title ) . '</span></h2>' . "\n";
+				echo '<div class="handle-actions hide-if-no-js">';
+				echo $toggle_button;
+				echo '</div>';
+
+				echo '</div>' . "\n";
+
+			} else {
+				echo $toggle_button;;
+				echo $title_tag;
+			}
+
 			echo '<div class="inside">' . "\n";
 		}
 	}

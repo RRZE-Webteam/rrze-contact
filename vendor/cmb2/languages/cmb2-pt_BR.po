@@ -58,7 +58,7 @@ msgstr "Alternar painel: %s"
 
 #: includes/CMB2_Types.php:231
 msgid "Custom CMB2 field type classes must extend CMB2_Type_Base."
-msgstr "Classes de tipo de campo contactalizado do CMB2 devem estender CMB2_Type_Base."
+msgstr "Classes de tipo de campo personalizado do CMB2 devem estender CMB2_Type_Base."
 
 #: example-functions.php:783
 msgid "Will show in REST API \"editable\" contexts only (`POST` requests)."
@@ -226,7 +226,7 @@ msgstr "Este campo não tem um cmb_id especificado."
 
 #: example-functions.php:176
 msgid "Custom Rendered Field"
-msgstr "Campo com renderização contactalizada"
+msgstr "Campo com renderização personalizada"
 
 #: includes/CMB2_hookup.php:185
 msgid "Term metaboxes configuration requires a \"taxonomies\" parameter."
@@ -250,7 +250,7 @@ msgstr "Metabox de categoria"
 
 #. Description of the plugin/theme
 msgid "CMB2 will create metaboxes and forms with custom fields that will blow your mind."
-msgstr "CMB2 irá criar caixas de meta e os formulários com campos contactalizados que vai explodir sua mente."
+msgstr "CMB2 irá criar caixas de meta e os formulários com campos personalizados que vai explodir sua mente."
 
 #. Plugin Name of the plugin/theme
 msgid "CMB2"
