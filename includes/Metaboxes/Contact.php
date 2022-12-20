@@ -42,16 +42,22 @@ class Contact extends Metaboxes
     public function deleteTransients()
     {
         $aTransients = get_option('rrze-contact-shortcode-transients');
-        foreach ($aTransients as $transient) {
-            delete_transient($transient);
+
+        if (!empty($aTransients)){
+            foreach ($aTransients as $transient) {
+                delete_transient($transient);
+            }
+            update_option('rrze-contact-shortcode-transients', '');
         }
-        update_option('rrze-contact-shortcode-transients', '');
     }
 
     public function saveMeta($postID, $post_after, $post_before)
     {
 
-        // 2DO: on-save: store vcf + vcf.qr as post_meta
+        // 2DO: 
+        // on-save: store vcf + vcf.qr as post_meta
+        // social media is not stored
+
 
         // $vcard = new Vcard($this->univisData);
         // echo $vcard->showCard();
