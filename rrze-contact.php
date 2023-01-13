@@ -4,7 +4,7 @@
  * Plugin Name:     RRZE Contact
  * Plugin URI:      https://github.com/RRZE-Webteam/rrze-contact
  * Description:     Einbindung von Daten aus Contact
- * Version:         0.1.25
+ * Version:         0.1.26
  * Author:          RRZE-Webteam
  * Author URI:      https://blogs.fau.de/webworking/
  * License:         GNU General Public License v3
@@ -18,6 +18,7 @@ namespace RRZE\Contact;
 defined('ABSPATH') || exit;
 
 use RRZE\Contact\Main;
+use function RRZE\Contact\Config\getSettingsFields;
 
 // Laden der Konfigurationsdatei
 require_once __DIR__ . '/config/config.php';
@@ -112,12 +113,12 @@ function showFAUPersonNotice()
 function update()
 {
     // update only one time
-    $version = '0.0.25';
-    $isUpdated = get_option('rrze-contact-updated', FALSE);
+    // $version = '0.0.25';
+    // $isUpdated = get_option('rrze-contact-updated', FALSE);
 
-    if ($isUpdated == $version) {
-        return;
-    }
+    // if ($isUpdated == $version) {
+    //     return;
+    // }
 
     $postIDs = get_posts([
         'post_type' => 'person',
@@ -140,6 +141,140 @@ function update()
     foreach ($postIDs as $postID) {
         set_post_type($postID, 'location');
     }
+
+    $oldOptions = get_option('_fau_person');
+
+    $newOptions = get_option('rrze-contact');
+
+    if (!empty($oldOptions)){
+
+        if (!empty($oldOptions['sidebar_titel'])){
+            $newOptions['sidebar_honorificPrefix'] = $oldOptions['sidebar_titel'];
+        }
+        if (!empty($oldOptions['sidebar_familyName'])){
+            $newOptions['sidebar_familyName'] = $oldOptions['sidebar_familyName'];
+        }
+        if (!empty($oldOptions['sidebar_givenName'])){
+            $newOptions['sidebar_givenName'] = $oldOptions['sidebar_givenName'];
+        }
+        if (!empty($oldOptions['sidebar_position'])){
+            $newOptions['sidebar_position'] = $oldOptions['sidebar_position'];
+        }
+        if (!empty($oldOptions['sidebar_titel'])){
+            $newOptions['sidebar_honorificPrefix'] = $oldOptions['sidebar_titel'];
+        }
+        if (!empty($oldOptions['sidebar_suffix'])){
+            $newOptions['sidebar_honorificSuffix'] = $oldOptions['sidebar_suffix'];
+        }
+        if (!empty($oldOptions['sidebar_suffix'])){
+            $newOptions['sidebar_honorificSuffix'] = $oldOptions['sidebar_suffix'];
+        }
+
+
+        // Testen! on => true, off => false
+
+
+
+        // sidebar_name ?
+
+        // sidebar_adresse ?
+
+        // sidebar_workLocation ?
+
+        // sidebar_telefon ?
+
+        // sidebar_mobil ?
+
+        // sidebar_fax ?
+
+        // sidebar_mail ?
+
+        // sidebar_webseite ?
+
+        // sidebar_sprechzeiten ?
+
+        // sidebar_kurzauszug ?
+
+        // sidebar_bild ?
+
+        // sidebar_socialmedia ?
+
+        // sidebar_ansprechpartner ?
+
+        // constants_view_telefonlink ? (besser weglassen)
+
+        // constants_view_telefon_intformat ? (besser weglassen)
+        
+        // constants_view_some_position ?
+
+        if (!empty($oldOptions['constants_view_raum_prefix'])){
+            $newOptions['layout_room_text'] = $oldOptions['constants_view_raum_prefix'];
+        }
+        if (!empty($oldOptions['constants_view_kontakt_linktext'])){
+            $newOptions['layout_moreButton_text'] = $oldOptions['constants_view_kontakt_linktext'];
+        }
+        if (!empty($oldOptions['constants_view_kontakt_page_imagecaption'])){
+            $newOptions['layout_imagecaption'] = $oldOptions['constants_view_kontakt_page_imagecaption'];
+        }
+        if (!empty($oldOptions['constants_view_kontakt_page_imagesize'])){
+            $newOptions['layout_imagesize'] = $oldOptions['constants_view_kontakt_page_imagesize'];
+        }
+        if (!empty($oldOptions['constants_view_thumb_size'])){
+            $newOptions['layout_view_thumb_size'] = $oldOptions['constants_view_thumb_size'];
+        }
+        if (!empty($oldOptions['constants_view_card_size'])){
+            $newOptions['layout_view_card_size'] = $oldOptions['constants_view_card_size'];
+        }
+        if (!empty($oldOptions['constants_view_card_linkimage'])){
+            $newOptions['layout_imagelink'] = $oldOptions['constants_view_card_linkimage'];
+        }
+        if (!empty($oldOptions['constants_backend_view_metabox_kontaktlist'])){
+            $newOptions['layout_backend_view_metabox_contactlist'] = $oldOptions['constants_backend_view_metabox_kontaktlist'];
+        }
+        if (!empty($oldOptions['sidebar_organisation'])){
+            $newOptions['sidebar_organization'] = $oldOptions['sidebar_organisation'];
+        }
+        if (!empty($oldOptions['sidebar_abteilung'])){
+            $newOptions['sidebar_department'] = $oldOptions['sidebar_abteilung'];
+        }
+        if (!empty($oldOptions['constants_has_archive_page'])){
+            $newOptions['layout_has_archive_page'] = $oldOptions['constants_has_archive_page'];
+        }
+        if (!empty($oldOptions['constants_has_archive_page'])){
+            $newOptions['layout_has_archive_page'] = $oldOptions['constants_has_archive_page'];
+        }
+        if (!empty($oldOptions['constants_has_archive_page'])){
+            $newOptions['layout_has_archive_page'] = $oldOptions['constants_has_archive_page'];
+        }
+        if (!empty($oldOptions['constants_has_archive_page'])){
+            $newOptions['layout_has_archive_page'] = $oldOptions['constants_has_archive_page'];
+        }
+        if (!empty($oldOptions['constants_has_archive_page'])){
+            $newOptions['layout_has_archive_page'] = $oldOptions['constants_has_archive_page'];
+        }
+        if (!empty($oldOptions['constants_has_archive_page'])){
+            $newOptions['layout_has_archive_page'] = $oldOptions['constants_has_archive_page'];
+        }
+        if (!empty($oldOptions['constants_has_archive_page'])){
+            $newOptions['layout_has_archive_page'] = $oldOptions['constants_has_archive_page'];
+        }
+        if (!empty($oldOptions['constants_view_kontakt_linkname'])){
+            $newOptions['layout_view_contact_linkname'] = $oldOptions['layout_view_contact_linkname'];
+        }
+    
+
+
+    echo '<pre>';
+    var_dump($oldOptions);
+
+
+    // $newOptions = getSettingsFields();
+
+    var_dump($newOptions);
+
+    }
+
+    exit;
 
     // 2DO: get old settings and use them for this plugin
 
