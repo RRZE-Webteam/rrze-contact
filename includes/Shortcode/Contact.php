@@ -39,8 +39,70 @@ class Contact extends Shortcode
         add_shortcode('contact', [$this, 'shortcode_contact']);
         // add_shortcode('consultation', [$this, 'shortcode_contact']); // next feature
 
+        // translate shortcodes from FAU-Person
+        add_shortcode('kontakt', [$this, 'translateFAUPersonShortcode']);
+        add_shortcode('person', [$this, 'translateFAUPersonShortcode']);
+        add_shortcode('kontaktliste', [$this, 'translateFAUPersonShortcode']);
+        add_shortcode('persons', [$this, 'translateFAUPersonShortcode']);
+
+
         // remove_filter('the_content', 'wpautop'); // still needed?
     }
+
+
+    private function removeFAUPersonShortcodes()
+    {
+        // remove all shortcodes added by FAU-Person
+        remove_shortcode('kontakt');
+        remove_shortcode('person');
+        remove_shortcode('kontaktliste');
+        remove_shortcode('persons');
+    }
+
+    private function translateFAUPersonShortcode($oldAtts, $content = null)
+    {
+        $newAtts = $oldAtts;
+
+        if (!empty($oldAtts['format'])) {
+            switch ($oldAtts['format']) {
+                case 'kompakt':
+                    $newAtts['format'] = 'compact';
+                    break;
+                case 'liste':
+                    $newAtts['format'] = 'list';
+                    break;
+            }
+        }
+
+        $aSubs = [
+            'title' => 'title',
+            'suffix' => 'honorificSuffix',
+            'workLocation' => 'locations ',
+            'worksFor' => 'organization, department',
+            'jobTitle' => 'position',
+            'telefon' => 'phone',
+            'adresse' => 'street, city, room',
+            'bild' => 'image',
+            'sprechzeiten' => 'consultations',
+        ];
+
+        if (!empty($oldAtts['show'])) {
+            $newAtts['show'] = preg_replace(array_keys($aSubs), array_values($aSubs), $oldAtts['show']);
+        }
+
+        if (!empty($oldAtts['hide'])) {
+            $newAtts['hide'] = preg_replace(array_keys($aSubs), array_values($aSubs), $oldAtts['hide']);
+        }
+
+        $sAtts = '';
+        foreach($newAtts as $key => $val){
+            $sAtts .= $key . '="' . $val . '" ';
+        }
+
+        do_shortcode('[contact ' . $sAtts . ']');
+    }
+
+
 
     private function getCSSClass($class, $border, $background)
     {
@@ -60,11 +122,13 @@ class Contact extends Shortcode
                 'order' => 'ASC',
                 'fields' => 'ids',
                 'suppress_filters' => false,
-                'tax_query' => [[
-                    'taxonomy' => 'contacts_category',
-                    'field' => 'term_id',
-                    'terms' => $aCategory['term_id'],
-                ]],
+                'tax_query' => [
+                    [
+                        'taxonomy' => 'contacts_category',
+                        'field' => 'term_id',
+                        'terms' => $aCategory['term_id'],
+                    ]
+                ],
                 'nopaging' => true,
             ]);
         }
@@ -279,11 +343,13 @@ class Contact extends Shortcode
         wp_localize_script($editor_script, $mySettings['block']['blockname'] . 'Config', $mySettings);
 
         // register block
-        register_block_type($mySettings['block']['blocktype'], array(
-            'editor_script' => $editor_script,
-            'render_callback' => [$this, 'shortcode_contact'],
-            'attributes' => $mySettings,
-        )
+        register_block_type(
+            $mySettings['block']['blocktype'],
+            array(
+                'editor_script' => $editor_script,
+                'render_callback' => [$this, 'shortcode_contact'],
+                'attributes' => $mySettings,
+            )
         );
     }
 
